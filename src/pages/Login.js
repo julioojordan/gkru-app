@@ -11,19 +11,49 @@ import {
   MDBCheckbox,
 } from "mdb-react-ui-kit";
 import { Form } from "react-bootstrap";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useCookies } from 'react-cookie';
+import { login, setRole } from "../actions";
+import services from "../services";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [, setCookie] = useCookies(['auth_token']);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const auth = (data) => {
-    console.log(data); // Lakukan sesuatu dengan data yang dikirimkan
-    navigate("/about");
+  const getRole = (data) => {
+    if (data.ketuaLingkungan == 0 && data.ketuaWilayah == 0){
+      return 'admin'
+    }
+    if (data.ketuaLingkungan != 0 && data.ketuaWilayah != 0){
+      return 'ketuaLingkungan'
+    }
+    if (data.ketuaLingkungan == 0 && data.ketuaWilayah != 0){
+      return 'ketuaWilayah'
+    }
+  }
+
+  const auth = async (formValue) => {
+    const oneDay = 24 * 60 * 60 * 1000;
+    const expiryDate = new Date(Date.now() + oneDay);
+    const {data} = await services.LoginService(formValue.username, formValue.password);
+    setCookie('auth_token', data.auth, { path: '/', expires: expiryDate });
+    dispatch(login({
+      authToken: data.auth,
+      id: data.id,
+      username: data.username,
+      ketuaLingkungan: data.ketuaLingkungan,
+      ketuaWilayah: data.ketuaWilayah,
+    }));
+    dispatch(setRole(getRole(data)))
+    navigate("/dashboard");
   };
 
   return (
@@ -40,32 +70,32 @@ function Login() {
                 Please enter your username and password!
               </p>
               <Form onSubmit={handleSubmit(auth)}>
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                label="Username"
-                id="username"
-                size="lg"
-                {...register("username", { required: true })}
-              />
-              {errors.username && <span>This field is required</span>}
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                label="Password"
-                id="password"
-                type="password"
-                size="lg"
-                {...register("password", { required: true })}
-              />
-              {errors.password && <span>This field is required</span>}
-              <MDBCheckbox
-                name="flexCheck"
-                id="flexCheckDefault"
-                className="mb-4"
-                label="Remember password"
-              />
-              <MDBBtn size="lg" type="submit" className="w-100">
-                Login
-              </MDBBtn>
+                <MDBInput
+                  wrapperClass="mb-4 w-100"
+                  label="Username"
+                  id="username"
+                  size="lg"
+                  {...register("username", { required: true })}
+                />
+                {errors.username && <span>This field is required</span>}
+                <MDBInput
+                  wrapperClass="mb-4 w-100"
+                  label="Password"
+                  id="password"
+                  type="password"
+                  size="lg"
+                  {...register("password", { required: true })}
+                />
+                {errors.password && <span>This field is required</span>}
+                <MDBCheckbox
+                  name="flexCheck"
+                  id="flexCheckDefault"
+                  className="mb-4"
+                  label="Remember password"
+                />
+                <MDBBtn size="lg" type="submit" className="w-100">
+                  Login
+                </MDBBtn>
               </Form>
               <hr className="my-4" />
             </MDBCardBody>

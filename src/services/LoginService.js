@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const auth = async (username, password) => {
+const auth = async (username, password) => {
     const url = "http://localhost:3001/login"
     const requestBody = {
         username,
@@ -14,3 +14,5 @@ export const auth = async (username, password) => {
         return Promise.reject(error);
       }
 }
+
+export default auth

@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.select-search-custom {
+  margin-bottom: 1rem;
+  width: 100%;
+  background-color: white !important; /* pastikan ini ada dalam file CSS */
+  z-index: 10;
+}

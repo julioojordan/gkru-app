@@ -1,0 +1,46 @@
+import api from "./Api";
+
+const getAllUser = async () => {
+  const url = "/user";
+  try {
+    const response = await api.get(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
+const updateUser = async (formData) => {
+  const body = {
+    Username: formData.Username, 
+    KetuaLingkungan: formData.KetuaLingkungan,
+    KetuaWilayah: formData.KetuaWilayah,
+    UpdatedBy: formData.UpdatedBy
+  };
+  const url = `/user/${formData.Id}/update`;
+  try {
+    const response = await api.patch(url, body);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
+const addUser = async (formData) => {
+  const url = "/user/add";
+  try {
+    const response = await api.post(url, formData);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
+export default {
+  getAllUser,
+  updateUser,
+  addUser
+};
