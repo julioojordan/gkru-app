@@ -63,9 +63,8 @@ const AnggotaDetail = () => {
         }));
         setKeluargaOptions(formattedOptions);
       } catch (error) {
-        console.error("Error fetching options:", error);
         if (error.response && error.response.status === 401) {
-          handleLogout(); // Call handleLogout when Unauthorized
+          await handleLogout(); // Call handleLogout when Unauthorized
         }
       } finally {
         setLoading(false);
@@ -133,17 +132,16 @@ const AnggotaDetail = () => {
       });
 
     } catch (error) {
-      console.error("Error updating data:", error);
       setFormData(initialFormData);
 
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error updating the data.',
-        icon: 'error',
-      });
-      
       if (error.response && error.response.status === 401) {
-        handleLogout(); // Call handleLogout when Unauthorized
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error updating the data.",
+          icon: "error",
+        });
       }
     } finally {
       Swal.close();

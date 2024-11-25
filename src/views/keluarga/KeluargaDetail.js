@@ -4,9 +4,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Select from 'react-select';
 import services from '../../services';
 import Swal from 'sweetalert2';
-import { margin } from '@mui/system';
+import { useAuth } from '../../hooks/useAuth';
 
 const KeluargaDetail = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state || {};
@@ -28,6 +29,7 @@ const KeluargaDetail = () => {
   const [payedMonths, setPayedMonths] = useState([]);
   const [anggotaOptions, setAnggotaOptions] = useState([]);
   const [loadingEdit, setLoadingEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [anggota, setAnggota] = useState([]);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
   const [lingkungan, setLingkungan] = useState([]);
@@ -57,19 +59,24 @@ const KeluargaDetail = () => {
 
   useEffect(() => {
     const fetchHistory = async () => {
-        try {
-            const response = await services.HistoryService.getAllHistoryWithIdKeluarga(data.Id);
-            const payedData = response
-            .filter(item => item.Keterangan === 'IN')
-            .map(item => ({
-                month: item.Bulan,
-                id: item.Id,
-                year: item.Tahun,
-            }));
-            setPayedMonths(payedData)
-        } catch (error) {
-            console.error("Error fetching history:", error);
+      setLoading(true);
+      try {
+          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(data.Id);
+          const payedData = response
+          .filter(item => item.Keterangan === 'IN')
+          .map(item => ({
+              month: item.Bulan,
+              id: item.Id,
+              year: item.Tahun,
+          }));
+          setPayedMonths(payedData)
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
         }
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchHistory();
@@ -94,7 +101,9 @@ const KeluargaDetail = () => {
         setLingkungan(lingkunganResponse);
         setLingkunganOptions(options2);
       } catch (error) {
-        console.error("Error fetching edit Data:", error);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       }finally {
         setLoadingEdit(false);
       }
@@ -176,18 +185,21 @@ const KeluargaDetail = () => {
       });
 
     } catch (error) {
-      console.error("Error updating data:", error);
       setFormData(initialFormData);
       setTimeout(() => {
         handleKepalaChange(anggotaOptions.find(option => option.value === initialFormData.KepalaKeluarga));
         handleLingkunganChange(lingkunganOptions.find(option => option.value === initialFormData.Lingkungan));
       }, 0);
 
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error updating the data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error updating the data.",
+          icon: "error",
+        });
+      }
     } finally {
       Swal.close();
       setIsEditable(false);
@@ -469,6 +481,9 @@ const KeluargaDetail = () => {
         {/* Payment History */}
         <h3 style={{ textAlign: 'center'}}>Payment History</h3>
         <div style={{ overflowX: 'auto' }}>
+        {loading ? (
+          <div className="shimmer">Loading...</div>
+        ) : (
           <CTable striped hover className="mt-4 shadow-sm">
             <CTableHead>
               <CTableRow>
@@ -502,6 +517,7 @@ const KeluargaDetail = () => {
               ))}
             </CTableBody>
           </CTable>
+        )}
         </div>
       </CCardBody>
     </CCard>

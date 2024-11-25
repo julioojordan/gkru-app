@@ -3,8 +3,10 @@ import { CForm, CFormInput, CButton, CCard, CCardBody } from '@coreui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import services from '../../services';
 import Swal from 'sweetalert2';
+import { useAuth } from '../../hooks/useAuth';
 
 const WilayahDetail = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const data = {
     NamaWilayah: '',
@@ -47,12 +49,15 @@ const WilayahDetail = () => {
       });
 
     } catch (error) {
-
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error adding the data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error adding the data.",
+          icon: "error",
+        });
+      }
     } finally {
       Swal.close();
       setFormData(initialFormData);

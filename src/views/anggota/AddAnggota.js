@@ -3,8 +3,10 @@ import { CForm, CFormInput, CButton, CCard, CCardBody, CFormSelect } from '@core
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services';
+import { useAuth } from '../../hooks/useAuth';
 
 const AddAnggota = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: {Id, Lingkungan, Wilayah, KepalaKeluarga, Nomor} } = location.state || {};
@@ -80,13 +82,16 @@ const AddAnggota = () => {
       });
 
     } catch (error) {
-      console.error("Error updating data:", error);
-
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error adding the data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        console.log('masuk Unauthorized')
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error adding the data.",
+          icon: "error",
+        });
+      }
     } finally {
       Swal.close();
     }

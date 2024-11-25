@@ -8,8 +8,10 @@ import {
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import services from '../../services';
+import { useAuth } from '../../hooks/useAuth';
 
 const AddTHForm = () => {
+  const { handleLogout } = useAuth();
   const [nominal, setNominal] = useState('');
   const [idKeluarga, setIdKeluarga] = useState(null);
   const [keterangan, setKeterangan] = useState('');
@@ -42,7 +44,9 @@ const AddTHForm = () => {
         }));
         setKeluargaOptions(formattedOptions);
       } catch (error) {
-        console.error("Error fetching options:", error);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoading(false);
       }
@@ -53,6 +57,7 @@ const AddTHForm = () => {
 
   useEffect(() => {
     const fetchHistory = async () => {
+      // TO DO add loading terpisah kah untuk ini atau set loading whole page aja ??
       if (keterangan === 'IN' && idKeluarga) {
         try {
           const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value);
@@ -60,7 +65,9 @@ const AddTHForm = () => {
           const availableMonths = months.filter(month => !existingMonths.includes(month.value));
           setBulanOptions(availableMonths);
         } catch (error) {
-          console.error("Error fetching history:", error);
+          if (error.response && error.response.status === 401) {
+            await handleLogout();
+          }
         }
       }
     };
@@ -142,12 +149,15 @@ const AddTHForm = () => {
         });
 
       } catch (error) {
-        console.error("Error adding data:", error);
-        await Swal.fire({
-          title: 'Error!',
-          text: 'There was an error adding the data.',
-          icon: 'error',
-        });
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        } else {
+          await Swal.fire({
+            title: "Error!",
+            text: "There was an error adding the data.",
+            icon: "error",
+          });
+        }
       } finally {
         Swal.close();
       }
@@ -172,12 +182,15 @@ const AddTHForm = () => {
         });
 
       } catch (error) {
-        console.error("Error adding data:", error);
-        await Swal.fire({
-          title: 'Error!',
-          text: 'There was an error adding the data.',
-          icon: 'error',
-        });
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        } else {
+          await Swal.fire({
+            title: "Error!",
+            text: "There was an error adding the data.",
+            icon: "error",
+          });
+        }
       } finally {
         Swal.close();
       }

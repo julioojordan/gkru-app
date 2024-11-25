@@ -4,8 +4,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import services from '../../services';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
+import { useAuth } from '../../hooks/useAuth';
 
 const LingkunganDetail = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { lingkungan } = location.state || {};
@@ -19,6 +21,7 @@ const LingkunganDetail = () => {
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
   const [wilayahOptions, setWilayahOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (lingkungan) {
@@ -35,6 +38,7 @@ const LingkunganDetail = () => {
 
   useEffect(() => {
     const fetchWilayah = async () => {
+      setLoading(true);
       try {
         const response = await services.WilayahService.getAllWilayah();
         const options = response.map(wilayah => ({
@@ -43,7 +47,11 @@ const LingkunganDetail = () => {
         }));
         setWilayahOptions(options);
       } catch (error) {
-        console.error("Error fetching wilayah:", error);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -94,17 +102,20 @@ const LingkunganDetail = () => {
       });
 
     } catch (error) {
-      console.error("Error updating data:", error);
       setFormData(initialFormData);
       setTimeout(() => {
         handleSelectChange(wilayahOptions.find(option => option.value === initialFormData.Wilayah));
       }, 0);
 
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error updating the data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error updating the data.",
+          icon: "error",
+        });
+      }
     } finally {
       Swal.close();
       setIsEditable(false);
@@ -113,119 +124,123 @@ const LingkunganDetail = () => {
 
   return (
     <CCard>
-      <CCardBody>
-        <h5>Detail Lingkungan</h5>
-        <CForm onSubmit={handleSubmit}>
-          {/* Input Id Lingkungan */}
-          <CFormInput
-            type="text"
-            id="idLingkungan"
-            floatingLabel="ID Lingkungan"
-            name="Id"
-            value={formData.Id}
-            onChange={handleChange}
-            disabled
-            className="mb-3"
-          />
+      {loading ? (
+          <div className="shimmer">Loading...</div>
+        ) : (
+        <CCardBody>
+          <h5>Detail Lingkungan</h5>
+          <CForm onSubmit={handleSubmit}>
+            {/* Input Id Lingkungan */}
+            <CFormInput
+              type="text"
+              id="idLingkungan"
+              floatingLabel="ID Lingkungan"
+              name="Id"
+              value={formData.Id}
+              onChange={handleChange}
+              disabled
+              className="mb-3"
+            />
 
-          <CFormInput
-            type="text"
-            id="namaLingkungan"
-            floatingLabel="Nama Lingkungan"
-            name="NamaLingkungan"
-            value={formData.NamaLingkungan}
-            onChange={handleChange}
-            disabled={!isEditable}
-            className="mb-3"
-          />
+            <CFormInput
+              type="text"
+              id="namaLingkungan"
+              floatingLabel="Nama Lingkungan"
+              name="NamaLingkungan"
+              value={formData.NamaLingkungan}
+              onChange={handleChange}
+              disabled={!isEditable}
+              className="mb-3"
+            />
 
-          <CFormInput
-            type="text"
-            id="kodeLingkungan"
-            floatingLabel="Kode Lingkungan"
-            name="KodeLingkungan"
-            value={formData.KodeLingkungan}
-            onChange={handleChange}
-            disabled={!isEditable}
-            className="mb-3"
-          />
+            <CFormInput
+              type="text"
+              id="kodeLingkungan"
+              floatingLabel="Kode Lingkungan"
+              name="KodeLingkungan"
+              value={formData.KodeLingkungan}
+              onChange={handleChange}
+              disabled={!isEditable}
+              className="mb-3"
+            />
 
-          <Select
-            options={wilayahOptions}
-            value={wilayahOptions.find(option => option.value === formData.Wilayah)} // Gunakan formData untuk value
-            onChange={handleSelectChange}
-            placeholder="Select Wilayah"
-            isDisabled={!isEditable}
-            isSearchable
-            styles={{
-              container: (base) => ({
-                ...base,
-                width: '100%',
-                marginBottom: '1rem',
-              }),
-              control: (base) => ({
-                ...base,
-                backgroundColor: 'white',
-                borderColor: '#ced4da',
-                borderWidth: '1px',
-                borderRadius: '0.375rem',
-              }),
-              menu: (base) => ({
-                ...base,
-                zIndex: 1050,
-              }),
+            <Select
+              options={wilayahOptions}
+              value={wilayahOptions.find(option => option.value === formData.Wilayah)} // Gunakan formData untuk value
+              onChange={handleSelectChange}
+              placeholder="Select Wilayah"
+              isDisabled={!isEditable}
+              isSearchable
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  width: '100%',
+                  marginBottom: '1rem',
+                }),
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: 'white',
+                  borderColor: '#ced4da',
+                  borderWidth: '1px',
+                  borderRadius: '0.375rem',
+                }),
+                menu: (base) => ({
+                  ...base,
+                  zIndex: 1050,
+                }),
+              }}
+              required
+            />
+
+            <CButton color="secondary" onClick={handleBack} className="me-2"
+            style= {{
+              width: '200px',
+              height: '100%',
+              fontSize: '0.9rem',
+              padding: '10px 0',
+              color: 'white',
+              fontWeight: 'bold',
+              borderRadius: '5px',
+              transition: '0.3s',
             }}
-            required
-          />
+            >
+              Back
+            </CButton>
 
-          <CButton color="secondary" onClick={handleBack} className="me-2"
-           style= {{
-            width: '200px',
-            height: '100%',
-            fontSize: '0.9rem',
-            padding: '10px 0',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '5px',
-            transition: '0.3s',
-          }}
-          >
-            Back
-          </CButton>
+            {/* Tombol Edit */}
+            <CButton color="info" onClick={handleEdit} className="me-2"
+            style= {{
+              width: '200px',
+              height: '100%',
+              fontSize: '0.9rem',
+              padding: '10px 0',
+              color: 'white',
+              fontWeight: 'bold',
+              borderRadius: '5px',
+              transition: '0.3s',
+            }}
+            >
+              Edit
+            </CButton>
 
-          {/* Tombol Edit */}
-          <CButton color="info" onClick={handleEdit} className="me-2"
-           style= {{
-            width: '200px',
-            height: '100%',
-            fontSize: '0.9rem',
-            padding: '10px 0',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '5px',
-            transition: '0.3s',
-          }}
-          >
-            Edit
-          </CButton>
-
-          {/* Tombol Submit */}
-          <CButton color="primary" type="submit" disabled={!isEditable}
-           style= {{
-            width: '200px',
-            height: '100%',
-            fontSize: '0.9rem',
-            padding: '10px 0',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '5px',
-            transition: '0.3s',
-          }}
-          >
-            Submit
-          </CButton>
-        </CForm>
-      </CCardBody>
+            {/* Tombol Submit */}
+            <CButton color="primary" type="submit" disabled={!isEditable}
+            style= {{
+              width: '200px',
+              height: '100%',
+              fontSize: '0.9rem',
+              padding: '10px 0',
+              color: 'white',
+              fontWeight: 'bold',
+              borderRadius: '5px',
+              transition: '0.3s',
+            }}
+            >
+              Submit
+            </CButton>
+          </CForm>
+        </CCardBody>
+        )}
     </CCard>
   );
 };

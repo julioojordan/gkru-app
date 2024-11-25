@@ -3,8 +3,10 @@ import { CForm, CFormInput, CButton, CCard, CCardBody } from '@coreui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import services from '../../services';
 import Swal from 'sweetalert2';
+import { useAuth } from '../../hooks/useAuth';
 
 const WilayahDetail = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { wilayah } = location.state || {};
@@ -66,16 +68,16 @@ const WilayahDetail = () => {
       });
 
     } catch (error) {
-      console.error("Error updating data:", error);
-
-      // Mengembalikan formData ke nilai awal jika error
       setFormData(initialFormData);
-
-      await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error updating the data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
+        await Swal.fire({
+          title: "Error!",
+          text: "There was an error updating the data.",
+          icon: "error",
+        });
+      }
     } finally {
       Swal.close();
       setIsEditable(false);

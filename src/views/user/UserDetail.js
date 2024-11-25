@@ -242,9 +242,9 @@ const UserDetail = () => {
           )
         );
       }, 0);
+
       if (error.response && error.response.status === 401) {
-        console.log('masuk Unauthorized')
-        await handleLogout(); // Call handleLogout when Unauthorized
+        await handleLogout();
       } else {
         await Swal.fire({
           title: "Error!",
