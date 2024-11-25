@@ -25,7 +25,9 @@ const AddTHForm = () => {
   const [loading, setLoading] = useState(true);
   const [bulanOptions, setBulanOptions] = useState([]);
   const [selectedBulan, setSelectedBulan] = useState([]);
-
+  const [fileBukti, setFileBukti] = useState(null);
+  const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB
+  const VALID_FORMATS = ["image/jpeg", "image/png", "image/webp"];
   // Define months
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: i + 1,
@@ -61,9 +63,14 @@ const AddTHForm = () => {
       if (keterangan === 'IN' && idKeluarga) {
         try {
           const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value);
-          const existingMonths = response.map(item => item.Bulan);
-          const availableMonths = months.filter(month => !existingMonths.includes(month.value));
-          setBulanOptions(availableMonths);
+          if (response){ // handle misalkan keluaga sudah pernah bayar
+            const existingMonths = response.map(item => item.Bulan);
+            console.log({existingMonths})
+            const availableMonths = months.filter(month => !existingMonths.includes(month.value));
+            setBulanOptions(availableMonths);
+          }
+          // keluarga belum pernah bayar
+          setBulanOptions(months);
         } catch (error) {
           if (error.response && error.response.status === 401) {
             await handleLogout();
@@ -91,6 +98,34 @@ const AddTHForm = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file)
+    if (file) {
+      // Cek ukuran file
+      if (file.size > MAX_FILE_SIZE) {
+        Swal.fire({
+          title: "Error!",
+          text: `File size exceeds the maximum limit of 2MB.`,
+          icon: "error",
+        });
+        return;
+      }
+  
+      // Cek format file
+      if (!VALID_FORMATS.includes(file.type)) {
+        Swal.fire({
+          title: "Error!",
+          text: "Invalid file format. Only JPG, PNG, and WebP are allowed.",
+          icon: "error",
+        });
+        return;
+      }
+  
+      setFileBukti(file); // Jika valid
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const createdBy = 1;
@@ -107,6 +142,11 @@ const AddTHForm = () => {
       CreatedDate: createdDate,
       Tahun: currentYear //TO DO => kemungkinan ada case dimana nanti pengisian form itu sudah beda tahun (belum dibuat)
     };
+
+    if (fileBukti) {
+      data.FileBukti = fileBukti;
+    }
+    console.log(data)
 
     if (keterangan === 'IN') {
       const totalBulan = selectedBulan.length;
@@ -206,6 +246,7 @@ const AddTHForm = () => {
     setNamaLingkungan('');
     setSubKeterangan('');
     setSelectedBulan([]);
+    setFileBukti(null);
   };
 
   return (
@@ -342,6 +383,15 @@ const AddTHForm = () => {
             onChange={(e) => setSubKeterangan(e.target.value)}
             floatingClassName="mb-3"
             floatingLabel="Sub Keterangan"
+          />
+
+          <CFormInput
+            type="file"
+            id="fileBukti"
+            accept=".jpg,.jpeg,.png,.webp"
+            onChange={handleFileChange}
+            floatingClassName="mb-3"
+            floatingLabel="File Bukti (Optional)"
           />
 
           <CButton type="submit" color="primary">Submit</CButton>

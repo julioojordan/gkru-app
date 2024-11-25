@@ -58,7 +58,11 @@ const getDetailHistory = async (id) => {
 const addHistory = async (data) => {
   const url = "/history/add";
   try {
-    const response = await api.post(url, data); 
+    const response = await api.post(url, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);
