@@ -65,7 +65,7 @@ const getNavItems = (roleRedux) => [
   },
   {
     component: CNavItem,
-    name: 'Data Keluarga',
+    name: 'Data Keluarga Anggota',
     to: '/keluarga',
     icon: <CIcon icon={cilFolder} customClassName="nav-icon" />,
   },
