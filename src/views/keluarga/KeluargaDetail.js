@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody, CRow, CCol, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell } from '@coreui/react';
+import { CForm, CFormInput, CButton, CCard, CCardBody, CRow, CCol, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CFormSelect } from '@coreui/react';
 import { useNavigate, useLocation } from "react-router-dom";
 import Select from 'react-select';
 import services from '../../services';
@@ -22,7 +22,8 @@ const KeluargaDetail = () => {
     Alamat: '',
     TanggalLahir: '',
     TanggalBaptis: '',
-    Nomor: ''
+    Nomor: '',
+    Status: ''
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -43,12 +44,13 @@ const KeluargaDetail = () => {
             IdKeluarga: data.Id,
             NamaKepalaKeluarga: data.KepalaKeluarga.NamaLengkap,
             KepalaKeluarga: data.KepalaKeluarga.Id,
-            Wilayah: data.Wilayah.Id,
-            NamaWilayah: data.Wilayah.NamaWilayah,
+            Wilayah: data.Lingkungan.Wilayah.Id,
+            NamaWilayah: data.Lingkungan.Wilayah.NamaWilayah,
             Lingkungan: data.Lingkungan.Id,
             NamaLingkungan: data.Lingkungan.NamaLingkungan,
             Alamat: data.Alamat,
             Nomor: data.Nomor,
+            Status: data.Status,
             TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10), // Mengambil hanya tanggal
             TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
         }
@@ -118,6 +120,7 @@ const KeluargaDetail = () => {
     setIsEditable(true);
   };
   const handleCancelEdit = () => {
+    setFormData(initialFormData)
     setIsEditable(false);
   };
 
@@ -178,10 +181,20 @@ const KeluargaDetail = () => {
 
     try {
       const response = await services.KeluargaService.updateKeluarga(formData)
+      console.log({response})
+      // set new local State
+      const newSelectedLingkungan = lingkungan.find(lingkungan => lingkungan.Id === response.IdLingkungan);
+      const newData = {
+        ...response,
+        Lingkungan: newSelectedLingkungan,
+        Wilayah: newSelectedLingkungan.Wilayah
+      };
       await Swal.fire({
         title: 'Success!',
         text: 'Data has been updated successfully.',
         icon: 'success',
+      }).then(() => {
+        navigate(`/keluarga/${data.Id}`, { state: { data: newData } })
       });
 
     } catch (error) {
@@ -209,9 +222,17 @@ const KeluargaDetail = () => {
   return (
     <CCard className="shadow-lg rounded">
       <CCardBody>
-        <h1 style={{ textAlign: 'center', fontWeight: 'bold'}}>Keluarga Detail</h1>
+        <h1 style={{ textAlign: 'center', fontWeight: 'bold'}}>Keluarga Anggota Detail</h1> 
         {!isEditable && (
-          <h3 style={{ textAlign: 'center', fontSize: '1.25rem', color: '#6c757d' }}>{data.Nomor}</h3>
+          <h3 style={{ textAlign: 'center', fontSize: '1.25rem', color: '#6c757d' }}>
+            {formData.Nomor}
+            <span 
+              className={`badge ${formData.Status === "aktif" ? "text-bg-success" : "text-bg-danger"}`}
+              style={{marginLeft: '10px', height: '25px'}}
+            >
+              {formData.Status}
+            </span>
+         </h3>
         )}
         
         {loadingEdit ? (
@@ -219,14 +240,30 @@ const KeluargaDetail = () => {
         ) : (
           <CForm onSubmit={handleSubmit} className="p-3">
             {isEditable && (
-              <CFormInput
-                type="text"
-                name="Nomor"
-                label="Nomor Keluarga"
-                value={formData.Nomor}
-                onChange={handleChange}
-                className="mb-3 shadow-sm"
-              />
+              <>
+                <CFormInput
+                  type="text"
+                  name="Nomor"
+                  label="Nomor Keluarga"
+                  value={formData.Nomor}
+                  onChange={handleChange}
+                  className="mb-3 shadow-sm"
+                />
+                <CFormSelect
+                  id="status"
+                  value={formData.Status}
+                  onChange={handleChange}
+                  required
+                  floatingClassName="mb-3"
+                  floatingLabel="Status"
+                  name="Status"
+                >
+                  <option value="">Select Status</option>
+                  <option value="aktif">Aktif</option>
+                  <option value="nonAktif">Tidak Aktif</option>
+                </CFormSelect>
+              </>
+
             )}
             
             <CRow className="mt-4">

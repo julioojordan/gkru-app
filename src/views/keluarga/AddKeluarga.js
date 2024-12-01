@@ -191,7 +191,7 @@ const KeluargaDetail = () => {
   return (
     <CCard>
       <CCardBody>
-        <h1 style={{ textAlign: "center" }}>Add Keluarga</h1>
+        <h1 style={{ textAlign: "center" }}>Add Keluarga Anggota</h1>
         {loading ? (
           <div className="shimmer">Loading...</div>
         ) : (

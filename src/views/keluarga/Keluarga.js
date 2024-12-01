@@ -33,7 +33,7 @@ const Keluarga = () => {
 
   const columns = [
     {
-      name: 'Nomor Keluarga',
+      name: 'Nomor Keluarga Anggota',
       selector: row => row.Nomor,
       sortable: true,
     },
