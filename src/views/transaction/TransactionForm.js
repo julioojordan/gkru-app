@@ -28,6 +28,8 @@ const AddTHForm = () => {
   const [fileBukti, setFileBukti] = useState(null);
   const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB
   const VALID_FORMATS = ["image/jpeg", "image/png", "image/webp"];
+  const CURRENT_YEAR = new Date().getFullYear();
+  const [year, setYear] = useState(CURRENT_YEAR);
   // Define months
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: i + 1,
@@ -60,17 +62,19 @@ const AddTHForm = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       // TO DO add loading terpisah kah untuk ini atau set loading whole page aja ??
-      if (keterangan === 'IN' && idKeluarga) {
+      if (keterangan === 'IN' && idKeluarga && year) {
         try {
-          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value);
+          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value, year);
+          console.log({response})
           if (response){ // handle misalkan keluaga sudah pernah bayar
             const existingMonths = response.map(item => item.Bulan);
             console.log({existingMonths})
             const availableMonths = months.filter(month => !existingMonths.includes(month.value));
+            console.log({availableMonths})
             setBulanOptions(availableMonths);
+          }else{
+            setBulanOptions(months);
           }
-          // keluarga belum pernah bayar
-          setBulanOptions(months);
         } catch (error) {
           if (error.response && error.response.status === 401) {
             await handleLogout();
@@ -80,7 +84,7 @@ const AddTHForm = () => {
     };
 
     fetchHistory();
-  }, [keterangan, idKeluarga]);
+  }, [keterangan, idKeluarga, year]);
 
   const handleKeluargaChange = (selectedOption) => {
     setIdKeluarga(selectedOption);
@@ -130,7 +134,6 @@ const AddTHForm = () => {
     e.preventDefault();
     const createdBy = 1;
     const createdDate = new Date().toISOString();
-    const currentYear = new Date().getFullYear();
     
     let data = {
       Nominal: parseInt(nominal, 10),
@@ -140,7 +143,7 @@ const AddTHForm = () => {
       IdLingkungan: parseInt(idLingkungan, 10),
       SubKeterangan: subKeterangan,
       CreatedDate: createdDate,
-      Tahun: currentYear //TO DO => kemungkinan ada case dimana nanti pengisian form itu sudah beda tahun (belum dibuat)
+      Tahun: year
     };
 
     if (fileBukti) {
@@ -333,6 +336,21 @@ const AddTHForm = () => {
 
           {keterangan === 'IN' && (
             <>
+              <CFormSelect
+                id="tahun"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                required
+                floatingClassName="mb-3"
+                floatingLabel="Tahun"
+              >
+                <option value="">Select Tahun</option>
+                <option value={CURRENT_YEAR-2}>{CURRENT_YEAR-2}</option>
+                <option value={CURRENT_YEAR-1}>{CURRENT_YEAR-1}</option>
+                <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
+                <option value={CURRENT_YEAR+1}>{CURRENT_YEAR+1}</option>
+                <option value={CURRENT_YEAR+2}>{CURRENT_YEAR+2}</option>
+              </CFormSelect>
               <Select
                 options={bulanOptions}
                 value={selectedBulan}

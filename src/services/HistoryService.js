@@ -33,8 +33,11 @@ const getAllHistory = async () => {
   }
 };
 
-const getAllHistoryWithIdKeluarga = async (idKeluarga) => {
-  const url = `/history?idKeluarga=${idKeluarga}`;
+const getAllHistoryWithIdKeluarga = async (idKeluarga, year) => {
+  let url = `/history?idKeluarga=${idKeluarga}`;
+  if (year){
+    url = `/history?idKeluarga=${idKeluarga}&tahun=${year}`;
+  }
   try {
     const response = await api.get(url); 
     return Promise.resolve(response.data.data);
