@@ -83,7 +83,6 @@ const AddAnggota = () => {
 
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        console.log('masuk Unauthorized')
         await handleLogout();
       } else {
         await Swal.fire({

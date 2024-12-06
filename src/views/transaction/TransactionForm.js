@@ -65,12 +65,9 @@ const AddTHForm = () => {
       if (keterangan === 'IN' && idKeluarga && year) {
         try {
           const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value, year);
-          console.log({response})
           if (response){ // handle misalkan keluaga sudah pernah bayar
             const existingMonths = response.map(item => item.Bulan);
-            console.log({existingMonths})
             const availableMonths = months.filter(month => !existingMonths.includes(month.value));
-            console.log({availableMonths})
             setBulanOptions(availableMonths);
           }else{
             setBulanOptions(months);
@@ -104,7 +101,6 @@ const AddTHForm = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
     if (file) {
       // Cek ukuran file
       if (file.size > MAX_FILE_SIZE) {
@@ -149,7 +145,6 @@ const AddTHForm = () => {
     if (fileBukti) {
       data.FileBukti = fileBukti;
     }
-    console.log(data)
 
     if (keterangan === 'IN') {
       const totalBulan = selectedBulan.length;

@@ -32,9 +32,20 @@ const AddAnggota = async (formData) => {
     return Promise.reject(error);
   }
 };
+const UpdateAnggota = async (formData) => {
+  const url = `/anggota/${formData.Id}/update`;
+  try {
+    const response = await api.patch(url, formData);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
 
 export default {
   getTotalAnggota,
   getAllAnggotaWithIdKeluarga,
-  AddAnggota
+  AddAnggota,
+  UpdateAnggota
 };

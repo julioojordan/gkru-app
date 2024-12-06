@@ -181,7 +181,6 @@ const KeluargaDetail = () => {
 
     try {
       const response = await services.KeluargaService.updateKeluarga(formData)
-      console.log({response})
       // set new local State
       const newSelectedLingkungan = lingkungan.find(lingkungan => lingkungan.Id === response.IdLingkungan);
       const newData = {
@@ -460,18 +459,12 @@ const KeluargaDetail = () => {
             </CTableHead>
             <CTableBody>
                     {data.Anggota.map((anggota, index) => { 
-                        const keluarga = {
-                            Id: data.Id,
-                            Nomor: data.Nomor,
-                            Alamat: data.Alamat,
-                            KepalaKeluarga: data.KepalaKeluarga,
-                            Lingkungan: data.Lingkungan,
-                            Wilayah: data.Wilayah
-                        };
+                        const keluarga = data;
                         const stateData = {
                             anggota,
                             keluarga,
                             isKepalaKeluarga: false,
+                            isFromKeluargaDetail: true
                         }; 
                         return(
                         <CTableRow 

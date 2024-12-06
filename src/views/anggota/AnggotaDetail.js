@@ -11,7 +11,7 @@ const AnggotaDetail = () => {
   const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: {anggota, keluarga, isKepalaKeluarga} } = location.state || {};
+  const { data: {anggota, keluarga, isKepalaKeluarga, isFromKeluargaDetail} } = location.state || {};
 
   const [formData, setFormData] = useState({
     Id: '',
@@ -64,7 +64,7 @@ const AnggotaDetail = () => {
         setKeluargaOptions(formattedOptions);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          await handleLogout(); // Call handleLogout when Unauthorized
+          await handleLogout();
         }
       } finally {
         setLoading(false);
@@ -124,12 +124,32 @@ const AnggotaDetail = () => {
 
     try {
       const response = await services.AnggotaService.UpdateAnggota(formData);
+      let updatedData = {};
+      if(isFromKeluargaDetail){
+        updatedData = keluarga.Anggota.map((item) => {
+          return item.Id === response.Id
+            ? { ...item, ...response }
+            : item;
+        });
+        const updatedKeluarga = {
+          ...keluarga,
+          Anggota: updatedData,
+        };
+        await Swal.fire({
+          title: 'Success!',
+          text: 'Data has been updated successfully.',
+          icon: 'success',
+        }).then(() => {
+          navigate(`/keluarga/${keluarga.Id}`, { state: { data: updatedKeluarga } })
+        });
+      }else{
+        await Swal.fire({
+          title: 'Success!',
+          text: 'Data has been updated successfully.',
+          icon: 'success',
+        });
+      }
 
-      await Swal.fire({
-        title: 'Success!',
-        text: 'Data has been updated successfully.',
-        icon: 'success',
-      });
 
     } catch (error) {
       setFormData(initialFormData);

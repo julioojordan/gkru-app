@@ -193,6 +193,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                       anggota: data.KepalaKeluarga,
                       keluarga,
                       isKepalaKeluarga: true,
+                      isFromKeluargaDetail: false
                     })}
                   >
                     <CTableDataCell>1</CTableDataCell>
@@ -215,6 +216,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                         anggota,
                         keluarga,
                         isKepalaKeluarga: false,
+                        isFromKeluargaDetail: false
                       }; 
                       return (
                         <CTableRow 
