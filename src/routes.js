@@ -129,7 +129,7 @@ const routes = [
   { path: '/wilayah/:id', name: 'Detail Wilayah', element: WilayahDetail },
   { path: '/wilayah/add', name: 'Add Wilayah', element: AddWilayah, adminOnly: true },
   { path: '/keluarga', name: 'Data Keluarga Anggota', element: Keluarga },
-  { path: '/keluarga/add', name: 'Add Keluarga', element: AddKeluarga, adminOnly: true },
+  { path: '/keluarga/add', name: 'Add Keluarga', element: AddKeluarga },
   { path: '/keluarga/:id', name: 'Data Keluarga Anggota', element: KeluargaDetail },
   { path: '/anggota/:id', name: 'Detail Anggota', element: AnggotaDetail },
   { path: '/anggota/add', name: 'Add Anggota', element: AddAnggota, adminOnly: true },

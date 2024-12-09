@@ -17,9 +17,9 @@ export const useAuth = () => {
       text: "Your session has expired. Please log in again.",
       confirmButtonText: "OK",
     }).then(() => {
-      removeCookie("auth_token"); // Hapus token dari cookie
-      dispatch(logout()); // Dispatch logout action
-      navigate("/login"); // Redirect ke halaman login
+      removeCookie("auth_token");
+      dispatch(logout());
+      navigate("/login");
     });
   };
 

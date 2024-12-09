@@ -81,11 +81,14 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {}, nav
     return <p>Error: No filter keys provided. Please specify at least one key to filter the data.</p>;
   }
 
-  const filteredRows = rows.filter(item =>
-    filterKeys.some(key =>
-      item[key]?.toString().toLowerCase().includes(filterText.toLowerCase())
-    )
-  );
+  let filteredRows =[];
+  if (rows.length > 0){
+    filteredRows = rows.filter(item =>
+      filterKeys.some(key =>
+        item[key]?.toString().toLowerCase().includes(filterText.toLowerCase())
+      )
+    );
+  }
 
   return (
     <Root sx={{ maxWidth: '100%', width: '100%' }}>

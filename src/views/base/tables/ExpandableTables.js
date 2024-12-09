@@ -95,22 +95,25 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
     return <p>Error: No filter keys provided. Please specify at least one key to filter the data.</p>;
   }
 
-  const filteredRows = rows.filter(item => {
-    const anggotaMatch = item.Anggota.some(anggota =>
-      Object.values(anggota).some(value =>
-        value?.toString().toLowerCase().includes(filterText.toLowerCase())
-      )
-    );
-  
-    const keluargaMatch = filterKeys.some(key => {
-      const keys = key.split('.');
-      let value = item;
-      keys.forEach(k => value = value?.[k]);
-      return value?.toString().toLowerCase().includes(filterText.toLowerCase());
+  let filteredRows = []
+  if (rows.length > 0){
+    filteredRows = rows.filter(item => {
+      const anggotaMatch = item.Anggota.some(anggota =>
+        Object.values(anggota).some(value =>
+          value?.toString().toLowerCase().includes(filterText.toLowerCase())
+        )
+      );
+    
+      const keluargaMatch = filterKeys.some(key => {
+        const keys = key.split('.');
+        let value = item;
+        keys.forEach(k => value = value?.[k]);
+        return value?.toString().toLowerCase().includes(filterText.toLowerCase());
+      });
+    
+      return anggotaMatch || keluargaMatch;
     });
-  
-    return anggotaMatch || keluargaMatch;
-  });
+  }
 
   return (
     <Root sx={{ maxWidth: '100%', width: '100%' }}>
