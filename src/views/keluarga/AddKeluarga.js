@@ -10,13 +10,14 @@ import {
   CFormSelect,
   CCardSubtitle
 } from "@coreui/react";
-import { useNavigate, useLocation } from "react-router-dom";
 import Select from "react-select";
 import services from "../../services";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 
 const KeluargaDetail = () => {
-  const navigate = useNavigate();
+  const {ketuaLingkungan, ketuaWilayah} = useSelector(state => state.auth);
+  const {role} = useSelector(state => state.role);
   const [formData, setFormData] = useState({
     NamaKepalaKeluarga: "",
     Lingkungan: "",
@@ -28,9 +29,8 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     JenisKelamin: "",
     Nomor: "",
-    Keterangan: "Kepala Keluarga",//default keterangan untuk kepala keluarga
-    Hubungan: "Kepala Keluarga", //default hubungan untuk kepala keluarga
-    Anggota: [], // kemungkingan ini ngga perlu
+    Keterangan: "Kepala Keluarga",
+    Hubungan: "Kepala Keluarga",
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -40,23 +40,40 @@ const KeluargaDetail = () => {
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
 
   useEffect(() => {
-    const fetchEditData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
         const response = await services.LingkunganService.getAllLingkungan();
-        const options = response.map((lingkungan) => ({
+        console.log({response})
+        const filteredResponse = role === "ketuaWilayah" && ketuaWilayah !== 0
+          ? response.filter((lingkungan) => lingkungan.Wilayah.Id === ketuaWilayah)
+          : response;
+
+        const options = filteredResponse.map((lingkungan) => ({
           value: lingkungan.Id,
           label: lingkungan.NamaLingkungan,
         }));
         setLingkungan(response);
         setLingkunganOptions(options);
+        if (role !== 'admin' && ketuaLingkungan !== 0){
+          const selectedLingkungan = response.find(
+            (lingkungan) => lingkungan.Id === ketuaLingkungan
+          );
+          setFormData({
+            ...formData,
+            Lingkungan: selectedLingkungan.Id,
+            NamaLingkungan: selectedLingkungan.NamaLingkungan,
+            Wilayah: selectedLingkungan.Wilayah.Id,
+            NamaWilayah: selectedLingkungan.Wilayah.NamaWilayah,
+          });
+        }
       } catch (error) {
         console.error("Error fetching Data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchEditData();
+    fetchData();
   }, []);
 
   const handleLingkunganChange = (selectedOption) => {
@@ -180,9 +197,8 @@ const KeluargaDetail = () => {
       TanggalBaptis: "",
       JenisKelamin: "",
       Nomor: "",
-      Keterangan: "Kepala Keluarga",//default keterangan untuk kepala keluarga
-      Hubungan: "Kepala Keluarga", //default hubungan untuk kepala keluarga
-      Anggota: [], // kemungkingan ini ngga perlu
+      Keterangan: "Kepala Keluarga",
+      Hubungan: "Kepala Keluarga"
     });
     setAnggotaList([]);
     setIsWithAnggota(false);
@@ -224,6 +240,7 @@ const KeluargaDetail = () => {
                     value={lingkunganOptions.find(
                       (option) => option.value === formData.Lingkungan
                     )}
+                    isDisabled={role==="ketuaLingkungan"}
                     styles={{
                       container: (base) => ({
                         ...base,
@@ -341,13 +358,12 @@ const KeluargaDetail = () => {
                     <CCardBody>
                     <div className="d-flex justify-content-between align-items-center">
                         <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>{`Anggota ${index + 1}`}</CCardSubtitle>
-                        {/* Tombol untuk menghapus anggota */}
                         <CButton
                             color="danger"
                             onClick={() => handleRemoveAnggota(index)}
                             style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'5px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
                         >
-                            &times; {/* Simbol "x" */}
+                            &times;
                         </CButton>
                       </div>
                       <CRow>
@@ -427,7 +443,6 @@ const KeluargaDetail = () => {
                   </CCard>
                 ))}
 
-              {/* Button untuk Add Anggota */}
               <CButton
                 color="success"
                 onClick={handleAddAnggota}
