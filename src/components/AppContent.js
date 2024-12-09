@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
 import ProtectedRoute from './ProtectedRoute'
+import AdminRoute from './AdminRoute'
 
 // routes config
 import routes from '../routes'
@@ -12,6 +13,8 @@ const AppContent = () => {
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, idx) => {
+            const RouteGuard = route.adminOnly ? AdminRoute : ProtectedRoute;
+
             return (
               route.element && (
                 <Route
@@ -19,8 +22,7 @@ const AppContent = () => {
                   path={route.path}
                   exact={route.exact}
                   name={route.name}
-                  // element={<route.element />}
-                  element={<ProtectedRoute element={<route.element />} />}
+                  element={<RouteGuard element={<route.element />} />}
                 />
               )
             )
@@ -32,4 +34,4 @@ const AppContent = () => {
   )
 }
 
-export default React.memo(AppContent)
+export default React.memo(AppContent);
