@@ -4,7 +4,11 @@ const getAllWilayah = async () => {
   const url = "/wilayah";
   try {
     const response = await api.get(url);
-    return Promise.resolve(response.data.data);
+    if(response.data.data){
+      return Promise.resolve(response.data.data);
+    }else{
+      return Promise.resolve([]);
+    }
   } catch (error) {
     console.error("Error:", error);
     return Promise.reject(error);
