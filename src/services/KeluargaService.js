@@ -1,10 +1,23 @@
 import api from "./Api";
 
-const getAllKeluarga = async () => {
-  const url = "/keluarga";
+const getAllKeluarga = async (idLingkungan, idWilayah) => {
+  let url = "/keluarga";
+
+  const queryParams = [];
+  if (idLingkungan !== 0) queryParams.push(`idLingkungan=${idLingkungan}`);
+  if (idWilayah !== 0) queryParams.push(`idWilayah=${idWilayah}`);
+
+  if (queryParams.length > 0) {
+    url += `?${queryParams.join('&')}`;
+  }
+  console.log({url})
   try {
     const response = await api.get(url);
-    return Promise.resolve(response.data.data);
+    if(response.data.data){
+      return Promise.resolve(response.data.data);
+    }else{
+      return Promise.resolve([]);
+    }
   } catch (error) {
     console.error("Error:", error);
     return Promise.reject(error);

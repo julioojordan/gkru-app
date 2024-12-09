@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import ExpandableTables from "../base/tables/ExpandableTables";
 import services from "../../services";
 import { useNavigate  } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Keluarga = () => {
   const navigate = useNavigate();
+  const authRedux = useSelector(state => state.auth);
   const [keluargaData, setKeluargaData] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ const Keluarga = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await services.KeluargaService.getAllKeluarga();
+        const result = await services.KeluargaService.getAllKeluarga(authRedux.ketuaLingkungan, authRedux.ketuaWilayah);
         setKeluargaData(result);
       } catch (error) {
         console.error("Error fetching Keluarga data:", error);
