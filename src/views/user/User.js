@@ -44,7 +44,7 @@ const User = () => {
     {
         name: 'No',
         selector: (row, index) => index + 1,
-        width: '50px',
+        width: '60px',
     },
     {
       name: 'Id',

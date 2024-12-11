@@ -49,7 +49,6 @@ const WilayahDetail = () => {
 
   const handleDelete = async () => {
     try {
-      // Memunculkan dialog konfirmasi
       const result = await Swal.fire({
         title: 'Apakah Anda yakin ?',
         text: 'Data yang dihapus tidak dapat dikembalikan!',

@@ -53,9 +53,22 @@ const addLingkungan = async (formData) => {
   }
 };
 
+
+const deleteLingkungan = async (id) => {
+  const url = `/lingkungan/${id}/delete`;
+  try {
+    const response = await api.delete(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 export default {
   getAllLingkungan,
   updateLingkungan,
   getTotalLingkungan,
-  addLingkungan
+  addLingkungan,
+  deleteLingkungan
 };

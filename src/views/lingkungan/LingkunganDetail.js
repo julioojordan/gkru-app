@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody } from '@coreui/react';
+import { CForm, CFormInput, CButton, CCard, CCardBody, CCardSubtitle } from '@coreui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import services from '../../services';
 import Swal from 'sweetalert2';
@@ -29,7 +29,7 @@ const LingkunganDetail = () => {
         Id: lingkungan.Id,
         NamaLingkungan: lingkungan.NamaLingkungan,
         KodeLingkungan: lingkungan.KodeLingkungan,
-        Wilayah: lingkungan.Wilayah.Id,
+        Wilayah: lingkungan.Wilayah && lingkungan.Wilayah.Id ? lingkungan.Wilayah.Id : lingkungan.Wilayah,
       };
       setFormData(data);
       setInitialFormData(data);
@@ -74,22 +74,58 @@ const LingkunganDetail = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/lingkungan");
   };
 
   const handleEdit = () => {
     setIsEditable(true);
   };
 
+  const handleDelete = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Apakah Anda yakin ?',
+        text: 'Data yang dihapus tidak dapat dikembalikan!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal',
+      });
+  
+      if (result.isConfirmed) {
+        const loadingAlert = Swal.fire({
+          title: 'Loading...',
+          text: 'Please wait...',
+          allowOutsideClick: false,
+        });
+        const response = await services.LingkunganService.deleteLingkungan(lingkungan.Id);
+  
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(
+          navigate("/lingkungan")
+        );
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Gagal!',
+        text: 'Terjadi kesalahan saat menghapus data.',
+        icon: 'error',
+      });
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingAlert = Swal.fire({
       title: 'Loading...',
       text: 'Please wait...',
-      allowOutsideClick: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
-      }
+      allowOutsideClick: false
     });
 
     try {
@@ -99,7 +135,9 @@ const LingkunganDetail = () => {
         title: 'Success!',
         text: 'Data has been updated successfully.',
         icon: 'success',
-      });
+      }).then(
+        navigate(`/lingkungan/${response.Id}`, { state: { lingkungan: response } })
+      );
 
     } catch (error) {
       setFormData(initialFormData);
@@ -128,7 +166,16 @@ const LingkunganDetail = () => {
           <div className="shimmer">Loading...</div>
         ) : (
         <CCardBody>
-          <h5>Detail Lingkungan</h5>
+          <div className="d-flex justify-content-between align-items-center">
+          <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
+          <CButton
+              color="danger"
+              onClick={() => {handleDelete()}}
+              style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+          >
+              Delete
+          </CButton>
+        </div>
           <CForm onSubmit={handleSubmit}>
             {/* Input Id Lingkungan */}
             <CFormInput
