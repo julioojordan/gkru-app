@@ -317,17 +317,50 @@ const AnggotaDetail = () => {
           </CFormSelect>
 
           {/* Tombol Back */}
-          <CButton color="secondary" onClick={handleBack} className="me-2">
+          <CButton color="secondary" onClick={handleBack} className="me-2"
+          style= {{
+            width: '200px',
+            height: '100%',
+            fontSize: '0.9rem',
+            padding: '10px 0',
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: '5px',
+            transition: '0.3s',
+          }}
+          >
             Back
           </CButton>
 
           {/* Tombol Edit */}
-          <CButton color="info" onClick={handleEdit} className="me-2">
+          <CButton color="info" onClick={handleEdit} className="me-2"
+          style= {{
+            width: '200px',
+            height: '100%',
+            fontSize: '0.9rem',
+            padding: '10px 0',
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: '5px',
+            transition: '0.3s',
+          }}
+          >
             Edit
           </CButton>
 
           {/* Tombol Submit */}
-          <CButton color="primary" type="submit" disabled={!isEditable}>
+          <CButton color="primary" type="submit" disabled={!isEditable}
+          style= {{
+            width: '200px',
+            height: '100%',
+            fontSize: '0.9rem',
+            padding: '10px 0',
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: '5px',
+            transition: '0.3s',
+          }}
+          >
             Submit
           </CButton>
         </CForm>

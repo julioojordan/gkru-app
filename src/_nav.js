@@ -26,10 +26,6 @@ const getNavItems = (roleRedux) => [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    // badge: {
-    //   color: 'info',
-    //   text: 'NEW',
-    // },
   },
   ...(roleRedux === 'admin'
     ? [{
@@ -65,6 +61,12 @@ const getNavItems = (roleRedux) => [
   },
   {
     component: CNavItem,
+    name: 'Data Wilayah',
+    to: '/wilayah',
+    icon: <CIcon icon={cilFolder} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
     name: 'Data Keluarga Anggota',
     to: '/keluarga',
     icon: <CIcon icon={cilFolder} customClassName="nav-icon" />,
@@ -73,12 +75,19 @@ const getNavItems = (roleRedux) => [
     component: CNavTitle,
     name: 'Transaksi',
   },
-  {
-    component: CNavItem,
-    name: 'Form Transaksi',
-    to: '/transaksi',
-    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
-  },
+
+  ...(roleRedux === 'admin'
+    ? [{
+        component: CNavItem,
+        name: 'Form Transaksi',
+        to: '/transaksi',
+        icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
+        // badge: {
+        //   color: 'info',
+        //   text: 'NEW',
+        // },
+      }]
+    : []),
   {
     component: CNavItem,
     name: 'Kas Masuk dan Keluar',

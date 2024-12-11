@@ -52,9 +52,21 @@ const AddWilayah = async (formData) => {
   }
 };
 
+const deleteWilayah = async (id) => {
+  const url = `/wilayah/${id}/delete`;
+  try {
+    const response = await api.delete(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 export default {
   getAllWilayah,
   updateWilayah,
   getTotalWilayah,
-  AddWilayah
+  AddWilayah,
+  deleteWilayah
 };

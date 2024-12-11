@@ -93,7 +93,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {}, nav
   return (
     <Root sx={{ maxWidth: '100%', width: '100%' }}>
       <CRow className="align-items-center mb-3">
-        <CCol xs={navigateContext && navigateContext.length != 0 ? 4 : 12 } sm={navigateContext && navigateContext.length != 0 ? 6 : 12 } md={navigateContext && navigateContext.length != 0 ? 6 : 12 } lg={navigateContext && navigateContext.length != 0 ? 6 : 12 }>
+        <CCol xs={navigateContext && navigateContext.length != 0 ? 8 : 12 } sm={navigateContext && navigateContext.length != 0 ? 8 : 12 } md={navigateContext && navigateContext.length != 0 ? 8 : 12 } lg={navigateContext && navigateContext.length != 0 ? 8 : 12 }>
         <CFormInput
             placeholder="Search"
             value={filterText}
@@ -107,7 +107,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {}, nav
         </CCol>
         {navigateContext && navigateContext.length != 0 &&(
           navigateContext.map((context, index) => (
-              <CCol xs="4" sm="3" md="3" lg="3" className="text-right" >
+              <CCol xs="4" sm="4" md="4" lg="4" className="text-right" >
                 <CButton
                   id={`${context.name}-${index}`}
                   color="success"
@@ -126,7 +126,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {}, nav
                   onMouseOver={(e) => (e.target.style.backgroundColor = '#218838')}
                   onMouseOut={(e) => (e.target.style.backgroundColor = '#28a745')}
                 >
-                  {context.name}
+                  {context.name.replace("_", " ")}
                 </CButton>
               </CCol> 
             ))

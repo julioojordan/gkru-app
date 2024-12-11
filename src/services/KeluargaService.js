@@ -4,8 +4,8 @@ const getAllKeluarga = async (idLingkungan, idWilayah) => {
   let url = "/keluarga";
 
   const queryParams = [];
-  if (idLingkungan !== 0) queryParams.push(`idLingkungan=${idLingkungan}`);
-  if (idWilayah !== 0) queryParams.push(`idWilayah=${idWilayah}`);
+  if (idLingkungan && idLingkungan !== 0) queryParams.push(`idLingkungan=${idLingkungan}`);
+  if (idLingkungan && idWilayah !== 0) queryParams.push(`idWilayah=${idWilayah}`);
 
   if (queryParams.length > 0) {
     url += `?${queryParams.join('&')}`;
