@@ -5,13 +5,15 @@ import Swal from 'sweetalert2';
 import services from '../../services';
 import Select from 'react-select';
 import { useAuth } from '../../hooks/useAuth';
+import { useRedirect } from '../../hooks/useRedirect';
 
 
 const AnggotaDetail = () => {
   const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: {anggota, keluarga, isKepalaKeluarga, isFromKeluargaDetail} } = location.state || {};
+  const { redirectToBefore } = useRedirect();
+  const { data } = location.state || {};
 
   const [formData, setFormData] = useState({
     Id: '',
@@ -27,29 +29,32 @@ const AnggotaDetail = () => {
 
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
-  const [idKeluarga, setIdKeluarga] = useState(keluarga.Id);
+  const [idKeluarga, setIdKeluarga] = useState(data ? data.keluarga.Id : '');
   const [keluargaOptions, setKeluargaOptions] = useState([]);
   const [keluargaData, setKeluargaData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [namaWilayah, setNamaWilayah] = useState(keluarga.Wilayah.NamaWilayah);
-  const [namaLingkungan, setNamaLingkungan] = useState(keluarga.Lingkungan.NamaLingkungan);
+  const [namaWilayah, setNamaWilayah] = useState(data ? data.keluarga.Wilayah.NamaWilayah : '');
+  const [namaLingkungan, setNamaLingkungan] = useState(data ? data.keluarga.Lingkungan.NamaLingkungan : '');
 
   useEffect(() => {
-    if (anggota) {
-      const data = {
-        Id: anggota.Id,
-        NamaLengkap: anggota.NamaLengkap,
-        TanggalLahir: anggota.TanggalLahir.split('T')[0],
-        TanggalBaptis: anggota.TanggalBaptis.split('T')[0],
-        Keterangan: anggota.Keterangan,
-        Status: anggota.Status,
-        JenisKelamin: anggota.JenisKelamin,
-        IdKeluarga: keluarga.Id,
-      };
-      setFormData(data);
-      setInitialFormData(data);
+    if (!data || !data.anggota){
+      redirectToBefore();
     }
-  }, [anggota]);
+    if (data && data.anggota) {
+      const dataBaru = {
+        Id: data.anggota.Id,
+        NamaLengkap: data.anggota.NamaLengkap,
+        TanggalLahir: data.anggota.TanggalLahir.split('T')[0],
+        TanggalBaptis: data.anggota.TanggalBaptis.split('T')[0],
+        Keterangan: data.anggota.Keterangan,
+        Status: data.anggota.Status,
+        JenisKelamin: data.anggota.JenisKelamin,
+        IdKeluarga: data.keluarga.Id,
+      };
+      setFormData(dataBaru);
+      setInitialFormData(dataBaru);
+    }
+  }, [data]);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -125,14 +130,14 @@ const AnggotaDetail = () => {
     try {
       const response = await services.AnggotaService.UpdateAnggota(formData);
       let updatedData = {};
-      if(isFromKeluargaDetail){
-        updatedData = keluarga.Anggota.map((item) => {
+      if(data.isFromKeluargaDetail){
+        updatedData = data.keluarga.Anggota.map((item) => {
           return item.Id === response.Id
             ? { ...item, ...response }
             : item;
         });
         const updatedKeluarga = {
-          ...keluarga,
+          ...data.keluarga,
           Anggota: updatedData,
         };
         await Swal.fire({
@@ -140,13 +145,15 @@ const AnggotaDetail = () => {
           text: 'Data has been updated successfully.',
           icon: 'success',
         }).then(() => {
-          navigate(`/keluarga/${keluarga.Id}`, { state: { data: updatedKeluarga } })
+          navigate(`/keluarga/${data.keluarga.Id}`, { state: { data: updatedKeluarga } })
         });
       }else{
         await Swal.fire({
           title: 'Success!',
           text: 'Data has been updated successfully.',
           icon: 'success',
+        }).then(() => {
+          navigate('/keluarga')
         });
       }
 
@@ -191,11 +198,12 @@ const AnggotaDetail = () => {
 
           <Select
             options={keluargaOptions}
-            value={keluargaOptions.find(option => option.value === keluarga.Id)}
+            value={keluargaOptions.find(option => option.value === data.keluarga.Id )}
             onChange={handleKeluargaChange}
             placeholder="Select Keluarga"
             isSearchable
-            isDisabled={!isEditable || isKepalaKeluarga}
+            isDisabled={true}
+            // isDisabled={!isEditable || data.isKepalaKeluarga} // sementara di disable karena tidak terhandle di backend untuk update
             styles={{
               container: (base) => ({
                 ...base,
@@ -294,9 +302,9 @@ const AnggotaDetail = () => {
             required
             floatingClassName="mb-3"
             floatingLabel="Keterangan"
-            disabled={!isEditable || isKepalaKeluarga}
+            disabled={!isEditable || data.isKepalaKeluarga}
           >
-            <option value="">{isKepalaKeluarga ? "Kepala Keluarga" : formData.Keterangan}</option>
+            <option value="">{data && data.isKepalaKeluarga ? "Kepala Keluarga" : formData.Keterangan}</option>
             <option value="Istri">Istri</option>
             <option value="Anak">Anak</option>
           </CFormSelect>
