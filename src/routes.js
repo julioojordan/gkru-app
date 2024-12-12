@@ -70,6 +70,7 @@ const AddKeluarga =  React.lazy(() => import('./views/keluarga/AddKeluarga'))
 const AnggotaDetail = React.lazy(() => import('./views/anggota/AnggotaDetail'))
 const AddAnggota =  React.lazy(() => import('./views/anggota/AddAnggota'))
 const Laporan =  React.lazy(() => import('./views/laporan/Laporan'))
+const NotFound = React.lazy(() => import('./pages/NotFound'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -136,6 +137,7 @@ const routes = [
   { path: '/anggota/:id', name: 'Detail Anggota', element: AnggotaDetail },
   { path: '/anggota/add', name: 'Add Anggota', element: AddAnggota, adminOnly: true },
   { path: '/laporan', name: 'Laporan Keuangan', element: Laporan },
+  { path: '/notFound', name: 'Tidak Ditemukan', element: NotFound },
 ]
 
 export default routes

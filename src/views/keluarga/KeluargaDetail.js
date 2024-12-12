@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { CForm, CFormInput, CButton, CCard, CCardBody, CRow, CCol, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CFormSelect } from '@coreui/react';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams  } from "react-router-dom";
 import Select from 'react-select';
 import services from '../../services';
 import Swal from 'sweetalert2';
 import { useAuth } from '../../hooks/useAuth';
+import { useSelector } from "react-redux";
 
 const KeluargaDetail = () => {
   const { handleLogout } = useAuth();
+  const {role, auth} = useSelector((state) => state);
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = location.state || {};
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     IdKeluarga: '',
     NamaKepalaKeluarga: '',
@@ -27,6 +29,7 @@ const KeluargaDetail = () => {
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
+  const [data, setData] = useState(location.state?.data || null);
   const [payedMonths, setPayedMonths] = useState([]);
   const [anggotaOptions, setAnggotaOptions] = useState([]);
   const [loadingEdit, setLoadingEdit] = useState(false);
@@ -34,36 +37,90 @@ const KeluargaDetail = () => {
   const [anggota, setAnggota] = useState([]);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
   const [lingkungan, setLingkungan] = useState([]);
+  const [error, setError] = useState(false);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i); // Tahun 2024 - 2028
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  useEffect(() => {
-    if (data) {
-        const formValue = {
-            IdKeluarga: data.Id,
-            NamaKepalaKeluarga: data.KepalaKeluarga.NamaLengkap,
-            KepalaKeluarga: data.KepalaKeluarga.Id,
-            Wilayah: data.Lingkungan.Wilayah.Id,
-            NamaWilayah: data.Lingkungan.Wilayah.NamaWilayah,
-            Lingkungan: data.Lingkungan.Id,
-            NamaLingkungan: data.Lingkungan.NamaLingkungan,
-            Alamat: data.Alamat,
-            Nomor: data.Nomor,
-            Status: data.Status,
-            TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10), // Mengambil hanya tanggal
-            TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
-        }
-      setFormData(formValue);
-      setInitialFormData(formValue);
+  const getFormValue = (data) => {
+    const formValue = {
+        IdKeluarga: data.Id,
+        NamaKepalaKeluarga: data.KepalaKeluarga.NamaLengkap,
+        KepalaKeluarga: data.KepalaKeluarga.Id,
+        Wilayah: data.Lingkungan.Wilayah.Id,
+        NamaWilayah: data.Lingkungan.Wilayah.NamaWilayah,
+        Lingkungan: data.Lingkungan.Id,
+        NamaLingkungan: data.Lingkungan.NamaLingkungan,
+        Alamat: data.Alamat,
+        Nomor: data.Nomor,
+        Status: data.Status,
+        TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10),
+        TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
     }
+    return formValue
+  }
+
+  const setLocalState = async () => {
+    setLoading(true);
+    try{     
+      const dataKeluarga = await services.KeluargaService.getKeluargaById(id);                                                                                                                                                                                                                                                                                                                                 
+      setData(dataKeluarga);
+      if (role.role === "ketuaLingkungan" && auth.ketuaLingkungan !== dataKeluarga.Lingkungan.Id){
+        navigate(-1);
+      }
+      if (role.role === "ketuaWilayah" && auth.ketuaWilayah !== dataKeluarga.Wilayah.Id){
+        navigate(-1);
+      }   
+
+      return dataKeluarga
+    }catch(error){
+      console.log({error})
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+        return;
+      }
+      if (error.response && error.response.status === 404) {
+        navigate('/notFound')
+      }
+      setError(true);
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!data) {
+        const dataKeluarga = await setLocalState();
+        console.log({dataKeluarga})
+        if(dataKeluarga){
+          setFormData(getFormValue(dataKeluarga));
+          setInitialFormData(getFormValue(dataKeluarga));
+        }
+        return;
+      }else {
+        setFormData(getFormValue(data));
+        setInitialFormData(getFormValue(data));
+      }
+    }
+
+    fetchData();
   }, [data]);
 
   useEffect(() => {
     const fetchHistory = async () => {
+      let idKeluarga;
+      if (!data) {
+        const dataKeluarga = await setLocalState();
+        if(dataKeluarga){
+          idKeluarga = dataKeluarga.Id;
+        }
+      }else{
+        idKeluarga = data.Id
+      }
       setLoading(true);
       try {
-          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(data.Id);
+          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga);
           const payedData = response
           .filter(item => item.Keterangan === 'IN')
           .map(item => ({
@@ -75,20 +132,31 @@ const KeluargaDetail = () => {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await handleLogout();
+          return;
         }
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
     fetchHistory();
-  }, [data.Id]);
+  }, [data]);
 
   useEffect(() => {
     const fetchEditData= async () => {
+      let idKeluarga;
+      if (!data) {
+        const dataKeluarga = await setLocalState();
+        if(dataKeluarga){
+          idKeluarga = dataKeluarga.Id;
+        }
+      }else{
+        idKeluarga = data.Id
+      }
       setLoadingEdit(true);
       try {
-        const anggotaResponse = await services.AnggotaService.getAllAnggotaWithIdKeluarga(data.Id);
+        const anggotaResponse = await services.AnggotaService.getAllAnggotaWithIdKeluarga(idKeluarga);
         const lingkunganResponse = await services.LingkunganService.getAllLingkungan();
         const options = anggotaResponse.map(anggota => ({
           value: anggota.Id,
@@ -105,7 +173,9 @@ const KeluargaDetail = () => {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await handleLogout();
+          return;
         }
+        setError(true);
       }finally {
         setLoadingEdit(false);
       }
@@ -114,7 +184,9 @@ const KeluargaDetail = () => {
     if (isEditable) {
         fetchEditData();
     }
-  }, [data.Id, isEditable]);
+  }, [data, isEditable]);
+  
+  if (error) return <p>Error fetching data.</p>;
 
   const handleEdit = () => {
     setIsEditable(true);
@@ -458,33 +530,42 @@ const KeluargaDetail = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-                    {data.Anggota.map((anggota, index) => { 
-                        const keluarga = data;
-                        const stateData = {
-                            anggota,
-                            keluarga,
-                            isKepalaKeluarga: false,
-                            isFromKeluargaDetail: true
-                        }; 
-                        return(
-                        <CTableRow 
-                            key={anggota.Id} 
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleAnggotaClick(stateData)}
-                        >
-                            <CTableDataCell>{index + 1}</CTableDataCell>
-                            <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
-                            <CTableDataCell>{anggota.TanggalLahir.slice(0, 10)}</CTableDataCell>
-                            <CTableDataCell>{anggota.TanggalBaptis.slice(0, 10)}</CTableDataCell>
-                            <CTableDataCell>{anggota.Keterangan}</CTableDataCell>
-                            <CTableDataCell>{anggota.Status}</CTableDataCell>
-                            <CTableDataCell>
-                                {anggota.JenisKelamin === 'L' ? 'Laki-Laki' : 'Perempuan'}
-                            </CTableDataCell>
-                        </CTableRow>
-                        )}
-                    )}
-                </CTableBody>
+              {data && Array.isArray(data.Anggota) && data.Anggota.length > 0 ? (
+                data.Anggota.map((anggota, index) => { 
+                  const keluarga = data;
+                  const stateData = {
+                    anggota,
+                    keluarga,
+                    isKepalaKeluarga: false,
+                    isFromKeluargaDetail: true
+                  }; 
+                  return (
+                    <CTableRow 
+                      key={anggota.Id} 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleAnggotaClick(stateData)}
+                    >
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
+                      <CTableDataCell>{anggota.TanggalLahir.slice(0, 10)}</CTableDataCell>
+                      <CTableDataCell>{anggota.TanggalBaptis.slice(0, 10)}</CTableDataCell>
+                      <CTableDataCell>{anggota.Keterangan}</CTableDataCell>
+                      <CTableDataCell>{anggota.Status}</CTableDataCell>
+                      <CTableDataCell>
+                        {anggota.JenisKelamin === 'L' ? 'Laki-Laki' : 'Perempuan'}
+                      </CTableDataCell>
+                    </CTableRow>
+                  );
+                })
+              ) : (
+                <CTableRow>
+                  <CTableDataCell colSpan="7" style={{ textAlign: 'center' }}>
+                    Tidak ada data anggota
+                  </CTableDataCell>
+                </CTableRow>
+              )}
+            </CTableBody>
+
           </CTable>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>

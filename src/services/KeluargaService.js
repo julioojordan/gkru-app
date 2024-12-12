@@ -1,5 +1,21 @@
 import api from "./Api";
 
+const getKeluargaById = async (id) => {
+  let url = `/keluarga/${id}`;
+  try {
+    const response = await api.get(url);
+    console.log("response", response.data.data)
+  if(response.data.data){
+    return Promise.resolve(response.data.data);
+  }else{
+    return Promise.resolve([]);
+  }
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+}
+
 const getAllKeluarga = async (idLingkungan, idWilayah) => {
   let url = "/keluarga";
 
@@ -75,5 +91,6 @@ export default {
   getAllKeluarga,
   getTotalKeluarga,
   updateKeluarga,
-  AddKeluarga
+  AddKeluarga,
+  getKeluargaById
 };
