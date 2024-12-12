@@ -183,8 +183,8 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                   <CTableRow>
                     <CTableHeaderCell>No</CTableHeaderCell>
                     <CTableHeaderCell>Nama Anggota</CTableHeaderCell>
-                    <CTableHeaderCell>Tanggal Lahir</CTableHeaderCell>
                     <CTableHeaderCell>Keterangan</CTableHeaderCell>
+                    <CTableHeaderCell>Tanggal Lahir</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>

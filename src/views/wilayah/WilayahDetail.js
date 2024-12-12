@@ -4,10 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import services from '../../services';
 import Swal from 'sweetalert2';
 import { useAuth } from '../../hooks/useAuth';
+import { useRedirect } from '../../hooks/useRedirect';
 
 const WilayahDetail = () => {
   const navigate = useNavigate();
   const { handleLogout } = useAuth();
+  const { redirectToBefore } = useRedirect();
   const location = useLocation();
   const { wilayah } = location.state || {};
 
@@ -20,6 +22,9 @@ const WilayahDetail = () => {
   const [isEditable, setIsEditable] = useState(false);
 
   useEffect(() => {
+    if (!wilayah){
+      redirectToBefore();
+    }
     if (wilayah) {
       const data = {
         Id: wilayah.Id,

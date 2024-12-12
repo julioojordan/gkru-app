@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import services from "../../services"; // Pastikan services sudah diatur dengan benar
 import { CCard, CCardBody, CCardHeader, CButton, CSpinner, CImage, CRow } from '@coreui/react';
+import { useAuth } from '../../hooks/useAuth';
 
 const HistoryDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { handleLogout } = useAuth();
   const [historyDetail, setHistoryDetail] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,6 +20,9 @@ const HistoryDetail = () => {
         setHistoryDetail(result);
       } catch (error) {
         console.error("Error fetching Detail History:", error);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
         setError(true);
       }
       setLoading(false);
@@ -53,9 +58,13 @@ const HistoryDetail = () => {
           <p><strong>In Out:</strong> {historyDetail.Keterangan}</p>
           <p><strong>Sub Keterangan:</strong> {historyDetail.SubKeterangan}</p>
           <p><strong>Nominal:</strong> {historyDetail.Nominal}</p>
+          {historyDetail.Keterangan == "IN" && (
+            <p><strong>ID Keluarga:</strong> {historyDetail.IdKeluarga}</p>
+          )}
           <p><strong>Lingkungan:</strong> {historyDetail.Lingkungan.NamaLingkungan} ({historyDetail.Lingkungan.KodeLingkungan})</p>
           <p><strong>Wilayah:</strong> {historyDetail.Wilayah.NamaWilayah} ({historyDetail.Wilayah.KodeWilayah})</p>
           <p><strong>Pembayaran untuk:</strong> {monthName} {historyDetail.Tahun}</p>
+          
         </CCardBody>
       </CCard>
 

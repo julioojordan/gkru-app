@@ -5,9 +5,11 @@ import services from '../../services';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import { useAuth } from '../../hooks/useAuth';
+import { useRedirect } from '../../hooks/useRedirect';
 
 const LingkunganDetail = () => {
   const { handleLogout } = useAuth();
+  const { redirectToBefore } = useRedirect();
   const navigate = useNavigate();
   const location = useLocation();
   const { lingkungan } = location.state || {};
@@ -24,6 +26,9 @@ const LingkunganDetail = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if(!lingkungan){
+      redirectToBefore()
+    }
     if (lingkungan) {
       const data = {
         Id: lingkungan.Id,

@@ -15,9 +15,11 @@ import Swal from "sweetalert2";
 import Select from "react-select";
 import { updateUser, setRole } from "../../actions";
 import { useAuth } from '../../hooks/useAuth';
+import { useRedirect } from '../../hooks/useRedirect';
 
 const UserDetail = () => {
   const { handleLogout } = useAuth();
+  const { redirectToBefore } = useRedirect();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -80,6 +82,10 @@ const UserDetail = () => {
       }
     }
     if (authRedux) {
+      if(!row){
+        redirectToBefore()
+        return;
+      }
       const data = {
         Username: !row ? authRedux.username : row.Username,
         Lingkungan: !row ? authRedux.ketuaLingkungan : row.KetuaLingkungan,
