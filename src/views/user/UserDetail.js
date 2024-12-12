@@ -6,6 +6,7 @@ import {
   CCard,
   CCardBody,
   CFormSelect,
+  CCardSubtitle
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import services from "../../services";
@@ -35,6 +36,8 @@ const UserDetail = () => {
   const [isKetuaWilayah, setIsKetuaWilayah] = useState(false);
   const [isKetuaLingkungan, setIsKetuaLingkungan] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  
+  const [isEditable, setIsEditable] = useState(false);
 
   useEffect(() => {
     const checkCurrentRole = () => {
@@ -143,10 +146,6 @@ const UserDetail = () => {
     }));
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const handleTypeChange = (event) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -184,6 +183,53 @@ const UserDetail = () => {
     setIsKetuaWilayah(false);
     setIsAdmin(true);
   };
+
+  const handleBack = () => {
+    navigate("/user");
+  };
+
+  const handleEdit = () => {
+    setIsEditable(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Apakah Anda yakin ?',
+        text: 'Data yang dihapus tidak dapat dikembalikan!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal',
+      });
+  
+      if (result.isConfirmed) {
+        const loadingAlert = Swal.fire({
+          title: 'Loading...',
+          text: 'Please wait...',
+          allowOutsideClick: false,
+        });
+        const response = await services.UserService.deleteUser(row.Id);
+  
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(
+          navigate("/user")
+        );
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Gagal!',
+        text: 'Terjadi kesalahan saat menghapus data.',
+        icon: 'error',
+      });
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -227,7 +273,14 @@ const UserDetail = () => {
         title: "Success!",
         text: "Data has been updated successfully.",
         icon: "success",
-      });
+      }).then(
+        navigate(`/user/${row.Id}`, { state: { isSelf, row: {
+          Username: response.Username,
+          KetuaLingkungan: response.KetuaLingkungan,
+          KetuaWilayah: response.KetuaWilayah,
+          Password: ""
+        } } })
+      );
     } catch (error) {
       setFormData(initialFormData);
       setTimeout(() => {
@@ -254,6 +307,7 @@ const UserDetail = () => {
       }
     } finally {
       Swal.close();
+      setIsEditable(false);
     }
   };
 
@@ -264,7 +318,18 @@ const UserDetail = () => {
       ) : (
         <>
           <CCardBody>
-            <h5>Detail User</h5>
+            <div className="d-flex justify-content-between align-items-center">
+              <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
+              {!isSelf && (
+                <CButton
+                    color="danger"
+                    onClick={() => {handleDelete()}}
+                    style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+                >
+                    Delete
+                </CButton>
+              )}
+            </div>
             <CForm onSubmit={handleSubmit}>
               <CFormSelect
                 id="Type"
@@ -273,6 +338,7 @@ const UserDetail = () => {
                 onChange={handleTypeChange}
                 required
                 floatingClassName="mb-3"
+                disabled={!isEditable}
                 floatingLabel="Status"
               >
                 <option value="">Select Role</option>
@@ -288,6 +354,7 @@ const UserDetail = () => {
                 value={formData.Username}
                 onChange={handleChange}
                 className="mb-3"
+                disabled={!isEditable}
                 required
               />
 
@@ -300,6 +367,7 @@ const UserDetail = () => {
                   onChange={handleSelectWilayahChange}
                   placeholder="Select Wilayah"
                   isSearchable
+                  isDisabled={!isEditable}
                   styles={{
                     container: (base) => ({
                       ...base,
@@ -331,6 +399,7 @@ const UserDetail = () => {
                   onChange={handleSelectLingkunganChange}
                   placeholder="Select Lingkungan"
                   isSearchable
+                  isDisabled={!isEditable}
                   styles={{
                     container: (base) => ({
                       ...base,
@@ -361,6 +430,7 @@ const UserDetail = () => {
                 value={formData.Password}
                 onChange={handleChange}
                 className="mb-3"
+                disabled={!isEditable}
                 required
               />
 
@@ -379,13 +449,30 @@ const UserDetail = () => {
                   transition: "0.3s",
                 }}
               >
-                Cancel
+                Back
+              </CButton>
+
+              {/* Tombol Edit */}
+              <CButton color="info" onClick={handleEdit} className="me-2"
+                style= {{
+                  width: '200px',
+                  height: '100%',
+                  fontSize: '0.9rem',
+                  padding: '10px 0',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '5px',
+                  transition: '0.3s',
+                }}
+              >
+                Edit
               </CButton>
 
               {/* Tombol Submit */}
               <CButton
                 color="primary"
                 type="submit"
+                disabled={!isEditable}
                 style={{
                   width: "200px",
                   height: "100%",

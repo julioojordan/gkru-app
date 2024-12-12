@@ -26,7 +26,7 @@ const User = () => {
     fetchData();
   }, []);
 
-  const AddUser = () => {
+  const Add_User = () => {
     navigate("/user/add");
   };
 
@@ -35,7 +35,7 @@ const User = () => {
     navigate(`/user/${row.Id}`, { state: { isSelf, row } });
   };
 
-  const navigateContext = [AddUser]
+  const navigateContext = [Add_User]
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data.</p>;

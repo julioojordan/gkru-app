@@ -43,8 +43,20 @@ const addUser = async (formData) => {
   }
 };
 
+const deleteUser = async (id) => {
+  const url = `/user/${id}/delete`;
+  try {
+    const response = await api.delete(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 export default {
   getAllUser,
   updateUser,
-  addUser
+  addUser,
+  deleteUser
 };

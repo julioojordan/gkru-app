@@ -167,15 +167,15 @@ const LingkunganDetail = () => {
         ) : (
         <CCardBody>
           <div className="d-flex justify-content-between align-items-center">
-          <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
-          <CButton
-              color="danger"
-              onClick={() => {handleDelete()}}
-              style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
-          >
-              Delete
-          </CButton>
-        </div>
+            <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
+            <CButton
+                color="danger"
+                onClick={() => {handleDelete()}}
+                style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+            >
+                Delete
+            </CButton>
+          </div>
           <CForm onSubmit={handleSubmit}>
             {/* Input Id Lingkungan */}
             <CFormInput
