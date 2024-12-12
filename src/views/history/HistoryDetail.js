@@ -19,11 +19,10 @@ const HistoryDetail = () => {
         const result = await services.HistoryService.getDetailHistory(id);
         setHistoryDetail(result);
       } catch (error) {
-        console.error("Error fetching Detail History:", error);
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
-        setError(true);
       }
       setLoading(false);
     };

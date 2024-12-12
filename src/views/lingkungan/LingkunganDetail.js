@@ -24,6 +24,7 @@ const LingkunganDetail = () => {
   const [isEditable, setIsEditable] = useState(false);
   const [wilayahOptions, setWilayahOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if(!lingkungan){
@@ -52,6 +53,7 @@ const LingkunganDetail = () => {
         }));
         setWilayahOptions(options);
       } catch (error) {
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
@@ -62,6 +64,8 @@ const LingkunganDetail = () => {
 
     fetchWilayah();
   }, []);
+
+  if (error) return <p>Error fetching data.</p>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

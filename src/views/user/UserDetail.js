@@ -38,6 +38,7 @@ const UserDetail = () => {
   const [isKetuaWilayah, setIsKetuaWilayah] = useState(false);
   const [isKetuaLingkungan, setIsKetuaLingkungan] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState(false);
   
   const [isEditable, setIsEditable] = useState(false);
 
@@ -117,7 +118,10 @@ const UserDetail = () => {
         setLingkungan(lingkunganResponse);
         setLingkunganOptions(options2);
       } catch (error) {
-        console.error("Error fetching wilayah & lingkungan:", error);
+        setError(true)
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoading(false);
       }
@@ -125,6 +129,8 @@ const UserDetail = () => {
 
     fetchWilayah();
   }, []);
+
+  if (error) return <p>Error fetching data.</p>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

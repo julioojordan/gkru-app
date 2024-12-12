@@ -74,7 +74,7 @@ const KeluargaDetail = () => {
 
       return dataKeluarga
     }catch(error){
-      console.log({error})
+      setError(true);
       if (error.response && error.response.status === 401) {
         await handleLogout();
         return;
@@ -82,7 +82,6 @@ const KeluargaDetail = () => {
       if (error.response && error.response.status === 404) {
         navigate('/notFound')
       }
-      setError(true);
     }finally{
       setLoading(false);
     }
@@ -130,11 +129,10 @@ const KeluargaDetail = () => {
           }));
           setPayedMonths(payedData)
       } catch (error) {
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
-          return;
         }
-        setError(true);
       } finally {
         setLoading(false);
       }
@@ -171,11 +169,10 @@ const KeluargaDetail = () => {
         setLingkungan(lingkunganResponse);
         setLingkunganOptions(options2);
       } catch (error) {
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
-          return;
         }
-        setError(true);
       }finally {
         setLoadingEdit(false);
       }

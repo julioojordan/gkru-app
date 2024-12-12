@@ -33,6 +33,7 @@ const AnggotaDetail = () => {
   const [keluargaOptions, setKeluargaOptions] = useState([]);
   const [keluargaData, setKeluargaData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [namaWilayah, setNamaWilayah] = useState(data ? data.keluarga.Wilayah.NamaWilayah : '');
   const [namaLingkungan, setNamaLingkungan] = useState(data ? data.keluarga.Lingkungan.NamaLingkungan : '');
 
@@ -68,6 +69,7 @@ const AnggotaDetail = () => {
         }));
         setKeluargaOptions(formattedOptions);
       } catch (error) {
+        setError(true)
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
@@ -78,6 +80,8 @@ const AnggotaDetail = () => {
 
     fetchOptions();
   }, []);
+  
+  if (error) return <p>Error fetching data.</p>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
