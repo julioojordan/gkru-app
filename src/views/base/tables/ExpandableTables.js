@@ -98,7 +98,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
   let filteredRows = []
   if (rows.length > 0){
     filteredRows = rows.filter(item => {
-      const anggotaMatch = item.Anggota.some(anggota =>
+      const anggotaMatch = item.Anggota && item.Anggota.some(anggota =>
         Object.values(anggota).some(value =>
           value?.toString().toLowerCase().includes(filterText.toLowerCase())
         )
@@ -110,7 +110,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
         keys.forEach(k => value = value?.[k]);
         return value?.toString().toLowerCase().includes(filterText.toLowerCase());
       });
-    
+
       return anggotaMatch || keluargaMatch;
     });
   }
@@ -183,38 +183,43 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                   <CTableRow>
                     <CTableHeaderCell>No</CTableHeaderCell>
                     <CTableHeaderCell>Nama Anggota</CTableHeaderCell>
-                    <CTableHeaderCell>Keterangan</CTableHeaderCell>
+                    <CTableHeaderCell>Jenis Kelamin</CTableHeaderCell>
                     <CTableHeaderCell>Tanggal Lahir</CTableHeaderCell>
+                    <CTableHeaderCell>Keterangan</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  <CTableRow 
-                    key={data.KepalaKeluarga.id} 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleAnggotaClick({
-                      anggota: data.KepalaKeluarga,
-                      keluarga,
-                      isKepalaKeluarga: true,
-                      isFromKeluargaDetail: false
-                    })}
-                  >
-                    <CTableDataCell>1</CTableDataCell>
-                    <CTableDataCell>{data.KepalaKeluarga.NamaLengkap}</CTableDataCell>
-                    <CTableDataCell>
-                      {data.KepalaKeluarga.JenisKelamin === 'P' ? 'Perempuan' : data.KepalaKeluarga.JenisKelamin === 'L' ? 'Laki-Laki' : 'Tidak Diketahui'}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {new Date(data.KepalaKeluarga.TanggalLahir).toLocaleDateString("id-ID", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
+                  {data.KepalaKeluarga && (
+                    <CTableRow 
+                      key={data.KepalaKeluarga.id} 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleAnggotaClick({
+                        anggota: data.KepalaKeluarga,
+                        keluarga,
+                        isKepalaKeluarga: true,
+                        isFromKeluargaDetail: false,
                       })}
-                    </CTableDataCell>
-                    <CTableDataCell>{data.KepalaKeluarga.Keterangan}</CTableDataCell>
-                    <CTableDataCell>{data.KepalaKeluarga.Status}</CTableDataCell>
-                  </CTableRow>
-                  {data.Anggota.map((anggota, index) => {
+                    >
+                      <CTableDataCell>1</CTableDataCell>
+                      <CTableDataCell>{data.KepalaKeluarga.NamaLengkap}</CTableDataCell>
+                      <CTableDataCell>
+                        {data.KepalaKeluarga.JenisKelamin === 'P' ? 'Perempuan' : data.KepalaKeluarga.JenisKelamin === 'L' ? 'Laki-Laki' : 'Tidak Diketahui'}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {new Date(data.KepalaKeluarga.TanggalLahir).toLocaleDateString("id-ID", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </CTableDataCell>
+                      <CTableDataCell>{data.KepalaKeluarga.Keterangan}</CTableDataCell>
+                      <CTableDataCell>{data.KepalaKeluarga.Status}</CTableDataCell>
+                    </CTableRow>
+                  )}
+                  
+                  {data.Anggota &&  Array.isArray(data.Anggota) && data.Anggota.length > 0 && (
+                    data.Anggota.map((anggota, index) => {
                       const stateData = {
                         anggota,
                         keluarga,
@@ -242,8 +247,8 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                           <CTableDataCell>{anggota.Keterangan}</CTableDataCell>
                           <CTableDataCell>{anggota.Status}</CTableDataCell>
                         </CTableRow>
-                      )
-                    }
+                      );
+                    })
                   )}
                 </CTableBody>
               </CTable>
