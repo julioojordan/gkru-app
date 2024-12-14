@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import Select from 'react-select';
 import { useAuth } from '../../hooks/useAuth';
 import { useRedirect } from '../../hooks/useRedirect';
+import useHandleBack from '../../hooks/useHandleBack';
 
 const LingkunganDetail = () => {
   const { handleLogout } = useAuth();
@@ -26,6 +27,7 @@ const LingkunganDetail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  useHandleBack("/lingkungan")
   useEffect(() => {
     if(!lingkungan){
       redirectToBefore()

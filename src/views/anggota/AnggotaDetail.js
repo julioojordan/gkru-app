@@ -7,6 +7,7 @@ import services from '../../services';
 import Select from 'react-select';
 import { useAuth } from '../../hooks/useAuth';
 import { useRedirect } from '../../hooks/useRedirect';
+import useHandleBack from '../../hooks/useHandleBack';
 
 
 const AnggotaDetail = () => {
@@ -39,6 +40,7 @@ const AnggotaDetail = () => {
   const [namaWilayah, setNamaWilayah] = useState(data ? data.keluarga.Wilayah.NamaWilayah : '');
   const [namaLingkungan, setNamaLingkungan] = useState(data ? data.keluarga.Lingkungan.NamaLingkungan : '');
 
+  useHandleBack("/anggota");
   useEffect(() => {
     if (!data || !data.anggota){
       redirectToBefore();

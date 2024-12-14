@@ -5,6 +5,7 @@ import services from '../../services';
 import Swal from 'sweetalert2';
 import { useAuth } from '../../hooks/useAuth';
 import { useRedirect } from '../../hooks/useRedirect';
+import useHandleBack from '../../hooks/useHandleBack';
 
 const WilayahDetail = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const WilayahDetail = () => {
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
 
+  useHandleBack("/wilayah")
   useEffect(() => {
     if (!wilayah){
       redirectToBefore();

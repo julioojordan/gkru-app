@@ -16,6 +16,7 @@ import Select from "react-select";
 import { updateUser, setRole } from "../../actions";
 import { useAuth } from '../../hooks/useAuth';
 import { useRedirect } from '../../hooks/useRedirect';
+import useHandleBack from '../../hooks/useHandleBack';
 
 const UserDetail = () => {
   const { handleLogout } = useAuth();
@@ -42,6 +43,7 @@ const UserDetail = () => {
   
   const [isEditable, setIsEditable] = useState(false);
 
+  useHandleBack("/user");
   useEffect(() => {
     const checkCurrentRole = () => {
       if (isSelf){
