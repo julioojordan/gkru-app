@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody, CFormSelect } from '@coreui/react';
+
+import { CForm, CFormInput, CButton, CCard, CCardBody, CFormSelect, CCardSubtitle } from '@coreui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import services from '../../services';
@@ -25,6 +26,7 @@ const AnggotaDetail = () => {
     JenisKelamin: '',
     Hubungan: '',
     IdKeluarga: '',
+    IsKepalaKeluarga: '',
   });
 
   const [initialFormData, setInitialFormData] = useState({});
@@ -51,6 +53,7 @@ const AnggotaDetail = () => {
         Status: data.anggota.Status,
         JenisKelamin: data.anggota.JenisKelamin,
         IdKeluarga: data.keluarga.Id,
+        IsKepalaKeluarga: data.isKepalaKeluarga
       };
       setFormData(dataBaru);
       setInitialFormData(dataBaru);
@@ -120,6 +123,46 @@ const AnggotaDetail = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Apakah Anda yakin ?',
+        text: 'Data yang dihapus tidak dapat dikembalikan!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal',
+      });
+  
+      if (result.isConfirmed) {
+        const loadingAlert = Swal.fire({
+          title: 'Loading...',
+          text: 'Please wait...',
+          allowOutsideClick: false,
+        });
+        const response = await services.AnggotaService.deleteAnggota(data.anggota.Id);
+        console.log({response})
+  
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then(
+          navigate("/keluarga")
+        );
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Gagal!',
+        text: 'Terjadi kesalahan saat menghapus data.',
+        icon: 'error',
+      });
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     Swal.fire({
@@ -187,7 +230,16 @@ const AnggotaDetail = () => {
     ) : (
     <>
       <CCardBody>
-        <h5>Detail Anggota</h5>
+        <div className="d-flex justify-content-between align-items-center">
+          <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Anggota</CCardSubtitle>
+          <CButton
+              color="danger"
+              onClick={() => {handleDelete()}}
+              style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+          >
+              Delete
+          </CButton>
+        </div>
         <CForm onSubmit={handleSubmit}>
           <CFormInput
             type="text"
@@ -311,6 +363,7 @@ const AnggotaDetail = () => {
             <option value="">{data && data.isKepalaKeluarga ? "Kepala Keluarga" : formData.Keterangan}</option>
             <option value="Istri">Istri</option>
             <option value="Anak">Anak</option>
+            <option value="Anggota">Anggota</option>
           </CFormSelect>
 
           <CFormSelect

@@ -43,9 +43,22 @@ const UpdateAnggota = async (formData) => {
   }
 };
 
+const deleteAnggota = async (id) => {
+  const url = `/anggota/${id}/delete`;
+  console.log({url})
+  try {
+    const response = await api.delete(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 export default {
   getTotalAnggota,
   getAllAnggotaWithIdKeluarga,
   AddAnggota,
-  UpdateAnggota
+  UpdateAnggota,
+  deleteAnggota
 };
