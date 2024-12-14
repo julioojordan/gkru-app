@@ -5,16 +5,19 @@ import Select from 'react-select';
 import services from '../../services';
 import Swal from 'sweetalert2';
 import { useAuth } from '../../hooks/useAuth';
+import useHandleBack from '../../hooks/useHandleBack';
 import { useSelector } from "react-redux";
 
 const KeluargaDetail = () => {
   const { handleLogout } = useAuth();
-  const {role, auth} = useSelector((state) => state);
+  const role = useSelector((state) => state.role);
+  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
   const [formData, setFormData] = useState({
     IdKeluarga: '',
+    oldKepalaKeluarga: '',
     NamaKepalaKeluarga: '',
     KepalaKeluarga: '',
     Lingkungan: '',
@@ -35,6 +38,7 @@ const KeluargaDetail = () => {
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [anggota, setAnggota] = useState([]);
+  const [anggotaTable, setAnggotaTable] = useState(location.state?.data ? location.state.data.Anggota : null);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
   const [lingkungan, setLingkungan] = useState([]);
   const [error, setError] = useState(false);
@@ -46,6 +50,7 @@ const KeluargaDetail = () => {
     const formValue = {
         IdKeluarga: data.Id,
         NamaKepalaKeluarga: data.KepalaKeluarga.NamaLengkap,
+        oldKepalaKeluarga: data.KepalaKeluarga.Id,
         KepalaKeluarga: data.KepalaKeluarga.Id,
         Wilayah: data.Lingkungan.Wilayah.Id,
         NamaWilayah: data.Lingkungan.Wilayah.NamaWilayah,
@@ -65,6 +70,7 @@ const KeluargaDetail = () => {
     try{     
       const dataKeluarga = await services.KeluargaService.getKeluargaById(id);                                                                                                                                                                                                                                                                                                                                 
       setData(dataKeluarga);
+      setAnggotaTable(dataKeluarga.Anggota);
       if (role.role === "ketuaLingkungan" && auth.ketuaLingkungan !== dataKeluarga.Lingkungan.Id){
         navigate(-1);
       }
@@ -87,6 +93,8 @@ const KeluargaDetail = () => {
     }
   }
 
+  useHandleBack("/keluarga");
+
   useEffect(() => {
     const fetchData = async () => {
       if (!data) {
@@ -100,6 +108,7 @@ const KeluargaDetail = () => {
       }else {
         setFormData(getFormValue(data));
         setInitialFormData(getFormValue(data));
+        setAnggotaTable(data.Anggota);
       }
     }
 
@@ -120,14 +129,18 @@ const KeluargaDetail = () => {
       setLoading(true);
       try {
           const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga);
-          const payedData = response
-          .filter(item => item.Keterangan === 'IN')
-          .map(item => ({
-              month: item.Bulan,
-              id: item.Id,
-              year: item.Tahun,
-          }));
-          setPayedMonths(payedData)
+          if (response){
+            const payedData = response
+            .filter(item => item.Keterangan === 'IN')
+            .map(item => ({
+                month: item.Bulan,
+                id: item.Id,
+                year: item.Tahun,
+            }));
+            setPayedMonths(payedData)
+          }else{
+            setPayedMonths([])
+          }
       } catch (error) {
         setError(true);
         if (error.response && error.response.status === 401) {
@@ -156,10 +169,13 @@ const KeluargaDetail = () => {
       try {
         const anggotaResponse = await services.AnggotaService.getAllAnggotaWithIdKeluarga(idKeluarga);
         const lingkunganResponse = await services.LingkunganService.getAllLingkungan();
-        const options = anggotaResponse.map(anggota => ({
+        const options = anggotaResponse
+        .filter(anggota => anggota.Status === "HIDUP")
+        .map(anggota => ({
           value: anggota.Id,
           label: anggota.NamaLengkap,
         }));
+
         const options2 = lingkunganResponse.map(lingkungan => ({
           value: lingkungan.Id,
           label: `${lingkungan.KodeLingkungan} - ${lingkungan.NamaLingkungan}`,
@@ -257,6 +273,9 @@ const KeluargaDetail = () => {
         Lingkungan: newSelectedLingkungan,
         Wilayah: newSelectedLingkungan.Wilayah
       };
+      
+      setAnggotaTable(response.Anggota);
+      console.log({newData})
       await Swal.fire({
         title: 'Success!',
         text: 'Data has been updated successfully.',
@@ -279,6 +298,11 @@ const KeluargaDetail = () => {
           title: "Error!",
           text: "There was an error updating the data.",
           icon: "error",
+        }).then(() => {
+           // biar aman kalo error dikembalikan ke halaman keluarga saja -> case tx update sudah di commit errornya waktu fetching data anggota di backend
+           // kalo gak dibalikin ke keluarga agak tricky di local state nya halaman ini
+           // kalo dibalikin pun tidak masalah karena tidak ada update data hanya error fetching saja
+          navigate(`/keluarga`)
         });
       }
     } finally {
@@ -527,8 +551,8 @@ const KeluargaDetail = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {data && Array.isArray(data.Anggota) && data.Anggota.length > 0 ? (
-                data.Anggota.map((anggota, index) => { 
+              {anggotaTable && Array.isArray(anggotaTable) && anggotaTable.length > 0 ? (
+                anggotaTable.map((anggota, index) => { 
                   const keluarga = data;
                   const stateData = {
                     anggota,

@@ -58,7 +58,8 @@ const updateKeluarga = async (formData) => {
     Nomor: formData.Nomor,
     Alamat: formData.Alamat,
     Status: formData.Status,
-    IdKepalaKeluarga: formData.KepalaKeluarga
+    IdKepalaKeluarga: formData.KepalaKeluarga,
+    OldIdKepalaKeluarga: formData.oldKepalaKeluarga
   };
   const url = `/keluarga/${formData.IdKeluarga}/update`;
   try {
@@ -71,15 +72,9 @@ const updateKeluarga = async (formData) => {
 };
 
 const AddKeluarga = async (formData) => {
-  const body = {
-    IdWilayah: formData.IdWilayah, 
-    IdLingkungan: formData.IdLingkungan,
-    Nomor: formData.Nomor,
-    Alamat: formData.Alamat
-  };
   const url = "/keluarga/add";
   try {
-    const response = await api.post(url, body);
+    const response = await api.post(url, formData);
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);
