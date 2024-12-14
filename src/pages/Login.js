@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { useCookies } from 'react-cookie';
 import { login, setRole } from "../actions";
 import services from "../services";
+import Swal from "sweetalert2";
 
 function Login() {
   const navigate = useNavigate();
@@ -29,31 +30,52 @@ function Login() {
   } = useForm();
 
   const getRole = (data) => {
-    if (data.ketuaLingkungan == 0 && data.ketuaWilayah == 0){
-      return 'admin'
+    if (data.ketuaLingkungan === 0 && data.ketuaWilayah === 0) {
+      return 'admin';
     }
-    if (data.ketuaLingkungan != 0 && data.ketuaWilayah != 0){
-      return 'ketuaLingkungan'
+    if (data.ketuaLingkungan !== 0 && data.ketuaWilayah !== 0) {
+      return 'ketuaLingkungan';
     }
-    if (data.ketuaLingkungan == 0 && data.ketuaWilayah != 0){
-      return 'ketuaWilayah'
+    if (data.ketuaLingkungan === 0 && data.ketuaWilayah !== 0) {
+      return 'ketuaWilayah';
     }
-  }
+  };
 
   const auth = async (formValue) => {
     const oneDay = 24 * 60 * 60 * 1000;
     const expiryDate = new Date(Date.now() + oneDay);
-    const {data} = await services.LoginService(formValue.username, formValue.password);
-    setCookie('auth_token', data.auth, { path: '/', expires: expiryDate });
-    dispatch(login({
-      authToken: data.auth,
-      id: data.id,
-      username: data.username,
-      ketuaLingkungan: data.ketuaLingkungan,
-      ketuaWilayah: data.ketuaWilayah,
-    }));
-    dispatch(setRole(getRole(data)))
-    navigate("/dashboard");
+
+    try {
+      const { data } = await services.LoginService(formValue.username, formValue.password);
+      setCookie('auth_token', data.auth, { path: '/', expires: expiryDate });
+      dispatch(login({
+        authToken: data.auth,
+        id: data.id,
+        username: data.username,
+        ketuaLingkungan: data.ketuaLingkungan,
+        ketuaWilayah: data.ketuaWilayah,
+      }));
+      dispatch(setRole(getRole(data)));
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login Error:", error);
+
+      if (error.response && error.response.data.message === "user tidak ditemukan") {
+        await Swal.fire({
+          title: "Login Gagal",
+          text: "User tidak ditemukan. Silakan periksa kembali username dan password Anda.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        await Swal.fire({
+          title: "Login Gagal",
+          text: "Terjadi kesalahan saat login. Silakan coba lagi.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    }
   };
 
   return (
