@@ -190,6 +190,7 @@ const AddAnggota = () => {
             <option value="">Select Keterangan</option>
             <option value="Istri">Istri</option>
             <option value="Anak">Anak</option>
+            <option value="Anggota">Anggota</option>
           </CFormSelect>
 
           <CFormSelect

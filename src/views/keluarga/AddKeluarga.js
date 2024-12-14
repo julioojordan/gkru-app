@@ -406,6 +406,7 @@ const KeluargaDetail = () => {
                                 <option value="">Select Keterangan</option>
                                 <option value="Istri">Istri</option>
                                 <option value="Anak">Anak</option>
+                                <option value="Anggota">Anggota</option>
                             </CFormSelect>
                         </CCol>
                         <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
