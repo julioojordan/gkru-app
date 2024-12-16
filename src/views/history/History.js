@@ -18,23 +18,23 @@ const History = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await services.HistoryService.getAllHistory();
-        setHistory(result);
-      } catch (error) {
-        console.error("Error fetching History:", error);
-        setError(true);
-      }
-      setLoading(false);
-    };
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const result = await services.HistoryService.getAllHistory();
+          setHistory(result);
+        } catch (error) {
+          console.error("Error fetching History:", error);
+          setError(true);
+        }
+        setLoading(false);
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching data.</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error fetching data.</p>;
 
   const handleRowClick = (row) => {
     navigate(`/history/${row.Id}`);

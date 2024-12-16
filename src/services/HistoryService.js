@@ -37,6 +37,22 @@ const getAllHistory = async () => {
   }
 };
 
+const getAllHistoryWithKeluargaContext = async () => {
+  const url = "/historyWithContext";
+  try {
+    const response = await api.get(url); 
+    if(response.data.data){
+      return Promise.resolve(response.data.data);
+    }else{
+      return Promise.resolve([]);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
+
 const getAllHistoryWithIdKeluarga = async (idKeluarga, year) => {
   let url = `/history?idKeluarga=${idKeluarga}`;
   if (year){
@@ -84,4 +100,5 @@ export default {
   getDetailHistory,
   addHistory,
   getAllHistoryWithIdKeluarga,
+  getAllHistoryWithKeluargaContext,
 };
