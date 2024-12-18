@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CCard, CCardBody, CRow, CCol } from "@coreui/react";
+import { CCard, CCardBody, CRow, CCol, CFormSelect } from "@coreui/react";
 import Select from "react-select";
 import {
   Page,
@@ -11,6 +11,7 @@ import {
 } from "@react-pdf/renderer";
 import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
 
 // Data umat
 const data = [
@@ -130,6 +131,21 @@ const data = [
   },
 ];
 
+const monthMap = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
 //step 1 transform data
 const transformedData = (data) =>
   Object.values(
@@ -142,6 +158,14 @@ const transformedData = (data) =>
         Nominal,
         CreatedDate,
       } = curr;
+
+      const createdMonth = parseInt(
+        CreatedDate.split("T")[0].split("-")[1],
+        10
+      );
+      const createdMonthKey = monthMap[createdMonth - 1];
+      const currMonthKey = monthMap[Bulan - 1];
+
       if (!acc[IdKeluarga]) {
         acc[IdKeluarga] = {
           id: IdKeluarga,
@@ -161,82 +185,17 @@ const transformedData = (data) =>
             nov: 0,
             dec: 0,
           },
-          iuranDate: {
-            jan: "",
-            feb: "",
-            mar: "",
-            apr: "",
-            may: "",
-            jun: "",
-            jul: "",
-            aug: "",
-            sep: "",
-            oct: "",
-            nov: "",
-            dec: "",
-          },
         };
       }
-      const monthMap = [
-        "jan",
-        "feb",
-        "mar",
-        "apr",
-        "may",
-        "jun",
-        "jul",
-        "aug",
-        "sep",
-        "oct",
-        "nov",
-        "dec",
-      ];
-      acc[IdKeluarga].iuran[monthMap[Bulan - 1]] += Nominal;
-      acc[IdKeluarga].iuranDate[monthMap[Bulan - 1]] =
-        CreatedDate.split("T")[0];
+      if (createdMonth !== Bulan) {
+        acc[IdKeluarga].iuran[currMonthKey] = createdMonthKey;
+        acc[IdKeluarga].iuran[createdMonthKey] += Nominal;
+      } else {
+        acc[IdKeluarga].iuran[currMonthKey] += Nominal;
+      }
       return acc;
     }, {})
   );
-
-//step 2 transform data
-const transformedData2 = (data) => {
-  return data.map((item) => {
-    const newIuran = { ...item.iuran }; // Salin iuran asli
-    const paymentMap = {}; // Map untuk melacak akumulasi pembayaran per bulan
-
-    // Iterasi setiap bulan dalam iuranDate
-    for (const month in item.iuranDate) {
-      const paymentDate = item.iuranDate[month];
-      if (paymentDate) {
-        const paymentMonth = new Date(paymentDate)
-          .toLocaleString("en-US", { month: "short" })
-          .toLowerCase();
-
-        // Tambahkan nilai ke bulan pembayaran di map
-        if (!paymentMap[paymentMonth]) {
-          paymentMap[paymentMonth] = 0;
-        }
-        paymentMap[paymentMonth] += item.iuran[month];
-
-        // Ubah nilai bulan asal ke nama bulan pembayaran
-        newIuran[month] = paymentMonth;
-      }
-    }
-
-    // Update iuran untuk akumulasi pada bulan pembayaran
-    for (const month in paymentMap) {
-      newIuran[month] = paymentMap[month];
-    }
-
-    // Hapus iuranDate dan return data baru
-    return {
-      id: item.id,
-      nama: item.nama,
-      lingkungan: item.lingkungan,
-      iuran: newIuran,
-    };
-  });
-};
 
 // Style untuk PDF
 const styles = StyleSheet.create({
@@ -293,14 +252,12 @@ const styles = StyleSheet.create({
   },
   signatureBlock: { textAlign: "center", width: "40%" },
   emptySpace: { height: 5 },
+  highlightCell: {backgroundColor: "#FFC300"}
 });
-
-const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-
 
 
 // Komponen halaman PDF untuk setiap lingkungan
-const LingkunganPage = ({ lingkungan, rows }) => {
+const LingkunganPage = ({ lingkungan, rows, year }) => {
   const totals = Array(12).fill(0); // Total per bulan
   const totalPerRow = rows.map((row) => {
     const sum = Object.values(row.iuran).reduce((a, b) => {
@@ -326,11 +283,11 @@ const LingkunganPage = ({ lingkungan, rows }) => {
         <Text style={styles.header}>Paroki Kristus Raja Ungaran</Text>
         <Text style={styles.header}>{`Lingkungan ${lingkungan}`}</Text>
         <Text style={styles.header}>Rincian Penerimaan Iuran</Text>
-        <Text style={styles.header}>Tahun {new Date().getFullYear()}</Text>
+        <Text style={styles.header}>Tahun {year}</Text>
       </View>
-
+  
       <View style={styles.emptySpace}></View>
-
+  
       {/* Tabel */}
       <View style={styles.table}>
         {/* Header Table */}
@@ -353,37 +310,32 @@ const LingkunganPage = ({ lingkungan, rows }) => {
             "Nov",
             "Dec",
             "Total",
-          ].map((header, i) => (
-            <Text key={i} style={[styles.tableCell, styles.tableFontHeader]}>
+          ].map((header, index) => (
+            <Text key={`header-${index}`} style={[styles.tableCell, styles.tableFontHeader]}>
               {header}
             </Text>
           ))}
         </View>
-        {/* Rows */}{" "}
+  
+        {/* Rows */}
         {rows.map((row, index) => (
-          <View key={row.id} style={styles.tableRow}>
+          <View key={`row-${row.id}`} style={styles.tableRow}>
             <Text style={styles.tableCellNo}>{index + 1}</Text>
             <Text style={[styles.tableCellNama, styles.tableFontNama]}>
               {row.nama}
             </Text>
             {Object.values(row.iuran).map((value, i) => {
-              // Cek apakah nilai bukan angka dan apakah itu nama bulan
-              const isMonthName = monthNames.includes(value); // Cek apakah value adalah nama bulan
-              let backgroundColor = "transparent";
-              if (isNaN(value) || isMonthName || value > 10000){
-                backgroundColor = "#FFC300"
-              }
-
+              const isMonthName = monthMap.includes(value); // Apakah nilai adalah nama bulan
+              const highlightStyle = (isNaN(value) || isMonthName || value > 10000)
+                ? styles.highlightCell
+                : {};
+  
               return (
                 <Text
-                  key={i}
-                  style={[
-                    styles.tableCell,
-                    styles.tableFontNominal,
-                    { backgroundColor },
-                  ]}
+                  key={`iuran-${row.id}-${i}`}
+                  style={[styles.tableCell, styles.tableFontNominal, highlightStyle]}
                 >
-                  {value || "-"}{" "}
+                  {value || "-"}
                 </Text>
               );
             })}
@@ -392,11 +344,12 @@ const LingkunganPage = ({ lingkungan, rows }) => {
             </Text>
           </View>
         ))}
+  
         {/* Total Row */}
         <View style={styles.tableRow}>
           <Text style={styles.tableCellTotaL}>Total</Text>
           {totals.map((total, i) => (
-            <Text key={i} style={[styles.tableCell, styles.tableFontNominal]}>
+            <Text key={`total-${i}`} style={[styles.tableCell, styles.tableFontNominal]}>
               {total}
             </Text>
           ))}
@@ -405,9 +358,9 @@ const LingkunganPage = ({ lingkungan, rows }) => {
           </Text>
         </View>
       </View>
-
+  
       <View style={styles.emptySpace}></View>
-
+  
       {/* Tanda Tangan */}
       <View style={styles.signature}>
         <View style={styles.signatureBlock}>
@@ -433,30 +386,31 @@ const LingkunganPage = ({ lingkungan, rows }) => {
 };
 
 // Komponen utama
-const ExportView = ({ role, ketuaWilayah }) => {
-  // TO DO diambil dari redux aja ntar ya
+const ExportView = () => {
+  const { ketuaWilayah, ketuaLingkungan } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.role);
   const { handleLogout } = useAuth();
-  const [selectedLingkungan, setSelectedLingkungan] = useState(null);
+  const [selectedLingkungan, setSelectedLingkungan] = useState({
+    value: "all",
+    label: "Semua Lingkungan",
+  });
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
   const [error, setError] = useState(false);
+  const CURRENT_YEAR = new Date().getFullYear();
+  const [year, setYear] = useState(CURRENT_YEAR);
 
   useEffect(() => {
     const fetchLingkungan = async () => {
       try {
         const response = await services.LingkunganService.getAllLingkungan();
         const responseHistory =
-          await services.HistoryService.getAllHistoryWithKeluargaContext();
+          await services.HistoryService.getAllHistoryWithKeluargaContext(year);
         const filteredData = responseHistory.filter(
-          (item) => item.Tahun === 2024 && item.Keterangan === "IN"
-        ); // TO DO ganti berdasarkan created date aja
-        // console.log({responseHistory})
-        // console.log({filteredData})
-        // console.log(JSON.stringify(responseHistory, null, 2));
-        // console.log(transformedData(filteredData))
+          (item) =>item.Keterangan === "IN" // tahun sudah di fiilter pake created date di BE
+        );
         // console.log(JSON.stringify(transformedData(filteredData), null, 2));
-        // console.log(JSON.stringify(transformedData2(transformedData(filteredData)), null, 2));
 
         const filteredResponse =
           role === "ketuaWilayah" && ketuaWilayah !== 0
@@ -474,7 +428,13 @@ const ExportView = ({ role, ketuaWilayah }) => {
           { value: "all", label: "Semua Lingkungan" },
           ...options,
         ]);
-        setHistory(transformedData2(transformedData(filteredData))); // TO DO perlu add tombol tahun, jadi sebelum di proses Histoory ini simpan data dulu di state dan akan di filter setelah pilih tahun baru di proses pake logic ini ya
+        // auto set selection and disabled it if ketua lingkungan
+        if (role !== "admin" && ketuaLingkungan !== 0) {
+          setSelectedLingkungan(
+            options.find((option) => option.value === ketuaLingkungan)
+          );
+        }
+        setHistory(transformedData(filteredData));
         setLoading(false);
       } catch (error) {
         setError(true);
@@ -487,9 +447,8 @@ const ExportView = ({ role, ketuaWilayah }) => {
     };
 
     fetchLingkungan();
-  }, [role, ketuaWilayah]);
+  }, [year]);
 
-  console.log({ history });
   const filteredData =
     selectedLingkungan?.value === "all"
       ? history
@@ -501,7 +460,7 @@ const ExportView = ({ role, ketuaWilayah }) => {
           .filter((l) => l.value !== "all")
           .map((ling) => ({
             lingkungan: ling.label,
-            rows: history.filter((row) => row.lingkungan === ling.label),
+            rows: history.filter((row) => row.lingkungan === ling.value),
           }))
       : [
           {
@@ -513,7 +472,7 @@ const ExportView = ({ role, ketuaWilayah }) => {
   const MyDocument = (
     <Document>
       {groupedData.map(({ lingkungan, rows }) => (
-        <LingkunganPage key={lingkungan} lingkungan={lingkungan} rows={rows} />
+        <LingkunganPage key={lingkungan} lingkungan={lingkungan} rows={rows} year={year} />
       ))}
     </Document>
   );
@@ -530,11 +489,49 @@ const ExportView = ({ role, ketuaWilayah }) => {
 
         {/* Filter Lingkungan */}
         <CRow className="mb-4">
-          <CCol>
+          <CCol xs={12} sm={12} md={12} lg={6} xl={6}>
+            <CFormSelect
+              id="tahun"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              required
+              floatingClassName="mb-3"
+            >
+              <option value={CURRENT_YEAR - 2}>{CURRENT_YEAR - 2}</option>
+              <option value={CURRENT_YEAR - 1}>{CURRENT_YEAR - 1}</option>
+              <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
+              <option value={CURRENT_YEAR + 1}>{CURRENT_YEAR + 1}</option>
+              <option value={CURRENT_YEAR + 2}>{CURRENT_YEAR + 2}</option>
+            </CFormSelect>
+          </CCol>
+          <CCol xs={12} sm={12} md={12} lg={6} xl={6}>
             <Select
               options={lingkunganOptions}
               placeholder="Pilih Lingkungan"
               onChange={(option) => setSelectedLingkungan(option)}
+              value={lingkunganOptions.find(
+                (option) => option.value === selectedLingkungan.value
+              )}
+              isDisabled={role === "ketuaLingkungan"}
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  width: "100%",
+                  marginBottom: "35px",
+                  borderColor: "blue",
+                }),
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: "white",
+                  borderColor: "#ced4da",
+                  borderWidth: "1px",
+                  borderRadius: "0.375rem",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  zIndex: 1050,
+                }),
+              }}
             />
           </CCol>
         </CRow>

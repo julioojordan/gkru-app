@@ -37,8 +37,8 @@ const getAllHistory = async () => {
   }
 };
 
-const getAllHistoryWithKeluargaContext = async () => {
-  const url = "/historyWithContext";
+const getAllHistoryWithKeluargaContext = async (year) => {
+  const url = `/historyWithContext?tahun=${year}`;
   try {
     const response = await api.get(url); 
     if(response.data.data){
