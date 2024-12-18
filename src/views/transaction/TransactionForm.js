@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { CForm, CFormInput, CButton, CFormSelect } from "@coreui/react";
+import {
+  CForm,
+  CFormInput,
+  CButton,
+  CFormSelect,
+  CRow,
+  CCol,
+} from "@coreui/react";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import services from "../../services";
@@ -18,6 +25,7 @@ const AddTHForm = () => {
   const [keluargaOptions, setKeluargaOptions] = useState([]);
   const [keluarga, setKeluarga] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingKeterangan, setLoadingKeterangan] = useState(true);
   const [bulanOptions, setBulanOptions] = useState([]);
   const [selectedBulan, setSelectedBulan] = useState([]);
   const [fileBukti, setFileBukti] = useState(null);
@@ -46,7 +54,7 @@ const AddTHForm = () => {
         }));
         setKeluargaOptions(formattedOptions);
       } catch (error) {
-        setError(true)
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
@@ -60,6 +68,7 @@ const AddTHForm = () => {
 
   useEffect(() => {
     const fetchHistory = async () => {
+      setLoadingKeterangan(true);
       // TO DO add loading terpisah kah untuk ini atau set loading whole page aja ??
       if (keterangan === "IN" && idKeluarga && year) {
         try {
@@ -79,10 +88,12 @@ const AddTHForm = () => {
             setBulanOptions(months);
           }
         } catch (error) {
-          setError(true)
+          setError(true);
           if (error.response && error.response.status === 401) {
             await handleLogout();
           }
+        } finally {
+          setLoadingKeterangan(false);
         }
       }
     };
@@ -90,7 +101,6 @@ const AddTHForm = () => {
     fetchHistory();
   }, [keterangan, idKeluarga, year]);
 
-  
   if (error) return <p>Error fetching data.</p>;
 
   const handleKeluargaChange = (selectedOption) => {
@@ -339,63 +349,67 @@ const AddTHForm = () => {
             <option value="OUT">OUT</option>
           </CFormSelect>
 
-          {keterangan === "IN" && (
-            <>
-              <CFormSelect
-                id="tahun"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                required
-                floatingClassName="mb-3"
-                floatingLabel="Tahun"
-              >
-                <option value="">Select Tahun</option>
-                <option value={CURRENT_YEAR - 2}>{CURRENT_YEAR - 2}</option>
-                <option value={CURRENT_YEAR - 1}>{CURRENT_YEAR - 1}</option>
-                <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
-                <option value={CURRENT_YEAR + 1}>{CURRENT_YEAR + 1}</option>
-                <option value={CURRENT_YEAR + 2}>{CURRENT_YEAR + 2}</option>
-              </CFormSelect>
-              <Select
-                options={bulanOptions}
-                value={selectedBulan}
-                onChange={(selected) => {
-                  const maxSelection = nominal / 10000;
-                  if (selected.length > maxSelection) {
-                    Swal.fire({
-                      title: "Warning!",
-                      text: `Anda hanya bisa memilih maksimal ${maxSelection} bulan.`,
-                      icon: "warning",
-                    });
-                    return;
-                  }
-                  setSelectedBulan(selected);
-                }}
-                placeholder="Select Bulan"
-                isMulti
-                isSearchable
-                styles={{
-                  container: (base) => ({
-                    ...base,
-                    width: "100%",
-                    marginBottom: "1rem",
-                  }),
-                  control: (base) => ({
-                    ...base,
-                    backgroundColor: "white",
-                    borderColor: "#ced4da",
-                    borderWidth: "1px",
-                    borderRadius: "0.375rem",
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    zIndex: 1050,
-                  }),
-                }}
-                required
-                isDisabled={!bulanOptions.length} // Disable if no options
-              />
-            </>
+          {loadingKeterangan && keterangan === "IN" ? (
+            <p>Loading...</p>
+          ) : (
+            keterangan === "IN" && (
+              <>
+                <CFormSelect
+                  id="tahun"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  required
+                  floatingClassName="mb-3"
+                  floatingLabel="Tahun"
+                >
+                  <option value="">Select Tahun</option>
+                  <option value={CURRENT_YEAR - 2}>{CURRENT_YEAR - 2}</option>
+                  <option value={CURRENT_YEAR - 1}>{CURRENT_YEAR - 1}</option>
+                  <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
+                  <option value={CURRENT_YEAR + 1}>{CURRENT_YEAR + 1}</option>
+                  <option value={CURRENT_YEAR + 2}>{CURRENT_YEAR + 2}</option>
+                </CFormSelect>
+                <Select
+                  options={bulanOptions}
+                  value={selectedBulan}
+                  onChange={(selected) => {
+                    const maxSelection = nominal / 10000;
+                    if (selected.length > maxSelection) {
+                      Swal.fire({
+                        title: "Warning!",
+                        text: `Anda hanya bisa memilih maksimal ${maxSelection} bulan.`,
+                        icon: "warning",
+                      });
+                      return;
+                    }
+                    setSelectedBulan(selected);
+                  }}
+                  placeholder="Select Bulan"
+                  isMulti
+                  isSearchable
+                  styles={{
+                    container: (base) => ({
+                      ...base,
+                      width: "100%",
+                      marginBottom: "1rem",
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "white",
+                      borderColor: "#ced4da",
+                      borderWidth: "1px",
+                      borderRadius: "0.375rem",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      zIndex: 1050,
+                    }),
+                  }}
+                  required
+                  isDisabled={!bulanOptions.length} // Disable if no options
+                />
+              </>
+            )
           )}
 
           <CFormInput
@@ -417,9 +431,13 @@ const AddTHForm = () => {
             floatingLabel="File Bukti (Optional)"
           />
 
-          <CButton type="submit" color="primary">
-            Submit
-          </CButton>
+          <CRow className="gy-3 justify-content-center">
+            <CCol xs="12" md="12" xl="6">
+              <CButton type="submit" color="primary" className="w-100">
+                Submit
+              </CButton>
+            </CCol>
+          </CRow>
         </>
       )}
     </CForm>

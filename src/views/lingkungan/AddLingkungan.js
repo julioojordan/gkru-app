@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody } from '@coreui/react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import services from '../../services';
-import Swal from 'sweetalert2';
-import Select from 'react-select';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import { CForm, CFormInput, CButton, CCard, CCardBody, CRow, CCol } from "@coreui/react";
+import { useNavigate } from "react-router-dom";
+import services from "../../services";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import { useAuth } from "../../hooks/useAuth";
 
 const AddLingkungan = () => {
   const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const data = {
-    NamaLingkungan: '',
-    KodeLingkungan: '',
-    Wilayah: ''
+    NamaLingkungan: "",
+    KodeLingkungan: "",
+    Wilayah: "",
   };
 
   const [formData, setFormData] = useState(data);
@@ -24,7 +24,7 @@ const AddLingkungan = () => {
       setLoading(true);
       try {
         const response = await services.WilayahService.getAllWilayah();
-        const options = response.map(wilayah => ({
+        const options = response.map((wilayah) => ({
           value: wilayah.Id,
           label: wilayah.NamaWilayah,
         }));
@@ -52,7 +52,7 @@ const AddLingkungan = () => {
   const handleSelectChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      Wilayah: selectedOption ? selectedOption.value : '', // Menyimpan value yang dipilih
+      Wilayah: selectedOption ? selectedOption.value : "", // Menyimpan value yang dipilih
     }));
   };
 
@@ -60,27 +60,25 @@ const AddLingkungan = () => {
     navigate(-1);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingAlert = Swal.fire({
-      title: 'Loading...',
-      text: 'Please wait...',
+      title: "Loading...",
+      text: "Please wait...",
       allowOutsideClick: false,
       onBeforeOpen: () => {
         Swal.showLoading();
-      }
+      },
     });
 
     try {
       const response = await services.LingkunganService.addLingkungan(formData);
 
       await Swal.fire({
-        title: 'Success!',
-        text: 'Data has been added successfully.',
-        icon: 'success',
+        title: "Success!",
+        text: "Data has been added successfully.",
+        icon: "success",
       });
-
     } catch (error) {
       if (error.response && error.response.status === 401) {
         await handleLogout();
@@ -100,8 +98,8 @@ const AddLingkungan = () => {
   return (
     <CCard>
       {loading ? (
-          <div className="shimmer">Loading...</div>
-        ) : (
+        <div className="shimmer">Loading...</div>
+      ) : (
         <CCardBody>
           <h5>Detail Lingkungan</h5>
           <CForm onSubmit={handleSubmit}>
@@ -131,7 +129,9 @@ const AddLingkungan = () => {
 
             <Select
               options={wilayahOptions}
-              value={wilayahOptions.find(option => option.value === formData.Wilayah)}
+              value={wilayahOptions.find(
+                (option) => option.value === formData.Wilayah
+              )}
               onChange={handleSelectChange}
               required
               placeholder="Select Wilayah"
@@ -139,15 +139,15 @@ const AddLingkungan = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  width: '100%',
-                  marginBottom: '1rem',
+                  width: "100%",
+                  marginBottom: "1rem",
                 }),
                 control: (base) => ({
                   ...base,
-                  backgroundColor: 'white',
-                  borderColor: '#ced4da',
-                  borderWidth: '1px',
-                  borderRadius: '0.375rem',
+                  backgroundColor: "white",
+                  borderColor: "#ced4da",
+                  borderWidth: "1px",
+                  borderRadius: "0.375rem",
                 }),
                 menu: (base) => ({
                   ...base,
@@ -156,40 +156,48 @@ const AddLingkungan = () => {
               }}
             />
 
-            {/* Tombol Back */}
-            <CButton color="secondary" onClick={handleBack} className="me-2"
-            style= {{
-              width: '200px',
-              height: '100%',
-              fontSize: '0.9rem',
-              padding: '10px 0',
-              color: 'white',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              transition: '0.3s',
-            }}
-            
-            >
-              Back
-            </CButton>
-            {/* Tombol Submit */}
-            <CButton color="primary" type="submit"
-            style= {{
-              width: '200px',
-              height: '100%',
-              fontSize: '0.9rem',
-              padding: '10px 0',
-              color: 'white',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              transition: '0.3s',
-            }}
-            >
-              Submit
-            </CButton>
+            <CRow className="gy-3">
+              <CCol xs="12" md="6">
+                <CButton
+                  color="secondary"
+                  onClick={handleBack}
+                  className="w-100"
+                  style={{
+                    height: "100%",
+                    fontSize: "0.9rem",
+                    padding: "10px 0",
+                    color: "white",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    transition: "0.3s",
+                  }}
+                >
+                  Back
+                </CButton>
+              </CCol>
+              <CCol xs="12" md="6">
+                {/* Tombol Submit */}
+                <CButton
+                  color="primary"
+                  type="submit"
+                  className="w-100"
+                  style={{
+                    height: "100%",
+                    fontSize: "0.9rem",
+                    padding: "10px 0",
+                    color: "white",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    transition: "0.3s",
+                  }}
+                >
+                  Submit
+                </CButton>
+              </CCol>
+            </CRow>
           </CForm>
         </CCardBody>
-        )}
+      )}
     </CCard>
   );
 };

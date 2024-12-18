@@ -6,6 +6,8 @@ import {
   CCard,
   CCardBody,
   CFormSelect,
+  CRow,
+  CCol
 } from "@coreui/react";
 import { useNavigate } from "react-router-dom";
 import services from "../../services";
@@ -293,41 +295,45 @@ const AddUser = () => {
                 required
               />
 
-              <CButton
-                color="secondary"
-                onClick={handleBack}
-                className="me-2"
-                style={{
-                  width: "200px",
-                  height: "100%",
-                  fontSize: "0.9rem",
-                  padding: "10px 0",
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "5px",
-                  transition: "0.3s",
-                }}
-              >
-                Back
-              </CButton>
-
-              {/* Tombol Submit */}
-              <CButton
-                color="primary"
-                type="submit"
-                style={{
-                  width: "200px",
-                  height: "100%",
-                  fontSize: "0.9rem",
-                  padding: "10px 0",
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "5px",
-                  transition: "0.3s",
-                }}
-              >
-                Submit
-              </CButton>
+              <CRow className="gy-3">
+                <CCol xs="12" md="6">
+                  <CButton
+                    color="secondary"
+                    onClick={handleBack}
+                    className="w-100"
+                    style={{
+                      height: "100%",
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Back
+                  </CButton>
+                </CCol>
+                <CCol xs="12" md="6">
+                  {/* Tombol Submit */}
+                  <CButton
+                    color="primary"
+                    type="submit"
+                    className="w-100"
+                    style={{
+                      height: "100%",
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Submit
+                  </CButton>
+                </CCol>
+              </CRow>
             </CForm>
           </CCardBody>
         </>

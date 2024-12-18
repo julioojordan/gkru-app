@@ -1,28 +1,39 @@
-import React, { useState } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody, CFormSelect } from '@coreui/react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import services from '../../services';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState } from "react";
+import {
+  CForm,
+  CFormInput,
+  CButton,
+  CCard,
+  CCardBody,
+  CFormSelect,
+  CRow,
+  CCol
+} from "@coreui/react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+import services from "../../services";
+import { useAuth } from "../../hooks/useAuth";
 
 const AddAnggota = () => {
   const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: {Id, Lingkungan, Wilayah, KepalaKeluarga, Nomor} } = location.state || {};
+  const {
+    data: { Id, Lingkungan, Wilayah, KepalaKeluarga, Nomor },
+  } = location.state || {};
 
   const [formData, setFormData] = useState({
-    NamaLengkap: '',
-    TanggalLahir: '',
-    TanggalBaptis: '',
-    Keterangan: '',
-    Status: '',
-    JenisKelamin: '',
-    Hubungan: '',
+    NamaLengkap: "",
+    TanggalLahir: "",
+    TanggalBaptis: "",
+    Keterangan: "",
+    Status: "",
+    JenisKelamin: "",
+    Hubungan: "",
     IdKeluarga: Id,
   });
-  const [namaWilayah, ] = useState(Wilayah.NamaWilayah);
-  const [namaLingkungan, ] = useState(Lingkungan.NamaLingkungan);
+  const [namaWilayah] = useState(Wilayah.NamaWilayah);
+  const [namaLingkungan] = useState(Lingkungan.NamaLingkungan);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +48,7 @@ const AddAnggota = () => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-      Hubungan: value
+      Hubungan: value,
     }));
   };
 
@@ -48,8 +59,8 @@ const AddAnggota = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     Swal.fire({
-      title: 'Loading...',
-      text: 'Please wait...',
+      title: "Loading...",
+      text: "Please wait...",
       allowOutsideClick: false,
       onBeforeOpen: () => {
         Swal.showLoading();
@@ -65,22 +76,20 @@ const AddAnggota = () => {
         TanggalBaptis: formData.TanggalBaptis,
         Keterangan: formData.Keterangan,
         Status: formData.Status,
-        JenisKelamin: formData.JenisKelamin
-      }
+        JenisKelamin: formData.JenisKelamin,
+      };
       const newData = {
         ...location.state.data,
-        Anggota: [...location.state.data.Anggota, newAnggota]
+        Anggota: [...location.state.data.Anggota, newAnggota],
       };
 
-
       await Swal.fire({
-        title: 'Success!',
-        text: 'Data has been added successfully.',
-        icon: 'success',
+        title: "Success!",
+        text: "Data has been added successfully.",
+        icon: "success",
       }).then(() => {
-        navigate(`/keluarga/${Id}`, { state: { data: newData } })
+        navigate(`/keluarga/${Id}`, { state: { data: newData } });
       });
-
     } catch (error) {
       if (error.response && error.response.status === 401) {
         await handleLogout();
@@ -207,40 +216,47 @@ const AddAnggota = () => {
             <option value="MENINGGAL">Meninggal</option>
           </CFormSelect>
 
-          {/* Tombol Back */}
-          <CButton color="secondary" onClick={handleBack} className="me-2"
-          style= {{
-            width: '200px',
-            height: '100%',
-            fontSize: '0.9rem',
-            padding: '10px 0',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '5px',
-            transition: '0.3s',
-          }}
-          
-          >
-            Back
-          </CButton>
-          {/* Tombol Submit */}
-          <CButton color="primary" type="submit"
-          style= {{
-            width: '200px',
-            height: '100%',
-            fontSize: '0.9rem',
-            padding: '10px 0',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '5px',
-            transition: '0.3s',
-          }}
-          >
-            Submit
-          </CButton>
+          <CRow className="gy-3">
+            <CCol xs="12" md="6">
+              <CButton
+                color="secondary"
+                onClick={handleBack}
+                className="w-100"
+                style={{
+                  height: "100%",
+                  fontSize: "0.9rem",
+                  padding: "10px 0",
+                  color: "white",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  transition: "0.3s",
+                }}
+              >
+                Back
+              </CButton>
+            </CCol>
+            <CCol xs="12" md="6">
+              {/* Tombol Submit */}
+              <CButton
+                color="primary"
+                type="submit"
+                className="w-100"
+                style={{
+                  height: "100%",
+                  fontSize: "0.9rem",
+                  padding: "10px 0",
+                  color: "white",
+                  fontWeight: "bold",
+                  borderRadius: "5px",
+                  transition: "0.3s",
+                }}
+              >
+                Submit
+              </CButton>
+            </CCol>
+          </CRow>
         </CForm>
       </CCardBody>
-    
     </CCard>
   );
 };

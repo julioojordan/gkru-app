@@ -1,12 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { CForm, CFormInput, CButton, CCard, CCardBody, CCardSubtitle } from '@coreui/react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import services from '../../services';
-import Swal from 'sweetalert2';
-import Select from 'react-select';
-import { useAuth } from '../../hooks/useAuth';
-import { useRedirect } from '../../hooks/useRedirect';
-import useHandleBack from '../../hooks/useHandleBack';
+import React, { useState, useEffect } from "react";
+import {
+  CForm,
+  CFormInput,
+  CButton,
+  CCard,
+  CCardBody,
+  CCardSubtitle,
+  CRow,
+  CCol,
+} from "@coreui/react";
+import { useNavigate, useLocation } from "react-router-dom";
+import services from "../../services";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import { useAuth } from "../../hooks/useAuth";
+import { useRedirect } from "../../hooks/useRedirect";
+import useHandleBack from "../../hooks/useHandleBack";
 
 const LingkunganDetail = () => {
   const { handleLogout } = useAuth();
@@ -16,10 +25,10 @@ const LingkunganDetail = () => {
   const { lingkungan } = location.state || {};
 
   const [formData, setFormData] = useState({
-    Id: '',
-    NamaLingkungan: '',
-    KodeLingkungan: '',
-    Wilayah: ''
+    Id: "",
+    NamaLingkungan: "",
+    KodeLingkungan: "",
+    Wilayah: "",
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -27,17 +36,20 @@ const LingkunganDetail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  useHandleBack("/lingkungan")
+  useHandleBack("/lingkungan");
   useEffect(() => {
-    if(!lingkungan){
-      redirectToBefore()
+    if (!lingkungan) {
+      redirectToBefore();
     }
     if (lingkungan) {
       const data = {
         Id: lingkungan.Id,
         NamaLingkungan: lingkungan.NamaLingkungan,
         KodeLingkungan: lingkungan.KodeLingkungan,
-        Wilayah: lingkungan.Wilayah && lingkungan.Wilayah.Id ? lingkungan.Wilayah.Id : lingkungan.Wilayah,
+        Wilayah:
+          lingkungan.Wilayah && lingkungan.Wilayah.Id
+            ? lingkungan.Wilayah.Id
+            : lingkungan.Wilayah,
       };
       setFormData(data);
       setInitialFormData(data);
@@ -49,7 +61,7 @@ const LingkunganDetail = () => {
       setLoading(true);
       try {
         const response = await services.WilayahService.getAllWilayah();
-        const options = response.map(wilayah => ({
+        const options = response.map((wilayah) => ({
           value: wilayah.Id,
           label: wilayah.NamaWilayah,
         }));
@@ -80,7 +92,7 @@ const LingkunganDetail = () => {
   const handleSelectChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      Wilayah: selectedOption ? selectedOption.value : '', // Menyimpan value yang dipilih
+      Wilayah: selectedOption ? selectedOption.value : "", // Menyimpan value yang dipilih
     }));
   };
 
@@ -95,65 +107,72 @@ const LingkunganDetail = () => {
   const handleDelete = async () => {
     try {
       const result = await Swal.fire({
-        title: 'Apakah Anda yakin ?',
-        text: 'Data yang dihapus tidak dapat dikembalikan!',
-        icon: 'warning',
+        title: "Apakah Anda yakin ?",
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal',
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal",
       });
-  
+
       if (result.isConfirmed) {
         const loadingAlert = Swal.fire({
-          title: 'Loading...',
-          text: 'Please wait...',
+          title: "Loading...",
+          text: "Please wait...",
           allowOutsideClick: false,
         });
-        const response = await services.LingkunganService.deleteLingkungan(lingkungan.Id);
-  
-        Swal.fire({
-          title: 'Berhasil!',
-          text: 'Data berhasil dihapus.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        }).then(
-          navigate("/lingkungan")
+        const response = await services.LingkunganService.deleteLingkungan(
+          lingkungan.Id
         );
+
+        Swal.fire({
+          title: "Berhasil!",
+          text: "Data berhasil dihapus.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(navigate("/lingkungan"));
       }
     } catch (error) {
       Swal.fire({
-        title: 'Gagal!',
-        text: 'Terjadi kesalahan saat menghapus data.',
-        icon: 'error',
+        title: "Gagal!",
+        text: "Terjadi kesalahan saat menghapus data.",
+        icon: "error",
       });
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingAlert = Swal.fire({
-      title: 'Loading...',
-      text: 'Please wait...',
-      allowOutsideClick: false
+      title: "Loading...",
+      text: "Please wait...",
+      allowOutsideClick: false,
     });
 
     try {
-      const response = await services.LingkunganService.updateLingkungan(formData);
-
-      await Swal.fire({
-        title: 'Success!',
-        text: 'Data has been updated successfully.',
-        icon: 'success',
-      }).then(
-        navigate(`/lingkungan/${response.Id}`, { state: { lingkungan: response } })
+      const response = await services.LingkunganService.updateLingkungan(
+        formData
       );
 
+      await Swal.fire({
+        title: "Success!",
+        text: "Data has been updated successfully.",
+        icon: "success",
+      }).then(
+        navigate(`/lingkungan/${response.Id}`, {
+          state: { lingkungan: response },
+        })
+      );
     } catch (error) {
       setFormData(initialFormData);
       setTimeout(() => {
-        handleSelectChange(wilayahOptions.find(option => option.value === initialFormData.Wilayah));
+        handleSelectChange(
+          wilayahOptions.find(
+            (option) => option.value === initialFormData.Wilayah
+          )
+        );
       }, 0);
 
       if (error.response && error.response.status === 401) {
@@ -174,17 +193,33 @@ const LingkunganDetail = () => {
   return (
     <CCard>
       {loading ? (
-          <div className="shimmer">Loading...</div>
-        ) : (
+        <div className="shimmer">Loading...</div>
+      ) : (
         <CCardBody>
           <div className="d-flex justify-content-between align-items-center">
-            <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
-            <CButton
-                color="danger"
-                onClick={() => {handleDelete()}}
-                style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+            <CCardSubtitle
+              className="mb-2 text-body-secondary"
+              style={{ marginLeft: "3px" }}
             >
-                Delete
+              Detail Lingkungan
+            </CCardSubtitle>
+            <CButton
+              color="danger"
+              onClick={() => {
+                handleDelete();
+              }}
+              style={{
+                fontSize: "16px",
+                lineHeight: "1",
+                padding: "0.375rem 0.75rem",
+                borderRadius: "0.375rem",
+                marginBottom: "9px",
+                color: "white",
+                fontWeight: "bold",
+                transition: "0.3s",
+              }}
+            >
+              Delete
             </CButton>
           </div>
           <CForm onSubmit={handleSubmit}>
@@ -224,7 +259,9 @@ const LingkunganDetail = () => {
 
             <Select
               options={wilayahOptions}
-              value={wilayahOptions.find(option => option.value === formData.Wilayah)} // Gunakan formData untuk value
+              value={wilayahOptions.find(
+                (option) => option.value === formData.Wilayah
+              )} // Gunakan formData untuk value
               onChange={handleSelectChange}
               placeholder="Select Wilayah"
               isDisabled={!isEditable}
@@ -232,15 +269,15 @@ const LingkunganDetail = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  width: '100%',
-                  marginBottom: '1rem',
+                  width: "100%",
+                  marginBottom: "1rem",
                 }),
                 control: (base) => ({
                   ...base,
-                  backgroundColor: 'white',
-                  borderColor: '#ced4da',
-                  borderWidth: '1px',
-                  borderRadius: '0.375rem',
+                  backgroundColor: "white",
+                  borderColor: "#ced4da",
+                  borderWidth: "1px",
+                  borderRadius: "0.375rem",
                 }),
                 menu: (base) => ({
                   ...base,
@@ -250,55 +287,65 @@ const LingkunganDetail = () => {
               required
             />
 
-            <CButton color="secondary" onClick={handleBack} className="me-2"
-            style= {{
-              width: '200px',
-              height: '100%',
-              fontSize: '0.9rem',
-              padding: '10px 0',
-              color: 'white',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              transition: '0.3s',
-            }}
-            >
-              Back
-            </CButton>
+            <CRow className="gy-3">
+              {/* Tombol Back */}
+              <CCol xs="12" md="4">
+                <CButton
+                  color="secondary"
+                  onClick={handleBack}
+                  className="w-100"
+                  style={{
+                    fontSize: "0.9rem",
+                    padding: "10px 0",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    transition: "0.3s",
+                  }}
+                >
+                  Back
+                </CButton>
+              </CCol>
 
-            {/* Tombol Edit */}
-            <CButton color="info" onClick={handleEdit} className="me-2"
-            style= {{
-              width: '200px',
-              height: '100%',
-              fontSize: '0.9rem',
-              padding: '10px 0',
-              color: 'white',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              transition: '0.3s',
-            }}
-            >
-              Edit
-            </CButton>
+              {/* Tombol Edit */}
+              <CCol xs="12" md="4">
+                <CButton
+                  color="info"
+                  onClick={handleEdit}
+                  className="w-100"
+                  style={{
+                    fontSize: "0.9rem",
+                    padding: "10px 0",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    transition: "0.3s",
+                  }}
+                >
+                  Edit
+                </CButton>
+              </CCol>
 
-            {/* Tombol Submit */}
-            <CButton color="primary" type="submit" disabled={!isEditable}
-            style= {{
-              width: '200px',
-              height: '100%',
-              fontSize: '0.9rem',
-              padding: '10px 0',
-              color: 'white',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              transition: '0.3s',
-            }}
-            >
-              Submit
-            </CButton>
+              {/* Tombol Submit */}
+              <CCol xs="12" md="4">
+                <CButton
+                  color="primary"
+                  type="submit"
+                  disabled={!isEditable}
+                  className="w-100"
+                  style={{
+                    fontSize: "0.9rem",
+                    padding: "10px 0",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                    transition: "0.3s",
+                  }}
+                >
+                  Submit
+                </CButton>
+              </CCol>
+            </CRow>
           </CForm>
         </CCardBody>
-        )}
+      )}
     </CCard>
   );
 };

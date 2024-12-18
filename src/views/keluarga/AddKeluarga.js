@@ -8,7 +8,7 @@ import {
   CRow,
   CCol,
   CFormSelect,
-  CCardSubtitle
+  CCardSubtitle,
 } from "@coreui/react";
 import Select from "react-select";
 import services from "../../services";
@@ -17,8 +17,8 @@ import { useSelector } from "react-redux";
 import { useAuth } from "../../hooks/useAuth";
 
 const KeluargaDetail = () => {
-  const {ketuaLingkungan, ketuaWilayah} = useSelector(state => state.auth);
-  const {role} = useSelector(state => state.role);
+  const { ketuaLingkungan, ketuaWilayah } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.role);
   const [formData, setFormData] = useState({
     NamaKepalaKeluarga: "",
     Lingkungan: "",
@@ -46,10 +46,13 @@ const KeluargaDetail = () => {
       setLoading(true);
       try {
         const response = await services.LingkunganService.getAllLingkungan();
-        console.log({response})
-        const filteredResponse = role === "ketuaWilayah" && ketuaWilayah !== 0
-          ? response.filter((lingkungan) => lingkungan.Wilayah.Id === ketuaWilayah)
-          : response;
+        console.log({ response });
+        const filteredResponse =
+          role === "ketuaWilayah" && ketuaWilayah !== 0
+            ? response.filter(
+                (lingkungan) => lingkungan.Wilayah.Id === ketuaWilayah
+              )
+            : response;
 
         const options = filteredResponse.map((lingkungan) => ({
           value: lingkungan.Id,
@@ -57,7 +60,7 @@ const KeluargaDetail = () => {
         }));
         setLingkungan(response);
         setLingkunganOptions(options);
-        if (role !== 'admin' && ketuaLingkungan !== 0){
+        if (role !== "admin" && ketuaLingkungan !== 0) {
           const selectedLingkungan = response.find(
             (lingkungan) => lingkungan.Id === ketuaLingkungan
           );
@@ -124,7 +127,7 @@ const KeluargaDetail = () => {
       updatedAnggotaList = anggotaList.map((anggota, idx) =>
         idx === index ? { ...anggota, [name]: value } : anggota
       );
-    }else{
+    } else {
       updatedAnggotaList = anggotaList.map((anggota, idx) =>
         idx === index ? { ...anggota, [name]: value, hubungan: value } : anggota
       );
@@ -142,12 +145,12 @@ const KeluargaDetail = () => {
 
     try {
       const loadingAlert = Swal.fire({
-        title: 'Loading...',
-        text: 'Please wait...',
+        title: "Loading...",
+        text: "Please wait...",
         allowOutsideClick: false,
         onBeforeOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
 
       const keluargaRequest = {
@@ -164,27 +167,28 @@ const KeluargaDetail = () => {
         Alamat: formData.Alamat,
       };
 
-      const responseAddKK = await services.KeluargaService.AddKeluarga(keluargaRequest);
+      const responseAddKK = await services.KeluargaService.AddKeluarga(
+        keluargaRequest
+      );
       for (const anggota of anggotaList) {
         const anggotaRequest = {
           ...anggota,
-          idKeluarga: responseAddKK.Id
+          idKeluarga: responseAddKK.Id,
         };
 
         await services.AnggotaService.AddAnggota(anggotaRequest);
       }
 
       await Swal.fire({
-        title: 'Success!',
-        text: 'Data has been added successfully.',
-        icon: 'success',
+        title: "Success!",
+        text: "Data has been added successfully.",
+        icon: "success",
       });
-
     } catch (error) {
       await Swal.fire({
-        title: 'Error!',
-        text: 'There was an error adding the data.',
-        icon: 'error',
+        title: "Error!",
+        text: "There was an error adding the data.",
+        icon: "error",
       });
     } finally {
       Swal.close();
@@ -203,7 +207,7 @@ const KeluargaDetail = () => {
       JenisKelamin: "",
       Nomor: "",
       Keterangan: "Kepala Keluarga",
-      Hubungan: "Kepala Keluarga"
+      Hubungan: "Kepala Keluarga",
     });
     setAnggotaList([]);
     setIsWithAnggota(false);
@@ -245,7 +249,7 @@ const KeluargaDetail = () => {
                     value={lingkunganOptions.find(
                       (option) => option.value === formData.Lingkungan
                     )}
-                    isDisabled={role==="ketuaLingkungan"}
+                    isDisabled={role === "ketuaLingkungan"}
                     styles={{
                       container: (base) => ({
                         ...base,
@@ -280,79 +284,84 @@ const KeluargaDetail = () => {
               <hr className="my-4" />
 
               {/* Bagian Kedua: Add Kepala keluarga */}
-               <CCard className="mt-3">
-                    <CCardBody>
-                      <CCardSubtitle className="mb-2 text-body-secondary" style={{marginLeft: '3px'}}>Kepala Keluarga</CCardSubtitle>
-                    <CRow>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormInput
-                                type="text"
-                                name="NamaKepalaKeluarga"
-                                floatingLabel="Nama Lengkap"
-                                onChange={handleChange}
-                                value={formData.NamaKepalaKeluarga}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                        <CFormInput
-                            type="date"
-                            name="TanggalLahir"
-                            floatingLabel="Tanggal Lahir"
-                            onChange={handleChange}
-                            value={formData.TanggalLahir}
-                        />
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                        <CFormInput
-                            type="date"
-                            name="TanggalBaptis"
-                            floatingLabel="Tanggal Baptis"
-                            onChange={handleChange}
-                            value={formData.TanggalBaptis}
-                        />
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                        <CFormInput
-                            type="text"
-                            name="Keterangan"
-                            floatingLabel="Keterangan"
-                            value="Kepala Keluarga"
-                            disabled
-                        />
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormSelect
-                                id="jenisKelamin"
-                                name="JenisKelamin"
-                                value={formData.JenisKelamin}
-                                onChange={handleChange}
-                                required
-                                floatingClassName="mb-3"
-                                floatingLabel="Jenis Kelamin"
-                            >
-                                <option value="">Jenis Kelamin</option>
-                                <option value="L">Laki-Laki</option>
-                                <option value="P">Perempuan</option>
-                            </CFormSelect>
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormSelect
-                                id="status"
-                                name="Status"
-                                value={formData.Status}
-                                onChange={handleChange}
-                                required
-                                floatingClassName="mb-3"
-                                floatingLabel="Status"
-                            >
-                                <option value="">Status</option>
-                                <option value="HIDUP">Hidup</option>
-                                <option value="MENINGGAL">Meninggal</option>
-                            </CFormSelect>
-                        </CCol>
-                    </CRow>
-                    </CCardBody>
-                </CCard>
+              <CCard className="mt-3">
+                <CCardBody>
+                  <CCardSubtitle
+                    className="mb-2 text-body-secondary"
+                    style={{ marginLeft: "3px" }}
+                  >
+                    Kepala Keluarga
+                  </CCardSubtitle>
+                  <CRow>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormInput
+                        type="text"
+                        name="NamaKepalaKeluarga"
+                        floatingLabel="Nama Lengkap"
+                        onChange={handleChange}
+                        value={formData.NamaKepalaKeluarga}
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormInput
+                        type="date"
+                        name="TanggalLahir"
+                        floatingLabel="Tanggal Lahir"
+                        onChange={handleChange}
+                        value={formData.TanggalLahir}
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormInput
+                        type="date"
+                        name="TanggalBaptis"
+                        floatingLabel="Tanggal Baptis"
+                        onChange={handleChange}
+                        value={formData.TanggalBaptis}
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormInput
+                        type="text"
+                        name="Keterangan"
+                        floatingLabel="Keterangan"
+                        value="Kepala Keluarga"
+                        disabled
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormSelect
+                        id="jenisKelamin"
+                        name="JenisKelamin"
+                        value={formData.JenisKelamin}
+                        onChange={handleChange}
+                        required
+                        floatingClassName="mb-3"
+                        floatingLabel="Jenis Kelamin"
+                      >
+                        <option value="">Jenis Kelamin</option>
+                        <option value="L">Laki-Laki</option>
+                        <option value="P">Perempuan</option>
+                      </CFormSelect>
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      <CFormSelect
+                        id="status"
+                        name="Status"
+                        value={formData.Status}
+                        onChange={handleChange}
+                        required
+                        floatingClassName="mb-3"
+                        floatingLabel="Status"
+                      >
+                        <option value="">Status</option>
+                        <option value="HIDUP">Hidup</option>
+                        <option value="MENINGGAL">Meninggal</option>
+                      </CFormSelect>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
 
               <hr className="my-4" />
 
@@ -361,14 +370,26 @@ const KeluargaDetail = () => {
                 anggotaList.map((anggota, index) => (
                   <CCard className="mt-3" key={index}>
                     <CCardBody>
-                    <div className="d-flex justify-content-between align-items-center">
-                        <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>{`Anggota ${index + 1}`}</CCardSubtitle>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <CCardSubtitle
+                          className="mb-2 text-body-secondary"
+                          style={{ marginLeft: "3px" }}
+                        >{`Anggota ${index + 1}`}</CCardSubtitle>
                         <CButton
-                            color="danger"
-                            onClick={() => handleRemoveAnggota(index)}
-                            style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'5px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+                          color="danger"
+                          onClick={() => handleRemoveAnggota(index)}
+                          style={{
+                            fontSize: "16px",
+                            lineHeight: "1",
+                            padding: "0.375rem 0.75rem",
+                            borderRadius: "0.375rem",
+                            marginBottom: "5px",
+                            color: "white",
+                            fontWeight: "bold",
+                            transition: "0.3s",
+                          }}
                         >
-                            &times;
+                          &times;
                         </CButton>
                       </div>
                       <CRow>
@@ -400,91 +421,95 @@ const KeluargaDetail = () => {
                           />
                         </CCol>
                         <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormSelect
-                                id="keterangan"
-                                name="keterangan"
-                                value={anggota.Keterangan}
-                                onChange={(e) => handleAnggotaChange(e, index)}
-                                floatingClassName="mb-3"
-                                floatingLabel="Keterangan"
-                            >
-                                <option value="">Select Keterangan</option>
-                                <option value="Istri">Istri</option>
-                                <option value="Anak">Anak</option>
-                                <option value="Anggota">Anggota</option>
-                            </CFormSelect>
+                          <CFormSelect
+                            id="keterangan"
+                            name="keterangan"
+                            value={anggota.Keterangan}
+                            onChange={(e) => handleAnggotaChange(e, index)}
+                            floatingClassName="mb-3"
+                            floatingLabel="Keterangan"
+                          >
+                            <option value="">Select Keterangan</option>
+                            <option value="Istri">Istri</option>
+                            <option value="Anak">Anak</option>
+                            <option value="Anggota">Anggota</option>
+                          </CFormSelect>
                         </CCol>
                         <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormSelect
-                                id="jenisKelaminAnggota"
-                                name="jenisKelamin"
-                                value={anggota.jenisKelamin}
-                                onChange={(e) => handleAnggotaChange(e, index)}
-                                required
-                                floatingClassName="mb-3"
-                                floatingLabel="Jenis Kelamin"
-                            >
-                                <option value="">Select Jenis Kelamin</option>
-                                <option value="L">Laki-Laki</option>
-                                <option value="P">Perempuan</option>
-                            </CFormSelect>
+                          <CFormSelect
+                            id="jenisKelaminAnggota"
+                            name="jenisKelamin"
+                            value={anggota.jenisKelamin}
+                            onChange={(e) => handleAnggotaChange(e, index)}
+                            required
+                            floatingClassName="mb-3"
+                            floatingLabel="Jenis Kelamin"
+                          >
+                            <option value="">Select Jenis Kelamin</option>
+                            <option value="L">Laki-Laki</option>
+                            <option value="P">Perempuan</option>
+                          </CFormSelect>
                         </CCol>
                         <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                            <CFormSelect
-                                id="anggotaStatus"
-                                name="status"
-                                value={anggota.status}
-                                onChange={(e) => handleAnggotaChange(e, index)}
-                                required
-                                floatingClassName="mb-3"
-                                floatingLabel="Status"
-                            >
-                                <option value="">Select Status</option>
-                                <option value="HIDUP">Hidup</option>
-                                <option value="MENINGGAL">Meninggal</option>
-                            </CFormSelect>
+                          <CFormSelect
+                            id="anggotaStatus"
+                            name="status"
+                            value={anggota.status}
+                            onChange={(e) => handleAnggotaChange(e, index)}
+                            required
+                            floatingClassName="mb-3"
+                            floatingLabel="Status"
+                          >
+                            <option value="">Select Status</option>
+                            <option value="HIDUP">Hidup</option>
+                            <option value="MENINGGAL">Meninggal</option>
+                          </CFormSelect>
                         </CCol>
                       </CRow>
                     </CCardBody>
                   </CCard>
                 ))}
 
-              <CButton
-                color="success"
-                onClick={handleAddAnggota}
-                className="mt-3"
-                style={{
-                  width: '200px',
-                  height: '100%',
-                  fontSize: '0.9rem',
-                  padding: '10px 0',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  borderRadius: '5px',
-                  transition: '0.3s',
-                  marginRight: '10px'
-                }}
-              >
-                Add Anggota
-              </CButton>
+              <CRow className="gy-3">
+                <CCol xs="12" md="6">
+                  <CButton
+                    color="success"
+                    onClick={handleAddAnggota}
+                    className="w-100"
+                    style={{
+                      height: "100%",
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                      marginRight: "10px",
+                    }}
+                  >
+                    Add Anggota
+                  </CButton>
+                </CCol>
 
-              <CButton 
-              color="primary" 
-              type="submit" 
-              className="mt-3"
-              style={{
-                width: '200px',
-                height: '100%',
-                fontSize: '0.9rem',
-                padding: '10px 0',
-                color: 'white',
-                fontWeight: 'bold',
-                borderRadius: '5px',
-                transition: '0.3s',
-              }}
-              >
-                Submit
-              </CButton>
+                <CCol xs="12" md="6">
+                  <CButton
+                    color="primary"
+                    type="submit"
+                    className="w-100"
+                    style={{
+                      height: "100%",
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      color: "white",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Submit
+                  </CButton>
+                </CCol>
+              </CRow>
             </CForm>
           </>
         )}

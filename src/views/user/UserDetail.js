@@ -6,7 +6,9 @@ import {
   CCard,
   CCardBody,
   CFormSelect,
-  CCardSubtitle
+  CCardSubtitle,
+  CRow,
+  CCol
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import services from "../../services";
@@ -14,9 +16,9 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import Select from "react-select";
 import { updateUser, setRole } from "../../actions";
-import { useAuth } from '../../hooks/useAuth';
-import { useRedirect } from '../../hooks/useRedirect';
-import useHandleBack from '../../hooks/useHandleBack';
+import { useAuth } from "../../hooks/useAuth";
+import { useRedirect } from "../../hooks/useRedirect";
+import useHandleBack from "../../hooks/useHandleBack";
 
 const UserDetail = () => {
   const { handleLogout } = useAuth();
@@ -40,13 +42,13 @@ const UserDetail = () => {
   const [isKetuaLingkungan, setIsKetuaLingkungan] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(false);
-  
+
   const [isEditable, setIsEditable] = useState(false);
 
   useHandleBack("/user");
   useEffect(() => {
     const checkCurrentRole = () => {
-      if (isSelf){
+      if (isSelf) {
         setCurrentRole(roleRedux);
         if (roleRedux === "admin") {
           setIsAdmin(true);
@@ -63,37 +65,40 @@ const UserDetail = () => {
           setIsKetuaWilayah(true);
           setIsKetuaLingkungan(false);
         }
-      }else{
-        if (row.KetuaLingkungan == 0 && row.KetuaWilayah == 0){ //admin
+      } else {
+        if (row.KetuaLingkungan == 0 && row.KetuaWilayah == 0) {
+          //admin
           setIsAdmin(true);
           setIsKetuaWilayah(false);
           setIsKetuaLingkungan(false);
-          setCurrentRole('admin')
+          setCurrentRole("admin");
         }
-        if (row.KetuaLingkungan != 0 && row.KetuaWilayah != 0){ // ketua lingkungan
+        if (row.KetuaLingkungan != 0 && row.KetuaWilayah != 0) {
+          // ketua lingkungan
           setIsAdmin(false);
           setIsKetuaWilayah(false);
           setIsKetuaLingkungan(true);
-          setCurrentRole('ketuaLingkungan')
+          setCurrentRole("ketuaLingkungan");
         }
-        if (row.KetuaLingkungan == 0 && row.KetuaWilayah != 0){  // ketua wilayah
+        if (row.KetuaLingkungan == 0 && row.KetuaWilayah != 0) {
+          // ketua wilayah
           setIsAdmin(false);
           setIsKetuaWilayah(true);
           setIsKetuaLingkungan(false);
-          setCurrentRole('ketuaWilayah')
+          setCurrentRole("ketuaWilayah");
         }
       }
-    }
+    };
     if (authRedux) {
-      if(!row){
-        redirectToBefore()
+      if (!row) {
+        redirectToBefore();
         return;
       }
       const data = {
         Username: !row ? authRedux.username : row.Username,
         Lingkungan: !row ? authRedux.ketuaLingkungan : row.KetuaLingkungan,
         Wilayah: !row ? authRedux.ketuaWilayah : row.KetuaWilayah,
-        Password: ""
+        Password: "",
       };
       setFormData(data);
       setInitialFormData(data);
@@ -120,7 +125,7 @@ const UserDetail = () => {
         setLingkungan(lingkunganResponse);
         setLingkunganOptions(options2);
       } catch (error) {
-        setError(true)
+        setError(true);
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
@@ -151,12 +156,13 @@ const UserDetail = () => {
 
   const handleSelectLingkunganChange = (selectedOption) => {
     if (!selectedOption) return;
-    const idWilayah = lingkungan ? lingkungan
-      .find( (item) => item.Id === selectedOption.value).Wilayah.Id : ""
+    const idWilayah = lingkungan
+      ? lingkungan.find((item) => item.Id === selectedOption.value).Wilayah.Id
+      : "";
     setFormData((prevData) => ({
       ...prevData,
       Lingkungan: selectedOption ? selectedOption.value : "", // Menyimpan value yang dipilih
-      Wilayah: idWilayah
+      Wilayah: idWilayah,
     }));
   };
 
@@ -178,21 +184,21 @@ const UserDetail = () => {
   };
 
   const handleIsKetuaLingkungan = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(true);
     setIsKetuaWilayah(false);
     setIsAdmin(false);
   };
 
   const handleIsKetuaWilayah = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(false);
     setIsKetuaWilayah(true);
     setIsAdmin(false);
   };
 
   const handleIsAdmin = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(false);
     setIsKetuaWilayah(false);
     setIsAdmin(true);
@@ -209,41 +215,39 @@ const UserDetail = () => {
   const handleDelete = async () => {
     try {
       const result = await Swal.fire({
-        title: 'Apakah Anda yakin ?',
-        text: 'Data yang dihapus tidak dapat dikembalikan!',
-        icon: 'warning',
+        title: "Apakah Anda yakin ?",
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal',
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal",
       });
-  
+
       if (result.isConfirmed) {
         const loadingAlert = Swal.fire({
-          title: 'Loading...',
-          text: 'Please wait...',
+          title: "Loading...",
+          text: "Please wait...",
           allowOutsideClick: false,
         });
         const response = await services.UserService.deleteUser(row.Id);
-  
+
         Swal.fire({
-          title: 'Berhasil!',
-          text: 'Data berhasil dihapus.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        }).then(
-          navigate("/user")
-        );
+          title: "Berhasil!",
+          text: "Data berhasil dihapus.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(navigate("/user"));
       }
     } catch (error) {
       Swal.fire({
-        title: 'Gagal!',
-        text: 'Terjadi kesalahan saat menghapus data.',
-        icon: 'error',
+        title: "Gagal!",
+        text: "Terjadi kesalahan saat menghapus data.",
+        icon: "error",
       });
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -261,7 +265,8 @@ const UserDetail = () => {
         Id: !row ? authRedux.id : row.Id,
         Username: formData.Username,
         KetuaLingkungan: !isKetuaLingkungan ? 0 : formData.Lingkungan,
-        KetuaWilayah: isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
+        KetuaWilayah:
+          isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
         UpdatedBy: authRedux.id,
       };
       const response = await services.UserService.updateUser(data);
@@ -270,7 +275,8 @@ const UserDetail = () => {
           updateUser({
             username: formData.Username,
             ketuaLingkungan: !isKetuaLingkungan ? 0 : formData.Lingkungan,
-            ketuaWilayah: isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
+            ketuaWilayah:
+              isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
           })
         );
         dispatch(setRole(currentRole));
@@ -279,7 +285,7 @@ const UserDetail = () => {
         Username: response.Username,
         Lingkungan: response.KetuaLingkungan,
         Wilayah: response.KetuaWilayah,
-        Password: ""
+        Password: "",
       };
       setFormData(newFormData);
       setInitialFormData(newFormData);
@@ -288,12 +294,17 @@ const UserDetail = () => {
         text: "Data has been updated successfully.",
         icon: "success",
       }).then(
-        navigate(`/user/${row.Id}`, { state: { isSelf, row: {
-          Username: response.Username,
-          KetuaLingkungan: response.KetuaLingkungan,
-          KetuaWilayah: response.KetuaWilayah,
-          Password: ""
-        } } })
+        navigate(`/user/${row.Id}`, {
+          state: {
+            isSelf,
+            row: {
+              Username: response.Username,
+              KetuaLingkungan: response.KetuaLingkungan,
+              KetuaWilayah: response.KetuaWilayah,
+              Password: "",
+            },
+          },
+        })
       );
     } catch (error) {
       setFormData(initialFormData);
@@ -333,14 +344,30 @@ const UserDetail = () => {
         <>
           <CCardBody>
             <div className="d-flex justify-content-between align-items-center">
-              <CCardSubtitle className="mb-2 text-body-secondary" style={{ marginLeft: '3px' }}>Detail Lingkungan</CCardSubtitle>
+              <CCardSubtitle
+                className="mb-2 text-body-secondary"
+                style={{ marginLeft: "3px" }}
+              >
+                Detail Lingkungan
+              </CCardSubtitle>
               {!isSelf && (
                 <CButton
-                    color="danger"
-                    onClick={() => {handleDelete()}}
-                    style={{ fontSize: '16px', lineHeight: '1', padding: '0.375rem 0.75rem', borderRadius: '0.375rem', marginBottom:'9px', color: 'white', fontWeight: 'bold', transition: '0.3s' }}
+                  color="danger"
+                  onClick={() => {
+                    handleDelete();
+                  }}
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1",
+                    padding: "0.375rem 0.75rem",
+                    borderRadius: "0.375rem",
+                    marginBottom: "9px",
+                    color: "white",
+                    fontWeight: "bold",
+                    transition: "0.3s",
+                  }}
                 >
-                    Delete
+                  Delete
                 </CButton>
               )}
             </div>
@@ -448,58 +475,62 @@ const UserDetail = () => {
                 required
               />
 
-              <CButton
-                color="secondary"
-                onClick={handleBack}
-                className="me-2"
-                style={{
-                  width: "200px",
-                  height: "100%",
-                  fontSize: "0.9rem",
-                  padding: "10px 0",
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "5px",
-                  transition: "0.3s",
-                }}
-              >
-                Back
-              </CButton>
+              <CRow className="gy-3">
+                {/* Tombol Back */}
+                <CCol xs="12" md="4">
+                  <CButton
+                    color="secondary"
+                    onClick={handleBack}
+                    className="w-100"
+                    style={{
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Back
+                  </CButton>
+                </CCol>
 
-              {/* Tombol Edit */}
-              <CButton color="info" onClick={handleEdit} className="me-2"
-                style= {{
-                  width: '200px',
-                  height: '100%',
-                  fontSize: '0.9rem',
-                  padding: '10px 0',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  borderRadius: '5px',
-                  transition: '0.3s',
-                }}
-              >
-                Edit
-              </CButton>
+                {/* Tombol Edit */}
+                <CCol xs="12" md="4">
+                  <CButton
+                    color="info"
+                    onClick={handleEdit}
+                    className="w-100"
+                    style={{
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Edit
+                  </CButton>
+                </CCol>
 
-              {/* Tombol Submit */}
-              <CButton
-                color="primary"
-                type="submit"
-                disabled={!isEditable}
-                style={{
-                  width: "200px",
-                  height: "100%",
-                  fontSize: "0.9rem",
-                  padding: "10px 0",
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "5px",
-                  transition: "0.3s",
-                }}
-              >
-                Submit
-              </CButton>
+                {/* Tombol Submit */}
+                <CCol xs="12" md="4">
+                  <CButton
+                    color="primary"
+                    type="submit"
+                    disabled={!isEditable}
+                    className="w-100"
+                    style={{
+                      fontSize: "0.9rem",
+                      padding: "10px 0",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                      transition: "0.3s",
+                    }}
+                  >
+                    Submit
+                  </CButton>
+                </CCol>
+              </CRow>
             </CForm>
           </CCardBody>
         </>
