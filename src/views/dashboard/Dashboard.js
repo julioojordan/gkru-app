@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import WidgetsBrand from "../widgets/WidgetsBrand";
 import WidgetsDropdown from "../widgets/WidgetsDropdown";
 import services from "../../services";
+import { useAuth } from "../../hooks/useAuth";
 
 const Dashboard = () => {
   const [totalWealth, setTotalWealth] = useState(null);
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [totalKeluarga, setTotalKeluarga] = useState(null);
   const [totalWilayah, setTotalWilayah] = useState(null);
   const [totalLingkungan, setTotalLingkungan] = useState(null);
+  const { handleLogout } = useAuth();
   
   const [errors, setErrors] = useState({
     totalWealthError: false,
@@ -25,6 +27,12 @@ const Dashboard = () => {
   
   const [loading, setLoading] = useState(true);
 
+  const handleLogoutError = async (error) => {
+    if (error.response && error.response.status === 401) {
+      await handleLogout();
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,6 +41,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total wealth:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalWealthError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -41,6 +50,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total income:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalIncomeError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -49,6 +59,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total outcome:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalOutcomeError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -57,6 +68,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total Anggota:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalAnggotaError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -65,6 +77,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total Keluarga:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalKeluargaError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -73,6 +86,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total Lingkungan:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalLingkunganError: true }));
+        await handleLogoutError(error)
       }
 
       try {
@@ -81,6 +95,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching total Wilayah:", error);
         setErrors(prevErrors => ({ ...prevErrors, totalWilayahError: true }));
+        await handleLogoutError(error)
       }
 
       setLoading(false);

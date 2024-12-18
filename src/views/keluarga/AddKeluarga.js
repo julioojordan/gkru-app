@@ -14,6 +14,7 @@ import Select from "react-select";
 import services from "../../services";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
 const KeluargaDetail = () => {
   const {ketuaLingkungan, ketuaWilayah} = useSelector(state => state.auth);
@@ -38,6 +39,7 @@ const KeluargaDetail = () => {
   const [anggotaList, setAnggotaList] = useState([]);
   const [lingkungan, setLingkungan] = useState([]);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
+  const { handleLogout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +71,9 @@ const KeluargaDetail = () => {
         }
       } catch (error) {
         console.error("Error fetching Data:", error);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoading(false);
       }

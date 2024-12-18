@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import GeneralTables from "../base/tables/GeneralTables";
 import services from "../../services";
-import { CBadge } from '@coreui/react'
+import { CBadge } from "@coreui/react";
+import { useAuth } from "../../hooks/useAuth";
 
 const getBadge = (keterangan) => {
   return keterangan === "IN" ? (
@@ -15,26 +16,30 @@ const getBadge = (keterangan) => {
 const History = () => {
   const navigate = useNavigate();
   const [History, setHistory] = useState([]);
+  const { handleLogout } = useAuth();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const result = await services.HistoryService.getAllHistory();
-          setHistory(result);
-        } catch (error) {
-          console.error("Error fetching History:", error);
-          setError(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await services.HistoryService.getAllHistory();
+        setHistory(result);
+      } catch (error) {
+        console.error("Error fetching History:", error);
+        setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
         }
-        setLoading(false);
-      };
+      }
+      setLoading(false);
+    };
 
-      fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error fetching data.</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching data.</p>;
 
   const handleRowClick = (row) => {
     navigate(`/history/${row.Id}`);
@@ -55,7 +60,7 @@ const History = () => {
       name: "In Out",
       selector: (row) => row.Keterangan,
       sortable: true,
-      cell: row => getBadge(row.Keterangan),
+      cell: (row) => getBadge(row.Keterangan),
     },
     {
       name: "Sub Keterangan",

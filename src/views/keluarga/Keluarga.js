@@ -3,6 +3,7 @@ import ExpandableTables from "../base/tables/ExpandableTables";
 import services from "../../services";
 import { useNavigate  } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
 const Keluarga = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const Keluarga = () => {
   const [keluargaData, setKeluargaData] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+    const { handleLogout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +21,9 @@ const Keluarga = () => {
       } catch (error) {
         console.error("Error fetching Keluarga data:", error);
         setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       }
       setLoading(false);
     };

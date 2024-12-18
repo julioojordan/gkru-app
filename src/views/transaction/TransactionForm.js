@@ -1,31 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import {
-  CForm,
-  CFormInput,
-  CButton,
-  CFormSelect
-} from '@coreui/react';
-import Select from 'react-select';
-import Swal from 'sweetalert2';
-import services from '../../services';
-import { useAuth } from '../../hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import { CForm, CFormInput, CButton, CFormSelect } from "@coreui/react";
+import Select from "react-select";
+import Swal from "sweetalert2";
+import services from "../../services";
+import { useAuth } from "../../hooks/useAuth";
 
 const AddTHForm = () => {
   const { handleLogout } = useAuth();
-  const [nominal, setNominal] = useState('');
+  const [nominal, setNominal] = useState("");
   const [idKeluarga, setIdKeluarga] = useState(null);
-  const [keterangan, setKeterangan] = useState('');
-  const [idWilayah, setIdWilayah] = useState('');
-  const [idLingkungan, setIdLingkungan] = useState('');
-  const [namaWilayah, setNamaWilayah] = useState('');
-  const [namaLingkungan, setNamaLingkungan] = useState('');
-  const [subKeterangan, setSubKeterangan] = useState('');
+  const [keterangan, setKeterangan] = useState("");
+  const [idWilayah, setIdWilayah] = useState("");
+  const [idLingkungan, setIdLingkungan] = useState("");
+  const [namaWilayah, setNamaWilayah] = useState("");
+  const [namaLingkungan, setNamaLingkungan] = useState("");
+  const [subKeterangan, setSubKeterangan] = useState("");
   const [keluargaOptions, setKeluargaOptions] = useState([]);
   const [keluarga, setKeluarga] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bulanOptions, setBulanOptions] = useState([]);
   const [selectedBulan, setSelectedBulan] = useState([]);
   const [fileBukti, setFileBukti] = useState(null);
+  const [error, setError] = useState(false);
   const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB
   const VALID_FORMATS = ["image/jpeg", "image/png", "image/webp"];
   const CURRENT_YEAR = new Date().getFullYear();
@@ -33,7 +29,9 @@ const AddTHForm = () => {
   // Define months
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: i + 1,
-    label: new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(new Date(2024, i))
+    label: new Intl.DateTimeFormat("id-ID", { month: "long" }).format(
+      new Date(2024, i)
+    ),
   }));
 
   useEffect(() => {
@@ -41,13 +39,14 @@ const AddTHForm = () => {
       setLoading(true);
       try {
         const keluargaData = await services.KeluargaService.getAllKeluarga();
-        setKeluarga(keluargaData)
-        const formattedOptions = keluargaData.map(option => ({
+        setKeluarga(keluargaData);
+        const formattedOptions = keluargaData.map((option) => ({
           value: option.Id,
           label: `Keluarga ${option.KepalaKeluarga.NamaLengkap} - ${option.Nomor}`,
         }));
         setKeluargaOptions(formattedOptions);
       } catch (error) {
+        setError(true)
         if (error.response && error.response.status === 401) {
           await handleLogout();
         }
@@ -62,17 +61,25 @@ const AddTHForm = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       // TO DO add loading terpisah kah untuk ini atau set loading whole page aja ??
-      if (keterangan === 'IN' && idKeluarga && year) {
+      if (keterangan === "IN" && idKeluarga && year) {
         try {
-          const response = await services.HistoryService.getAllHistoryWithIdKeluarga(idKeluarga.value, year);
-          if (response){ // handle misalkan keluaga sudah pernah bayar
-            const existingMonths = response.map(item => item.Bulan);
-            const availableMonths = months.filter(month => !existingMonths.includes(month.value));
+          const response =
+            await services.HistoryService.getAllHistoryWithIdKeluarga(
+              idKeluarga.value,
+              year
+            );
+          if (response) {
+            // handle misalkan keluaga sudah pernah bayar
+            const existingMonths = response.map((item) => item.Bulan);
+            const availableMonths = months.filter(
+              (month) => !existingMonths.includes(month.value)
+            );
             setBulanOptions(availableMonths);
-          }else{
+          } else {
             setBulanOptions(months);
           }
         } catch (error) {
+          setError(true)
           if (error.response && error.response.status === 401) {
             await handleLogout();
           }
@@ -83,19 +90,24 @@ const AddTHForm = () => {
     fetchHistory();
   }, [keterangan, idKeluarga, year]);
 
+  
+  if (error) return <p>Error fetching data.</p>;
+
   const handleKeluargaChange = (selectedOption) => {
     setIdKeluarga(selectedOption);
-    const selectedKeluarga = keluarga.find(option => option.Id === selectedOption.value);
+    const selectedKeluarga = keluarga.find(
+      (option) => option.Id === selectedOption.value
+    );
     if (selectedKeluarga) {
-      setIdWilayah(selectedKeluarga.Wilayah.Id); 
+      setIdWilayah(selectedKeluarga.Wilayah.Id);
       setIdLingkungan(selectedKeluarga.Lingkungan.Id);
-      setNamaWilayah(selectedKeluarga.Wilayah.NamaWilayah); 
+      setNamaWilayah(selectedKeluarga.Wilayah.NamaWilayah);
       setNamaLingkungan(selectedKeluarga.Lingkungan.NamaLingkungan);
     } else {
-      setIdWilayah('');
-      setIdLingkungan('');
-      setNamaWilayah('');
-      setNamaLingkungan('');
+      setIdWilayah("");
+      setIdLingkungan("");
+      setNamaWilayah("");
+      setNamaLingkungan("");
     }
   };
 
@@ -111,7 +123,7 @@ const AddTHForm = () => {
         });
         return;
       }
-  
+
       // Cek format file
       if (!VALID_FORMATS.includes(file.type)) {
         Swal.fire({
@@ -121,7 +133,7 @@ const AddTHForm = () => {
         });
         return;
       }
-  
+
       setFileBukti(file); // Jika valid
     }
   };
@@ -130,7 +142,7 @@ const AddTHForm = () => {
     e.preventDefault();
     const createdBy = 1;
     const createdDate = new Date().toISOString();
-    
+
     let data = {
       Nominal: parseInt(nominal, 10),
       Keterangan: keterangan,
@@ -139,27 +151,27 @@ const AddTHForm = () => {
       IdLingkungan: parseInt(idLingkungan, 10),
       SubKeterangan: subKeterangan,
       CreatedDate: createdDate,
-      Tahun: year
+      Tahun: year,
     };
 
     if (fileBukti) {
       data.FileBukti = fileBukti;
     }
 
-    if (keterangan === 'IN') {
+    if (keterangan === "IN") {
       const totalBulan = selectedBulan.length;
       const nominalPerBulan = Math.floor(parseInt(nominal, 10) / totalBulan);
 
       if (totalBulan * 10000 < parseInt(nominal, 10)) {
-        const deficiency = parseInt(nominal, 10)/10000 - totalBulan;
+        const deficiency = parseInt(nominal, 10) / 10000 - totalBulan;
         await Swal.fire({
-            title: 'Error!',
-            text: `Jumlah bulan yang dipilih kurang ${deficiency} bulan`,
-            icon: 'error',
+          title: "Error!",
+          text: `Jumlah bulan yang dipilih kurang ${deficiency} bulan`,
+          icon: "error",
         });
         return; // Hentikan eksekusi lebih lanjut
       }
-      const requests = selectedBulan.map(bulan => ({
+      const requests = selectedBulan.map((bulan) => ({
         ...data,
         Nominal: nominalPerBulan,
         IdKeluarga: parseInt(idKeluarga.value, 10),
@@ -168,12 +180,12 @@ const AddTHForm = () => {
 
       try {
         const loadingAlert = Swal.fire({
-          title: 'Loading...',
-          text: 'Please wait...',
+          title: "Loading...",
+          text: "Please wait...",
           allowOutsideClick: false,
           onBeforeOpen: () => {
             Swal.showLoading();
-          }
+          },
         });
 
         for (const request of requests) {
@@ -181,11 +193,10 @@ const AddTHForm = () => {
         }
 
         await Swal.fire({
-          title: 'Success!',
-          text: 'Data has been added successfully.',
-          icon: 'success',
+          title: "Success!",
+          text: "Data has been added successfully.",
+          icon: "success",
         });
-
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await handleLogout();
@@ -203,22 +214,21 @@ const AddTHForm = () => {
       // Handle OUT case
       try {
         const loadingAlert = Swal.fire({
-          title: 'Loading...',
-          text: 'Please wait...',
+          title: "Loading...",
+          text: "Please wait...",
           allowOutsideClick: false,
           onBeforeOpen: () => {
             Swal.showLoading();
-          }
+          },
         });
 
         await services.HistoryService.addHistory(data);
-        
-        await Swal.fire({
-          title: 'Success!',
-          text: 'Data has been added successfully.',
-          icon: 'success',
-        });
 
+        await Swal.fire({
+          title: "Success!",
+          text: "Data has been added successfully.",
+          icon: "success",
+        });
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await handleLogout();
@@ -235,14 +245,14 @@ const AddTHForm = () => {
     }
 
     // Reset form after submission
-    setNominal('');
+    setNominal("");
     setIdKeluarga(null);
-    setKeterangan('');
-    setIdWilayah('');
-    setIdLingkungan('');
-    setNamaWilayah('');
-    setNamaLingkungan('');
-    setSubKeterangan('');
+    setKeterangan("");
+    setIdWilayah("");
+    setIdLingkungan("");
+    setNamaWilayah("");
+    setNamaLingkungan("");
+    setSubKeterangan("");
     setSelectedBulan([]);
     setFileBukti(null);
   };
@@ -274,15 +284,15 @@ const AddTHForm = () => {
             styles={{
               container: (base) => ({
                 ...base,
-                width: '100%',
-                marginBottom: '1rem',
+                width: "100%",
+                marginBottom: "1rem",
               }),
               control: (base) => ({
                 ...base,
-                backgroundColor: 'white',
-                borderColor: '#ced4da',
-                borderWidth: '1px',
-                borderRadius: '0.375rem',
+                backgroundColor: "white",
+                borderColor: "#ced4da",
+                borderWidth: "1px",
+                borderRadius: "0.375rem",
               }),
               menu: (base) => ({
                 ...base,
@@ -329,7 +339,7 @@ const AddTHForm = () => {
             <option value="OUT">OUT</option>
           </CFormSelect>
 
-          {keterangan === 'IN' && (
+          {keterangan === "IN" && (
             <>
               <CFormSelect
                 id="tahun"
@@ -340,22 +350,22 @@ const AddTHForm = () => {
                 floatingLabel="Tahun"
               >
                 <option value="">Select Tahun</option>
-                <option value={CURRENT_YEAR-2}>{CURRENT_YEAR-2}</option>
-                <option value={CURRENT_YEAR-1}>{CURRENT_YEAR-1}</option>
+                <option value={CURRENT_YEAR - 2}>{CURRENT_YEAR - 2}</option>
+                <option value={CURRENT_YEAR - 1}>{CURRENT_YEAR - 1}</option>
                 <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
-                <option value={CURRENT_YEAR+1}>{CURRENT_YEAR+1}</option>
-                <option value={CURRENT_YEAR+2}>{CURRENT_YEAR+2}</option>
+                <option value={CURRENT_YEAR + 1}>{CURRENT_YEAR + 1}</option>
+                <option value={CURRENT_YEAR + 2}>{CURRENT_YEAR + 2}</option>
               </CFormSelect>
               <Select
                 options={bulanOptions}
                 value={selectedBulan}
                 onChange={(selected) => {
-                  const maxSelection = nominal/10000
+                  const maxSelection = nominal / 10000;
                   if (selected.length > maxSelection) {
                     Swal.fire({
-                      title: 'Warning!',
+                      title: "Warning!",
                       text: `Anda hanya bisa memilih maksimal ${maxSelection} bulan.`,
-                      icon: 'warning',
+                      icon: "warning",
                     });
                     return;
                   }
@@ -367,15 +377,15 @@ const AddTHForm = () => {
                 styles={{
                   container: (base) => ({
                     ...base,
-                    width: '100%',
-                    marginBottom: '1rem',
+                    width: "100%",
+                    marginBottom: "1rem",
                   }),
                   control: (base) => ({
                     ...base,
-                    backgroundColor: 'white',
-                    borderColor: '#ced4da',
-                    borderWidth: '1px',
-                    borderRadius: '0.375rem',
+                    backgroundColor: "white",
+                    borderColor: "#ced4da",
+                    borderWidth: "1px",
+                    borderRadius: "0.375rem",
                   }),
                   menu: (base) => ({
                     ...base,
@@ -407,7 +417,9 @@ const AddTHForm = () => {
             floatingLabel="File Bukti (Optional)"
           />
 
-          <CButton type="submit" color="primary">Submit</CButton>
+          <CButton type="submit" color="primary">
+            Submit
+          </CButton>
         </>
       )}
     </CForm>

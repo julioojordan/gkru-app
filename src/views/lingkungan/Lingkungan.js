@@ -3,6 +3,7 @@ import GeneralTables from "../base/tables/GeneralTables";
 import services from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
 const Lingkungan = () => {
   const [lingkungan, setLingkungan] = useState([]);
@@ -10,6 +11,7 @@ const Lingkungan = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const roleRedux = useSelector((state) => state.role.role);
+  const { handleLogout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +21,9 @@ const Lingkungan = () => {
       } catch (error) {
         console.error("Error fetching lingkungan:", error);
         setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       }
       setLoading(false);
     };
@@ -32,7 +37,9 @@ const Lingkungan = () => {
   // to make wilayah clickable
   const handleCellClick = (row) => {
     if (row.Wilayah && row.Wilayah.Id) {
-      navigate(`/wilayah/${row.Wilayah.Id}`, { state: { wilayah: row.Wilayah } });
+      navigate(`/wilayah/${row.Wilayah.Id}`, {
+        state: { wilayah: row.Wilayah },
+      });
     }
   };
 
@@ -45,30 +52,32 @@ const Lingkungan = () => {
     navigate("/lingkungan/add");
   };
 
-  const navigateContext = [Add_Lingkungan]
+  const navigateContext = [Add_Lingkungan];
 
   const columns = [
     {
-        name: 'No',
-        selector: (row, index) => index + 1,
-        width: '60px',
+      name: "No",
+      selector: (row, index) => index + 1,
+      width: "60px",
     },
     {
-      name: 'Kode Lingkungan',
-      selector: row => row.KodeLingkungan,
+      name: "Kode Lingkungan",
+      selector: (row) => row.KodeLingkungan,
       sortable: true,
     },
     {
-      name: 'Nama Lingkungan',
-      selector: row => row.NamaLingkungan,
+      name: "Nama Lingkungan",
+      selector: (row) => row.NamaLingkungan,
       sortable: true,
     },
     {
-      name: 'Wilayah',
+      name: "Wilayah",
       cell: (row) => (
         <span
-          onClick={roleRedux === 'admin' ? () => handleCellClick(row) : () => {}}
-          style={{ cursor: 'pointer' }}
+          onClick={
+            roleRedux === "admin" ? () => handleCellClick(row) : () => {}
+          }
+          style={{ cursor: "pointer" }}
         >
           {row.Wilayah?.NamaWilayah}
         </span>
@@ -81,9 +90,9 @@ const Lingkungan = () => {
     <GeneralTables
       columns={columns}
       rows={lingkungan}
-      filterKeys={['KodeLingkungan', 'NamaLingkungan']}
-      onRowClicked={roleRedux === 'admin' ? handleRowClick : () => {}}
-      navigateContext={roleRedux === 'admin' ? navigateContext : []}
+      filterKeys={["KodeLingkungan", "NamaLingkungan"]}
+      onRowClicked={roleRedux === "admin" ? handleRowClick : () => {}}
+      navigateContext={roleRedux === "admin" ? navigateContext : []}
     />
   );
 };

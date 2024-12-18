@@ -12,6 +12,7 @@ import services from "../../services";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import Select from "react-select";
+import { useAuth } from "../../hooks/useAuth";
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -27,6 +28,8 @@ const AddUser = () => {
   const [isKetuaWilayah, setIsKetuaWilayah] = useState(false);
   const [isKetuaLingkungan, setIsKetuaLingkungan] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { handleLogout } = useAuth();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (authRedux) {
@@ -34,7 +37,7 @@ const AddUser = () => {
         Username: "",
         Lingkungan: "",
         Wilayah: "",
-        Password: ""
+        Password: "",
       };
       setFormData(data);
     }
@@ -60,6 +63,10 @@ const AddUser = () => {
         setLingkunganOptions(options2);
       } catch (error) {
         console.error("Error fetching wilayah & lingkungan:", error);
+        setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoading(false);
       }
@@ -67,6 +74,8 @@ const AddUser = () => {
 
     fetchWilayah();
   }, []);
+
+  if (error) return <p>Error fetching data.</p>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,12 +94,13 @@ const AddUser = () => {
 
   const handleSelectLingkunganChange = (selectedOption) => {
     if (!selectedOption) return;
-    const idWilayah = lingkungan ? lingkungan
-      .find( (item) => item.Id === selectedOption.value).Wilayah.Id : ""
+    const idWilayah = lingkungan
+      ? lingkungan.find((item) => item.Id === selectedOption.value).Wilayah.Id
+      : "";
     setFormData((prevData) => ({
       ...prevData,
       Lingkungan: selectedOption ? selectedOption.value : "", // Menyimpan value yang dipilih
-      Wilayah: idWilayah
+      Wilayah: idWilayah,
     }));
   };
 
@@ -100,9 +110,9 @@ const AddUser = () => {
 
   const handleTypeChange = (event) => {
     setFormData((prevData) => ({
-        ...prevData,
-        Wilayah: "",
-        Lingkungan: "",
+      ...prevData,
+      Wilayah: "",
+      Lingkungan: "",
     }));
     const selectedRole = event.target.value;
     setCurrentRole(selectedRole);
@@ -116,21 +126,21 @@ const AddUser = () => {
   };
 
   const handleIsKetuaLingkungan = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(true);
     setIsKetuaWilayah(false);
     setIsAdmin(false);
   };
 
   const handleIsKetuaWilayah = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(false);
     setIsKetuaWilayah(true);
     setIsAdmin(false);
   };
 
   const handleIsAdmin = (selectedRole) => {
-    setCurrentRole(selectedRole)
+    setCurrentRole(selectedRole);
     setIsKetuaLingkungan(false);
     setIsKetuaWilayah(false);
     setIsAdmin(true);
@@ -152,9 +162,10 @@ const AddUser = () => {
         Username: formData.Username,
         Password: formData.Password,
         KetuaLingkungan: !isKetuaLingkungan ? 0 : formData.Lingkungan,
-        KetuaWilayah: isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
+        KetuaWilayah:
+          isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
         UpdatedBy: authRedux.id,
-        CreatedBy: authRedux.id
+        CreatedBy: authRedux.id,
       };
       const response = await services.UserService.addUser(data);
       await Swal.fire({
@@ -162,7 +173,7 @@ const AddUser = () => {
         text: "Data has been Added successfully.",
         icon: "success",
       }).then(() => {
-        navigate(`/user`)
+        navigate(`/user`);
       });
     } catch (error) {
       await Swal.fire({

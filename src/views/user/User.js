@@ -3,10 +3,12 @@ import GeneralTables from "../base/tables/GeneralTables";
 import services from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
 const User = () => {
   const [User, setUser] = useState([]);
   const [error, setError] = useState(false);
+  const { handleLogout } = useAuth();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const authRedux = useSelector((state) => state.auth);
@@ -19,6 +21,9 @@ const User = () => {
       } catch (error) {
         console.error("Error fetching User:", error);
         setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       }
       setLoading(false);
     };
@@ -31,39 +36,39 @@ const User = () => {
   };
 
   const handleRowClick = (row) => {
-    const isSelf = authRedux.id == row.Id ? true : false
+    const isSelf = authRedux.id == row.Id ? true : false;
     navigate(`/user/${row.Id}`, { state: { isSelf, row } });
   };
 
-  const navigateContext = [Add_User]
+  const navigateContext = [Add_User];
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data.</p>;
 
   const columns = [
     {
-        name: 'No',
-        selector: (row, index) => index + 1,
-        width: '60px',
+      name: "No",
+      selector: (row, index) => index + 1,
+      width: "60px",
     },
     {
-      name: 'Id',
-      selector: row => row.Id,
+      name: "Id",
+      selector: (row) => row.Id,
       sortable: true,
     },
     {
-      name: 'Username',
-      selector: row => row.Username,
+      name: "Username",
+      selector: (row) => row.Username,
       sortable: true,
     },
     {
-      name: 'Ketua Lingkungan',
-      selector: row => row.KetuaLingkungan,
+      name: "Ketua Lingkungan",
+      selector: (row) => row.KetuaLingkungan,
       sortable: true,
     },
     {
-      name: 'Ketua Wilayah',
-      selector: row => row.KetuaWilayah,
+      name: "Ketua Wilayah",
+      selector: (row) => row.KetuaWilayah,
       sortable: true,
     },
   ];
@@ -72,7 +77,7 @@ const User = () => {
     <GeneralTables
       columns={columns}
       rows={User}
-      filterKeys={['Id', 'Username', 'KetuaLingkungan', 'KetuaWilayah']}
+      filterKeys={["Id", "Username", "KetuaLingkungan", "KetuaWilayah"]}
       navigateContext={navigateContext}
       onRowClicked={handleRowClick}
     />

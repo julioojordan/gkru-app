@@ -85,11 +85,15 @@ const WilayahDetail = () => {
         );
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Gagal!',
-        text: 'Terjadi kesalahan saat menghapus data.',
-        icon: 'error',
-      });
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
+        Swal.fire({
+          title: 'Gagal!',
+          text: 'Terjadi kesalahan saat menghapus data.',
+          icon: 'error',
+        });
+      }
     }
   }
 

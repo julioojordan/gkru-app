@@ -3,6 +3,7 @@ import GeneralTables from "../base/tables/GeneralTables";
 import services from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
 const Wilayah = () => {
   const [wilayah, setWilayah] = useState([]);
@@ -10,6 +11,7 @@ const Wilayah = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const roleRedux = useSelector((state) => state.role.role);
+    const { handleLogout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +21,9 @@ const Wilayah = () => {
       } catch (error) {
         console.error("Error fetching wilayah:", error);
         setError(true);
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       }
       setLoading(false);
     };
