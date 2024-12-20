@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
-  MDBBtn,
   MDBContainer,
   MDBRow,
   MDBCol,
@@ -10,10 +9,11 @@ import {
   MDBInput,
   MDBCheckbox,
 } from "mdb-react-ui-kit";
+import { CButton, CRow, CCol } from "@coreui/react";
 import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useCookies } from 'react-cookie';
+import { useCookies } from "react-cookie";
 import { login, setRole } from "../actions";
 import services from "../services";
 import Swal from "sweetalert2";
@@ -21,7 +21,7 @@ import Swal from "sweetalert2";
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [, setCookie] = useCookies(['auth_token']);
+  const [, setCookie] = useCookies(["auth_token"]);
 
   const {
     register,
@@ -31,13 +31,13 @@ function Login() {
 
   const getRole = (data) => {
     if (data.ketuaLingkungan === 0 && data.ketuaWilayah === 0) {
-      return 'admin';
+      return "admin";
     }
     if (data.ketuaLingkungan !== 0 && data.ketuaWilayah !== 0) {
-      return 'ketuaLingkungan';
+      return "ketuaLingkungan";
     }
     if (data.ketuaLingkungan === 0 && data.ketuaWilayah !== 0) {
-      return 'ketuaWilayah';
+      return "ketuaWilayah";
     }
   };
 
@@ -46,21 +46,29 @@ function Login() {
     const expiryDate = new Date(Date.now() + oneDay);
 
     try {
-      const { data } = await services.LoginService(formValue.username, formValue.password);
-      setCookie('auth_token', data.auth, { path: '/', expires: expiryDate });
-      dispatch(login({
-        authToken: data.auth,
-        id: data.id,
-        username: data.username,
-        ketuaLingkungan: data.ketuaLingkungan,
-        ketuaWilayah: data.ketuaWilayah,
-      }));
+      const { data } = await services.LoginService(
+        formValue.username,
+        formValue.password
+      );
+      setCookie("auth_token", data.auth, { path: "/", expires: expiryDate });
+      dispatch(
+        login({
+          authToken: data.auth,
+          id: data.id,
+          username: data.username,
+          ketuaLingkungan: data.ketuaLingkungan,
+          ketuaWilayah: data.ketuaWilayah,
+        })
+      );
       dispatch(setRole(getRole(data)));
       navigate("/dashboard");
     } catch (error) {
       console.error("Login Error:", error);
 
-      if (error.response && error.response.data.message === "user tidak ditemukan") {
+      if (
+        error.response &&
+        error.response.data.message === "user tidak ditemukan"
+      ) {
         await Swal.fire({
           title: "Login Gagal",
           text: "User tidak ditemukan. Silakan periksa kembali username dan password Anda.",
@@ -92,6 +100,9 @@ function Login() {
                 Please enter your username and password!
               </p>
               <Form onSubmit={handleSubmit(auth)}>
+                {errors.username && (
+                  <span style={{ color: "red" }}>Username diperlukan</span>
+                )}
                 <MDBInput
                   wrapperClass="mb-4 w-100"
                   label="Username"
@@ -99,7 +110,9 @@ function Login() {
                   size="lg"
                   {...register("username", { required: true })}
                 />
-                {errors.username && <span>This field is required</span>}
+                {errors.password && (
+                  <span style={{ color: "red" }}>Password Diperlukan</span>
+                )}
                 <MDBInput
                   wrapperClass="mb-4 w-100"
                   label="Password"
@@ -108,16 +121,19 @@ function Login() {
                   size="lg"
                   {...register("password", { required: true })}
                 />
-                {errors.password && <span>This field is required</span>}
                 <MDBCheckbox
                   name="flexCheck"
                   id="flexCheckDefault"
                   className="mb-4"
                   label="Remember password"
                 />
-                <MDBBtn size="lg" type="submit" className="w-100">
-                  Login
-                </MDBBtn>
+                <CRow className="gy-3 justify-content-center">
+                  <CCol xs="12" md="12" xl="12">
+                    <CButton type="submit" color="primary" className="w-100">
+                      Submit
+                    </CButton>
+                  </CCol>
+                </CRow>
               </Form>
               <hr className="my-4" />
             </MDBCardBody>
