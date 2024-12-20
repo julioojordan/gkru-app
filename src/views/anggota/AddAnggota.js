@@ -62,8 +62,8 @@ const AddAnggota = () => {
       title: "Loading...",
       text: "Please wait...",
       allowOutsideClick: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
+      didOpen: () => {
+        Swal.showLoading(); // Pindahkan showLoading ke didOpen untuk konsistensi
       },
     });
 
