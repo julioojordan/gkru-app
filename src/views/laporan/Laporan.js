@@ -199,7 +199,7 @@ const transformedData = (data) =>
 
 // Style untuk PDF
 const styles = StyleSheet.create({
-  page: { padding: 30, flexDirection: "column", backgroundColor: "#FFFFFF" },
+  page: { padding: 10, flexDirection: "column", backgroundColor: "#FFFFFF" },
   header: { marginBottom: 2, textAlign: "center", fontSize: 12 },
   title: { fontSize: 14, fontWeight: "bold", marginBottom: 5 },
   table: { display: "table", width: "100%", marginTop: 10 },
@@ -281,7 +281,7 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
       {/* Header */}
       <View>
         <Text style={styles.header}>Paroki Kristus Raja Ungaran</Text>
-        <Text style={styles.header}>{`Lingkungan ${lingkungan}`}</Text>
+        <Text style={styles.header}>{lingkungan}</Text>
         <Text style={styles.header}>Rincian Penerimaan Iuran</Text>
         <Text style={styles.header}>Tahun {year}</Text>
       </View>
