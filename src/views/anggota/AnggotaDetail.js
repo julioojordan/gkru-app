@@ -9,7 +9,7 @@ import {
   CFormSelect,
   CCardSubtitle,
   CRow,
-  CCol
+  CCol,
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -37,6 +37,7 @@ const AnggotaDetail = () => {
     Hubungan: "",
     IdKeluarga: "",
     IsKepalaKeluarga: "",
+    NoTelp: "",
   });
 
   const [initialFormData, setInitialFormData] = useState({});
@@ -66,6 +67,7 @@ const AnggotaDetail = () => {
         TanggalBaptis: data.anggota.TanggalBaptis.split("T")[0],
         Keterangan: data.anggota.Keterangan,
         Status: data.anggota.Status,
+        NoTelp: data.anggota.NoTelp,
         JenisKelamin: data.anggota.JenisKelamin,
         IdKeluarga: data.keluarga.Id,
         IsKepalaKeluarga: data.isKepalaKeluarga,
@@ -344,6 +346,17 @@ const AnggotaDetail = () => {
                 className="mb-3"
               />
 
+              <CFormInput
+                type="text"
+                id="noTelp"
+                floatingLabel="No Telp"
+                name="NoTelp"
+                value={formData.NoTelp}
+                onChange={handleChange}
+                disabled={!isEditable}
+                className="mb-3"
+              />
+
               {/* Input Tanggal Lahir */}
               <CFormInput
                 type="date"
@@ -417,7 +430,6 @@ const AnggotaDetail = () => {
                 <option value="HIDUP">Hidup</option>
                 <option value="MENINGGAL">Meninggal</option>
               </CFormSelect>
-              
               <CRow className="gy-3">
                 {/* Tombol Back */}
                 <CCol xs="12" md="4">

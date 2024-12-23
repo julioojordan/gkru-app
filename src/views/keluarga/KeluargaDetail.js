@@ -595,6 +595,7 @@ const KeluargaDetail = () => {
               <CTableRow>
                 <CTableHeaderCell>No</CTableHeaderCell>
                 <CTableHeaderCell>Nama Anggota</CTableHeaderCell>
+                <CTableHeaderCell>No Telp</CTableHeaderCell>
                 <CTableHeaderCell>Tanggal Lahir</CTableHeaderCell>
                 <CTableHeaderCell>Tanggal Baptis</CTableHeaderCell>
                 <CTableHeaderCell>Keterangan</CTableHeaderCell>
@@ -622,6 +623,7 @@ const KeluargaDetail = () => {
                     >
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
+                      <CTableDataCell>{anggota.NoTelp}</CTableDataCell>
                       <CTableDataCell>
                         {anggota.TanggalLahir.slice(0, 10)}
                       </CTableDataCell>

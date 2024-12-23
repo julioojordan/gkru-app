@@ -30,8 +30,10 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     JenisKelamin: "",
     Nomor: "",
+    Status:"HIDUP",
     Keterangan: "Kepala Keluarga",
     Hubungan: "Kepala Keluarga",
+    NoTelp: "",
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -115,6 +117,7 @@ const KeluargaDetail = () => {
         keterangan: "",
         jenisKelamin: "",
         status: "",
+        noTelp: "",
       },
     ]);
     setIsWithAnggota(true);
@@ -292,35 +295,29 @@ const KeluargaDetail = () => {
                   >
                     Kepala Keluarga
                   </CCardSubtitle>
+                  {/* Baris Pertama */}
                   <CRow>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                    <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                       <CFormInput
                         type="text"
                         name="NamaKepalaKeluarga"
                         floatingLabel="Nama Lengkap"
+                        required
                         onChange={handleChange}
                         value={formData.NamaKepalaKeluarga}
                       />
                     </CCol>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                    <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                       <CFormInput
-                        type="date"
-                        name="TanggalLahir"
-                        floatingLabel="Tanggal Lahir"
+                        type="text"
+                        name="NoTelp"
+                        floatingLabel="No Telepon"
+                        required
                         onChange={handleChange}
-                        value={formData.TanggalLahir}
+                        value={formData.NoTelp}
                       />
                     </CCol>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                      <CFormInput
-                        type="date"
-                        name="TanggalBaptis"
-                        floatingLabel="Tanggal Baptis"
-                        onChange={handleChange}
-                        value={formData.TanggalBaptis}
-                      />
-                    </CCol>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                    <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                       <CFormInput
                         type="text"
                         name="Keterangan"
@@ -329,7 +326,31 @@ const KeluargaDetail = () => {
                         disabled
                       />
                     </CCol>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                  </CRow>
+
+                  {/* Baris Kedua */}
+                  <CRow className="mt-3">
+                    <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
+                      <CFormInput
+                        type="date"
+                        name="TanggalLahir"
+                        floatingLabel="Tanggal Lahir"
+                        onChange={handleChange}
+                        required
+                        value={formData.TanggalLahir}
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
+                      <CFormInput
+                        type="date"
+                        name="TanggalBaptis"
+                        floatingLabel="Tanggal Baptis"
+                        onChange={handleChange}
+                        required
+                        value={formData.TanggalBaptis}
+                      />
+                    </CCol>
+                    <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                       <CFormSelect
                         id="jenisKelamin"
                         name="JenisKelamin"
@@ -344,13 +365,14 @@ const KeluargaDetail = () => {
                         <option value="P">Perempuan</option>
                       </CFormSelect>
                     </CCol>
-                    <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                    <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                       <CFormSelect
                         id="status"
                         name="Status"
                         value={formData.Status}
                         onChange={handleChange}
                         required
+                        disabled
                         floatingClassName="mb-3"
                         floatingLabel="Status"
                       >
@@ -374,7 +396,9 @@ const KeluargaDetail = () => {
                         <CCardSubtitle
                           className="mb-2 text-body-secondary"
                           style={{ marginLeft: "3px" }}
-                        >{`Anggota ${index + 1}`}</CCardSubtitle>
+                        >
+                          {`Anggota ${index + 1}`}
+                        </CCardSubtitle>
                         <CButton
                           color="danger"
                           onClick={() => handleRemoveAnggota(index)}
@@ -392,40 +416,36 @@ const KeluargaDetail = () => {
                           &times;
                         </CButton>
                       </div>
+
+                      {/* Baris Pertama */}
                       <CRow>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                        <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                           <CFormInput
                             type="text"
                             name="namaLengkap"
                             floatingLabel="Nama Lengkap"
+                            required
                             value={anggota.namaLengkap}
                             onChange={(e) => handleAnggotaChange(e, index)}
                           />
                         </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                        <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                           <CFormInput
-                            type="date"
-                            name="tanggalLahir"
-                            floatingLabel="Tanggal Lahir"
-                            value={anggota.tanggalLahir}
+                            type="text"
+                            name="noTelp"
+                            floatingLabel="No Telepon"
+                            required
+                            value={anggota.noTelp}
                             onChange={(e) => handleAnggotaChange(e, index)}
                           />
                         </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
-                          <CFormInput
-                            type="date"
-                            name="tanggalBaptis"
-                            floatingLabel="Tanggal Baptis"
-                            value={anggota.tanggalBaptis}
-                            onChange={(e) => handleAnggotaChange(e, index)}
-                          />
-                        </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                        <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
                           <CFormSelect
                             id="keterangan"
                             name="keterangan"
-                            value={anggota.Keterangan}
+                            value={anggota.keterangan}
                             onChange={(e) => handleAnggotaChange(e, index)}
+                            required
                             floatingClassName="mb-3"
                             floatingLabel="Keterangan"
                           >
@@ -435,7 +455,31 @@ const KeluargaDetail = () => {
                             <option value="Anggota">Anggota</option>
                           </CFormSelect>
                         </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                      </CRow>
+
+                      {/* Baris Kedua */}
+                      <CRow className="mt-3">
+                        <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
+                          <CFormInput
+                            type="date"
+                            name="tanggalLahir"
+                            floatingLabel="Tanggal Lahir"
+                            required
+                            value={anggota.tanggalLahir}
+                            onChange={(e) => handleAnggotaChange(e, index)}
+                          />
+                        </CCol>
+                        <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
+                          <CFormInput
+                            type="date"
+                            name="tanggalBaptis"
+                            floatingLabel="Tanggal Baptis"
+                            required
+                            value={anggota.tanggalBaptis}
+                            onChange={(e) => handleAnggotaChange(e, index)}
+                          />
+                        </CCol>
+                        <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                           <CFormSelect
                             id="jenisKelaminAnggota"
                             name="jenisKelamin"
@@ -450,7 +494,7 @@ const KeluargaDetail = () => {
                             <option value="P">Perempuan</option>
                           </CFormSelect>
                         </CCol>
-                        <CCol xs={12} sm={12} md={12} lg={2} xl={2}>
+                        <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                           <CFormSelect
                             id="anggotaStatus"
                             name="status"

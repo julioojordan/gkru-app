@@ -183,6 +183,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                   <CTableRow>
                     <CTableHeaderCell>No</CTableHeaderCell>
                     <CTableHeaderCell>Nama Anggota</CTableHeaderCell>
+                    <CTableHeaderCell>No Telp</CTableHeaderCell>
                     <CTableHeaderCell>Jenis Kelamin</CTableHeaderCell>
                     <CTableHeaderCell>Tanggal Lahir</CTableHeaderCell>
                     <CTableHeaderCell>Keterangan</CTableHeaderCell>
@@ -203,6 +204,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                     >
                       <CTableDataCell>1</CTableDataCell>
                       <CTableDataCell>{data.KepalaKeluarga.NamaLengkap}</CTableDataCell>
+                      <CTableDataCell>{data.KepalaKeluarga.NoTelp}</CTableDataCell>
                       <CTableDataCell>
                         {data.KepalaKeluarga.JenisKelamin === 'P' ? 'Perempuan' : data.KepalaKeluarga.JenisKelamin === 'L' ? 'Laki-Laki' : 'Tidak Diketahui'}
                       </CTableDataCell>
@@ -234,6 +236,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                         >
                           <CTableDataCell>{index + 2}</CTableDataCell>
                           <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
+                          <CTableDataCell>{anggota.NoTelp}</CTableDataCell>
                           <CTableDataCell>
                             {anggota.JenisKelamin === 'P' ? 'Perempuan' : anggota.JenisKelamin === 'L' ? 'Laki-Laki' : 'Tidak Diketahui'}
                           </CTableDataCell>
