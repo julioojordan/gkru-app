@@ -48,7 +48,6 @@ const KeluargaDetail = () => {
       setLoading(true);
       try {
         const response = await services.LingkunganService.getAllLingkungan();
-        console.log({ response });
         const filteredResponse =
           role === "ketuaWilayah" && ketuaWilayah !== 0
             ? response.filter(
