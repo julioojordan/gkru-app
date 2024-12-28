@@ -59,7 +59,8 @@ const updateKeluarga = async (formData) => {
     Alamat: formData.Alamat,
     Status: formData.Status,
     IdKepalaKeluarga: formData.KepalaKeluarga,
-    OldIdKepalaKeluarga: formData.oldKepalaKeluarga
+    OldIdKepalaKeluarga: formData.oldKepalaKeluarga,
+    NomorKKGereja: formData.NomorKKGereja
   };
   const url = `/keluarga/${formData.IdKeluarga}/update`;
   try {

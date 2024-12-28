@@ -30,12 +30,12 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     JenisKelamin: "",
     Nomor: "",
-    Status:"HIDUP",
+    NomorKKGereja: "",
+    Status: "HIDUP",
     Keterangan: "Kepala Keluarga",
     Hubungan: "Kepala Keluarga",
     NoTelp: "",
   });
-  const [initialFormData, setInitialFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isWithAnggota, setIsWithAnggota] = useState(false);
   const [anggotaList, setAnggotaList] = useState([]);
@@ -166,7 +166,9 @@ const KeluargaDetail = () => {
         IdWilayah: formData.Wilayah,
         IdLingkungan: formData.Lingkungan,
         Nomor: formData.Nomor,
+        NomorKKGereja: formData.NomorKKGereja,
         Alamat: formData.Alamat,
+        NoTelp: formData.NoTelp
       };
 
       const responseAddKK = await services.KeluargaService.AddKeluarga(
@@ -208,8 +210,11 @@ const KeluargaDetail = () => {
       TanggalBaptis: "",
       JenisKelamin: "",
       Nomor: "",
+      NomorKKGereja: "",
       Keterangan: "Kepala Keluarga",
       Hubungan: "Kepala Keluarga",
+      NoTelp: "",
+      Status: "HIDUP",
     });
     setAnggotaList([]);
     setIsWithAnggota(false);
@@ -224,8 +229,8 @@ const KeluargaDetail = () => {
         ) : (
           <>
             <CForm onSubmit={handleSubmit}>
-              <CRow className="mt-4">
-                <CCol lg={6} sm={12}>
+              <CRow className="mt-3">
+                <CCol lg={3} sm={12}>
                   <CFormInput
                     type="text"
                     name="Nomor"
@@ -234,6 +239,20 @@ const KeluargaDetail = () => {
                     onChange={handleChange}
                     className={`mb-3 bg-white`}
                   />
+                </CCol>
+
+                <CCol lg={3} sm={12}>
+                  <CFormInput
+                    type="text"
+                    name="NomorKKGereja"
+                    floatingLabel="Nomor KK Gereja"
+                    value={formData.NomorKKGereja}
+                    onChange={handleChange}
+                    className={`mb-3 bg-white`}
+                  />
+                </CCol>
+
+                <CCol lg={6} sm={12}>
                   <CFormInput
                     type="text"
                     name="Alamat"
@@ -243,7 +262,8 @@ const KeluargaDetail = () => {
                     className={`mb-3 bg-white`}
                   />
                 </CCol>
-
+              </CRow>
+              <CRow className="mt-3">
                 <CCol lg={6} sm={12}>
                   <Select
                     options={lingkunganOptions}
@@ -272,17 +292,18 @@ const KeluargaDetail = () => {
                       }),
                     }}
                   />
+                </CCol>
+                <CCol lg={6} sm={12}>
                   <CFormInput
                     type="text"
                     name="Wilayah"
                     floatingLabel="Wilayah"
                     value={formData.NamaWilayah}
                     disabled
-                    className="mb-3 border-0 bg-light"
+                    className="mb-3 border-0"
                   />
                 </CCol>
               </CRow>
-
               <hr className="my-4" />
 
               {/* Bagian Kedua: Add Kepala keluarga */}

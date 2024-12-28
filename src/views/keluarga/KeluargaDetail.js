@@ -44,6 +44,8 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     Nomor: "",
     Status: "",
+    NoTelp:"",
+    NomorKKGereja: ""
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -78,6 +80,8 @@ const KeluargaDetail = () => {
       Status: data.Status,
       TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10),
       TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
+      NoTelp: data.KepalaKeluarga.NoTelp,
+      NomorKKGereja: data.NomorKKGereja
     };
     return formValue;
   };
@@ -255,6 +259,7 @@ const KeluargaDetail = () => {
       ...formData,
       NamaKepalaKeluarga: selectedAnggota.NamaLengkap,
       KepalaKeluarga: selectedAnggota.Id,
+      NoTelp: selectedAnggota.NoTelp,
       TanggalLahir: selectedAnggota.TanggalLahir.slice(0, 10),
       TanggalBaptis: selectedAnggota.TanggalBaptis.slice(0, 10),
     });
@@ -294,6 +299,7 @@ const KeluargaDetail = () => {
 
     try {
       const response = await services.KeluargaService.updateKeluarga(formData);
+      console.log({response})
       // set new local State
       const newSelectedLingkungan = lingkungan.find(
         (lingkungan) => lingkungan.Id === response.IdLingkungan
@@ -443,13 +449,22 @@ const KeluargaDetail = () => {
                     className="mb-3 bg-light"
                   />
                 )}
-                {/* Tanggal Lahir dan Baptis */}
+                {/* Tanggal Lahir Baptis dan noTelp hanya isa diubah di data anggota ya */}
+                <CFormInput
+                  type="text"
+                  name="NoTelp"
+                  floatingLabel="Nomor Telepon"
+                  value={formData.NoTelp}
+                  onChange={handleChange}
+                  className="mb-3 border-0 bg-light shadow-sm"
+                  disabled={true}
+                />
                 <CFormInput
                   type="date"
                   name="TanggalLahir"
                   floatingLabel="Tanggal Lahir"
                   value={formData.TanggalLahir}
-                  disabled={!isEditable}
+                  disabled={true}
                   className="mb-3 border-0 bg-light shadow-sm"
                 />
                 <CFormInput
@@ -457,12 +472,23 @@ const KeluargaDetail = () => {
                   name="TanggalBaptis"
                   floatingLabel="Tanggal Baptis"
                   value={formData.TanggalBaptis}
-                  disabled={!isEditable}
+                  disabled={true}
                   className="mb-3 border-0 bg-light shadow-sm"
                 />
               </CCol>
 
               <CCol lg={6} sm={12}>
+              <CFormInput
+                  type="text"
+                  name="NomorKKGereja"
+                  floatingLabel="Nomor KK Gereja"
+                  value={formData.NomorKKGereja}
+                  onChange={handleChange}
+                  className={`mb-3 shadow-sm ${
+                    isEditable ? "bg-white" : "border-0 bg-light"
+                  }`}
+                  disabled={!isEditable}
+                />
                 <CFormInput
                   type="text"
                   name="Alamat"
@@ -470,7 +496,7 @@ const KeluargaDetail = () => {
                   value={formData.Alamat}
                   onChange={handleChange}
                   className={`mb-3 shadow-sm ${
-                    isEditable ? "border-info bg-white" : "border-0 bg-light"
+                    isEditable ? "bg-white" : "border-0 bg-light"
                   }`}
                   disabled={!isEditable}
                 />
@@ -490,8 +516,9 @@ const KeluargaDetail = () => {
                       }),
                       control: (base) => ({
                         ...base,
-                        backgroundColor: "#f8f9fa",
+                        backgroundColor: "white",
                         borderColor: "#ced4da",
+                        borderWidth: "1px",
                         borderRadius: "0.375rem",
                       }),
                       menu: (base) => ({
@@ -642,7 +669,7 @@ const KeluargaDetail = () => {
                 })
               ) : (
                 <CTableRow>
-                  <CTableDataCell colSpan="7" style={{ textAlign: "center" }}>
+                  <CTableDataCell colSpan="8" style={{ textAlign: "center" }}>
                     Tidak ada data anggota
                   </CTableDataCell>
                 </CTableRow>
