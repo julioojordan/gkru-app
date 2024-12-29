@@ -15,6 +15,22 @@ const getAllLingkungan = async () => {
   }
 };
 
+
+const getAllLingkunganWithTotalKeluarga = async () => {
+  const url = "/lingkunganWithTotalKeluarga";
+  try {
+    const response = await api.get(url);
+    if(response.data.data){
+      return Promise.resolve(response.data.data);
+    }else{
+      return Promise.resolve([]);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 const updateLingkungan = async (formData) => {
   const body = {
     NamaLingkungan: formData.NamaLingkungan, 
@@ -70,5 +86,6 @@ export default {
   updateLingkungan,
   getTotalLingkungan,
   addLingkungan,
-  deleteLingkungan
+  deleteLingkungan,
+  getAllLingkunganWithTotalKeluarga
 };

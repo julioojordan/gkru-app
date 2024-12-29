@@ -53,7 +53,7 @@ const getAllHistoryWithKeluargaContext = async (year) => {
 };
 
 const getAllHistorySetoran = async (year, month) => {
-  const url = `/historyWithContext?tahun=${year}&bulan=${month}`;
+  const url = `/historySetoran?tahun=${year}&bulan=${month}`;
   try {
     const response = await api.get(url);
     if (response.data.data) {

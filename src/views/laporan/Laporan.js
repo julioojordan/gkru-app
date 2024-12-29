@@ -8,128 +8,12 @@ import {
   Document,
   StyleSheet,
   PDFViewer,
+  Image,
 } from "@react-pdf/renderer";
 import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
-
-// Data umat
-const data = [
-  {
-    id: 1,
-    nama: "John Doe",
-    lingkungan: "Lingkungan A",
-    iuran: {
-      jan: 10000,
-      feb: 20000,
-      mar: 15000,
-      apr: 0,
-      may: 10000,
-      jun: 0,
-      jul: 0,
-      aug: 0,
-      sep: 5000,
-      oct: 0,
-      nov: 10000,
-      dec: 0,
-    },
-  },
-  {
-    id: 2,
-    nama: "Jane Doe",
-    lingkungan: "Lingkungan A",
-    iuran: {
-      jan: 0,
-      feb: 15000,
-      mar: 10000,
-      apr: 5000,
-      may: 0,
-      jun: 5000,
-      jul: 0,
-      aug: 0,
-      sep: 0,
-      oct: 0,
-      nov: 20000,
-      dec: 5000,
-    },
-  },
-  {
-    id: 3,
-    nama: "Michael Smith",
-    lingkungan: "Lingkungan B",
-    iuran: {
-      jan: 20000,
-      feb: 25000,
-      mar: 30000,
-      apr: 15000,
-      may: 10000,
-      jun: 20000,
-      jul: 10000,
-      aug: 15000,
-      sep: 0,
-      oct: 0,
-      nov: 20000,
-      dec: 15000,
-    },
-  },
-  {
-    id: 4,
-    nama: "Alice Johnson",
-    lingkungan: "Lingkungan B",
-    iuran: {
-      jan: 15000,
-      feb: 20000,
-      mar: 15000,
-      apr: 20000,
-      may: 25000,
-      jun: 30000,
-      jul: 10000,
-      aug: 5000,
-      sep: 0,
-      oct: 0,
-      nov: 15000,
-      dec: 10000,
-    },
-  },
-  {
-    id: 5,
-    nama: "Eve Williams",
-    lingkungan: "Lingkungan C",
-    iuran: {
-      jan: 10000,
-      feb: 20000,
-      mar: 25000,
-      apr: 30000,
-      may: 15000,
-      jun: 10000,
-      jul: 20000,
-      aug: 15000,
-      sep: 25000,
-      oct: 20000,
-      nov: 10000,
-      dec: 15000,
-    },
-  },
-  {
-    id: 6,
-    nama: "David Brown",
-    lingkungan: "Lingkungan C",
-    iuran: {
-      jan: 30000,
-      feb: 15000,
-      mar: 20000,
-      apr: 25000,
-      may: 30000,
-      jun: 35000,
-      jul: 40000,
-      aug: 10000,
-      sep: 20000,
-      oct: 15000,
-      nov: 10000,
-      dec: 5000,
-    },
-  },
-];
+import logo from "../../assets/brand/logo.png";
 
 const monthMap = [
   "jan",
@@ -145,6 +29,12 @@ const monthMap = [
   "nov",
   "dec",
 ];
+
+const formatRupiah = (amount) => {
+  const formattedAmount = Math.abs(amount).toLocaleString('id-ID');
+  const prefix = amount < 0 ? '-' : '';
+  return `${prefix}Rp ${formattedAmount}`;
+};
 
 //step 1 transform data
 const transformedData = (data) =>
@@ -200,8 +90,27 @@ const transformedData = (data) =>
 // Style untuk PDF
 const styles = StyleSheet.create({
   page: { padding: 10, flexDirection: "column", backgroundColor: "#FFFFFF" },
-  header: { marginBottom: 2, textAlign: "center", fontSize: 12 },
-  title: { fontSize: 14, fontWeight: "bold", marginBottom: 5 },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    marginRight: 10,
+  },
+  headerTextContainer: {
+    flex: 1,
+    textAlign: "center",
+  },
+  header: {
+    marginBottom: 2,
+    fontSize: 10,
+  },
+  headerDivider: {
+    borderBottom: '2px solid black',
+    marginVertical: 3,
+  },
   table: { display: "table", width: "100%", marginTop: 10 },
   tableRow: { flexDirection: "row" },
   tableCell: {
@@ -278,14 +187,17 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
 
   return (
     <Page size="A4" orientation="landscape" style={styles.page}>
-      {/* Header */}
-      <View>
-        <Text style={styles.header}>Paroki Kristus Raja Ungaran</Text>
-        <Text style={styles.header}>{lingkungan}</Text>
-        <Text style={styles.header}>Rincian Penerimaan Iuran</Text>
-        <Text style={styles.header}>Tahun {year}</Text>
+      
+      <View style={styles.headerContainer}>
+        <Image style={styles.logo} src={logo} />
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.header}>Paroki Kristus Raja Ungaran</Text>
+          <Text style={styles.header}>{lingkungan}</Text>
+          <View style={styles.headerDivider} />
+          <Text style={styles.header}>Rincian Penerimaan Iuran PANGRUKTILAYA</Text>
+          <Text style={styles.header}>Tahun {year}</Text>
+        </View>
       </View>
-  
       <View style={styles.emptySpace}></View>
   
       {/* Tabel */}
@@ -350,11 +262,11 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
           <Text style={styles.tableCellTotaL}>Total</Text>
           {totals.map((total, i) => (
             <Text key={`total-${i}`} style={[styles.tableCell, styles.tableFontNominal]}>
-              {total}
+              {formatRupiah(total)}
             </Text>
           ))}
           <Text style={[styles.tableCell, styles.tableFontNominal]}>
-            {grandTotal}
+            {formatRupiah(grandTotal)}
           </Text>
         </View>
       </View>
@@ -365,7 +277,7 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
       <View style={styles.signature}>
         <View style={styles.signatureBlock}>
           <Text>Diterima Oleh,</Text>
-          <Text style={{ marginTop: 50 }}>Tim Gereja</Text>
+          <Text style={{ marginTop: 50 }}>(.............................)</Text>
         </View>
         <View style={styles.signatureBlock}>
           <Text>
@@ -377,7 +289,7 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
             })}
           </Text>
           <Text>Disetujui Oleh</Text>
-          <Text style={{ marginTop: 37 }}>Nama Ketua</Text>
+          <Text style={{ marginTop: 37 }}>(.............................)</Text>
           <Text>Seksi Pengurus</Text>
         </View>
       </View>
