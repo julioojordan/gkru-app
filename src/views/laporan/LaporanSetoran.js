@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginRight: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   headerTextContainer: {
     flex: 1,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   headerDivider: {
-    borderBottom: '2px solid black',
+    borderBottom: "2px solid black",
     marginVertical: 3,
   },
   table: {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottom: "1px solid black",
     textAlign: "center",
-    fontSize: 9
+    fontSize: 9,
   },
   signature: {
     marginTop: 20,
@@ -169,18 +169,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   dateText: {
-    fontSize: 8 ,
+    fontSize: 8,
     textAlign: "right",
     marginBottom: 5,
-    marginRight: 33
+    marginRight: 33,
   },
 });
 
-
-
 const formatRupiah = (amount) => {
-  const formattedAmount = Math.abs(amount).toLocaleString('id-ID');
-  const prefix = amount < 0 ? '-' : '';
+  const formattedAmount = Math.abs(amount).toLocaleString("id-ID");
+  const prefix = amount < 0 ? "-" : "";
   return `${prefix}Rp ${formattedAmount}`;
 };
 
@@ -229,7 +227,7 @@ const generateRows = (data) => {
           </Text>
           {/* JUMLAH IURAN column */}
           <Text style={[styles.cell, styles.flex, styles.tableBodyFont]}>
-            {item.jumlahIuran }
+            {item.jumlahIuran}
           </Text>
         </View>
       );
@@ -243,7 +241,9 @@ const generateRows = (data) => {
     <View style={[styles.row, styles.tableHeader]} key="grand-total">
       <Text style={[styles.cell, { width: 30 + 30 + 140 }]}>JUMLAH</Text>
       <Text style={[styles.cell, { width: 40 }]}>{grandTotalKK}</Text>
-      <Text style={[styles.cell, styles.flex]}>{formatRupiah(grandTotalIuran)}</Text>
+      <Text style={[styles.cell, styles.flex]}>
+        {formatRupiah(grandTotalIuran)}
+      </Text>
     </View>
   );
 
@@ -445,7 +445,13 @@ const ExportView = () => {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
   if (error) return <p>Error fetching data.</p>;
 

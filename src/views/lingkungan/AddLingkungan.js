@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { CForm, CFormInput, CButton, CCard, CCardBody, CRow, CCol } from "@coreui/react";
+import {
+  CForm,
+  CFormInput,
+  CButton,
+  CCard,
+  CCardBody,
+  CRow,
+  CCol,
+} from "@coreui/react";
 import { useNavigate } from "react-router-dom";
 import services from "../../services";
 import Swal from "sweetalert2";
@@ -98,7 +106,11 @@ const AddLingkungan = () => {
   return (
     <CCard>
       {loading ? (
-        <div className="shimmer">Loading...</div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <CCardBody>
           <h5>Detail Lingkungan</h5>

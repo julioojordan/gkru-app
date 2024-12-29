@@ -128,8 +128,8 @@ const TransactionInForm = () => {
           ketuaWilayah
         );
         const historyIds = history
-        .filter((item) => item.Keterangan === 'IN')
-        .map((item) => item.IdKeluarga);
+          .filter((item) => item.Keterangan === "IN")
+          .map((item) => item.IdKeluarga);
 
         const filteredKeluarga = keluargaData.filter(
           (keluarga) =>
@@ -196,7 +196,7 @@ const TransactionInForm = () => {
     e.preventDefault();
     const createdBy = 1;
     const createdDate = new Date().toISOString();
-    let bukti = null
+    let bukti = null;
 
     let data = {
       Nominal: parseInt(nominal, 10),
@@ -209,7 +209,7 @@ const TransactionInForm = () => {
     };
 
     if (fileBukti) {
-      bukti= fileBukti;
+      bukti = fileBukti;
     }
 
     const totalKeluarga = selectedKeluarga.length;
@@ -276,7 +276,11 @@ const TransactionInForm = () => {
   return (
     <CForm onSubmit={handleSubmit}>
       {loading ? (
-        <div className="shimmer">Loading...</div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <>
           <CFormSelect
@@ -337,7 +341,11 @@ const TransactionInForm = () => {
             }}
           />
 
-          {keluargaOptions.length === 0 && idLingkungan && (<CAlert color="success">Semua Keluarga Anggota telah membayar iuran pada bulan ini</CAlert>)}
+          {keluargaOptions.length === 0 && idLingkungan && (
+            <CAlert color="success">
+              Semua Keluarga Anggota telah membayar iuran pada bulan ini
+            </CAlert>
+          )}
 
           <CFormInput
             type="text"
@@ -423,9 +431,9 @@ const TransactionInForm = () => {
 
           <CRow className="gy-3 justify-content-center">
             <CCol xs="12" md="12" xl="6">
-              <CButton 
-                type="submit" 
-                color="primary" 
+              <CButton
+                type="submit"
+                color="primary"
                 className="w-100"
                 disabled={keluargaOptions.length === 0}
               >

@@ -121,13 +121,13 @@ const TransactionOutForm = () => {
 
     let data = {
       Nominal: parseInt(nominal, 10),
-      Keterangan: 'OUT',
+      Keterangan: "OUT",
       CreatedBy: createdBy,
       SubKeterangan: subKeterangan,
       CreatedDate: createdDate,
       Tahun: year,
       Bulan: month,
-      IdKeluarga: idKeluarga.value
+      IdKeluarga: idKeluarga.value,
     };
 
     if (fileBukti) {
@@ -152,7 +152,6 @@ const TransactionOutForm = () => {
         icon: "success",
       });
     } catch (error) {
-      console.log({error})
       if (error.response && error.response.status === 401) {
         await handleLogout();
       } else {
@@ -178,7 +177,11 @@ const TransactionOutForm = () => {
   return (
     <CForm onSubmit={handleSubmit}>
       {loading ? (
-        <div className="shimmer">Loading...</div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <>
           <CFormSelect

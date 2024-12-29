@@ -38,7 +38,14 @@ const History = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   if (error) return <p>Error fetching data.</p>;
 
   const handleRowClick = (row) => {
@@ -55,12 +62,14 @@ const History = () => {
       name: "Id",
       selector: (row) => row.Id,
       sortable: true,
+      width: "80px",
     },
     {
-      name: "In Out",
+      name: "Ket",
       selector: (row) => row.Keterangan,
       sortable: true,
       cell: (row) => getBadge(row.Keterangan),
+      width: "100px",
     },
     {
       name: "Sub Keterangan",
@@ -68,7 +77,9 @@ const History = () => {
       sortable: true,
       cell: (row) => (
         <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
-          {row.SubKeterangan}
+          {row.SubKeterangan !== "" && row.SubKeterangan
+            ? row.SubKeterangan
+            : "(tidak ada)"}
         </div>
       ),
     },
@@ -105,7 +116,13 @@ const History = () => {
     <GeneralTables
       columns={columns}
       rows={History}
-      filterKeys={["Id", "Historyname", "KetuaLingkungan", "KetuaWilayah"]}
+      filterKeys={[
+        "Id",
+        "Keterangan",
+        "Lingkungan.NamaLingkungan",
+        "Wilayah.NamaWilayah",
+        "SubKeterangan",
+      ]}
       onRowClicked={handleRowClick}
     />
   );

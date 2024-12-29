@@ -31,7 +31,14 @@ const Lingkungan = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   if (error) return <p>Error fetching data.</p>;
 
   // to make wilayah clickable
@@ -90,7 +97,7 @@ const Lingkungan = () => {
     <GeneralTables
       columns={columns}
       rows={lingkungan}
-      filterKeys={["KodeLingkungan", "NamaLingkungan"]}
+      filterKeys={["KodeLingkungan", "NamaLingkungan", "Wilayah.NamaWilayah"]}
       onRowClicked={roleRedux === "admin" ? handleRowClick : () => {}}
       navigateContext={roleRedux === "admin" ? navigateContext : []}
     />

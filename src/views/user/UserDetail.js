@@ -8,7 +8,7 @@ import {
   CFormSelect,
   CCardSubtitle,
   CRow,
-  CCol
+  CCol,
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import services from "../../services";
@@ -339,7 +339,11 @@ const UserDetail = () => {
   return (
     <CCard>
       {loading ? (
-        <div className="shimmer">Loading...</div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <>
           <CCardBody>

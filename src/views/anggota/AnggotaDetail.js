@@ -243,7 +243,11 @@ const AnggotaDetail = () => {
   return (
     <CCard>
       {loading ? (
-        <div className="shimmer">Loading...</div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <>
           <CCardBody>

@@ -168,7 +168,7 @@ const KeluargaDetail = () => {
         Nomor: formData.Nomor,
         NomorKKGereja: formData.NomorKKGereja,
         Alamat: formData.Alamat,
-        NoTelp: formData.NoTelp
+        NoTelp: formData.NoTelp,
       };
 
       const responseAddKK = await services.KeluargaService.AddKeluarga(
@@ -225,7 +225,11 @@ const KeluargaDetail = () => {
       <CCardBody>
         <h1 style={{ textAlign: "center" }}>Add Keluarga Anggota</h1>
         {loading ? (
-          <div className="shimmer">Loading...</div>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         ) : (
           <>
             <CForm onSubmit={handleSubmit}>

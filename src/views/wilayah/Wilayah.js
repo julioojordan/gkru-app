@@ -11,7 +11,7 @@ const Wilayah = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const roleRedux = useSelector((state) => state.role.role);
-    const { handleLogout } = useAuth();
+  const { handleLogout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +31,14 @@ const Wilayah = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   if (error) return <p>Error fetching data.</p>;
 
   //to make each row clickable
@@ -43,22 +50,22 @@ const Wilayah = () => {
     navigate("/wilayah/add");
   };
 
-  const navigateContext = [Add_Wilayah]
+  const navigateContext = [Add_Wilayah];
 
   const columns = [
     {
-        name: 'No',
-        selector: (row, index) => index + 1,
-        width: '60px',
+      name: "No",
+      selector: (row, index) => index + 1,
+      width: "60px",
     },
     {
-      name: 'Kode Wilayah',
-      selector: row => row.KodeWilayah,
+      name: "Kode Wilayah",
+      selector: (row) => row.KodeWilayah,
       sortable: true,
     },
     {
-      name: 'Nama Wilayah',
-      selector: row => row.NamaWilayah,
+      name: "Nama Wilayah",
+      selector: (row) => row.NamaWilayah,
       sortable: true,
     },
   ];
@@ -67,9 +74,9 @@ const Wilayah = () => {
     <GeneralTables
       columns={columns}
       rows={wilayah}
-      filterKeys={['KodeWilayah', 'NamaWilayah']}
-      onRowClicked={roleRedux === 'admin' ? handleRowClick : () => {}}
-      navigateContext={roleRedux === 'admin' ? navigateContext : []}
+      filterKeys={["KodeWilayah", "NamaWilayah"]}
+      onRowClicked={roleRedux === "admin" ? handleRowClick : () => {}}
+      navigateContext={roleRedux === "admin" ? navigateContext : []}
     />
   );
 };

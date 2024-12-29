@@ -42,7 +42,14 @@ const User = () => {
 
   const navigateContext = [Add_User];
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   if (error) return <p>Error fetching data.</p>;
 
   const columns = [
