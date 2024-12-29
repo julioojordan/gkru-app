@@ -22,23 +22,19 @@ import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 import { useSelector } from "react-redux";
 
 const getNavItems = (roleRedux) => [
-  {
-    component: CNavItem,
-    name: "Dashboard",
-    to: "/dashboard",
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-  },
   ...(roleRedux === "admin"
     ? [
+        {
+          component: CNavItem,
+          name: "Dashboard",
+          to: "/dashboard",
+          icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+        },
         {
           component: CNavItem,
           name: "User",
           to: "/user",
           icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-          // badge: {
-          //   color: 'info',
-          //   text: 'NEW',
-          // },
         },
       ]
     : []),
@@ -46,6 +42,12 @@ const getNavItems = (roleRedux) => [
     component: CNavItem,
     name: "Aturan Pangruktilaya",
     to: "/aturan",
+    icon: <CIcon icon={cilInfo} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: "Tata Cara Pengisian Form",
+    to: "/aturanFormIuran",
     icon: <CIcon icon={cilInfo} customClassName="nav-icon" />,
   },
   // {

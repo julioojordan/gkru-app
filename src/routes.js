@@ -75,11 +75,13 @@ const Laporan =  React.lazy(() => import('./views/laporan/Laporan'))
 const LaporanSetoran =  React.lazy(() => import('./views/laporan/LaporanSetoran'))
 const NotFound = React.lazy(() => import('./pages/NotFound'))
 const Aturan = React.lazy(() => import('./views/tataCara/Aturan'))
+const AturanIuran = React.lazy(() => import('./views/tataCara/Iuran'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/aturan', name: 'Aturan Pangruktilaya', element: Aturan },
+  { path: '/aturanFormIuran', name: 'Tata Cara Mengisi Form Iuran', element: AturanIuran },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
@@ -134,7 +136,7 @@ const routes = [
   { path: '/history/:id', name: 'Detail History', element: HistoryDetail },
   { path: '/pembayaranDetail/:id', name: 'Detail Pembayaran', element: PembayaranyDetail, adminOnly: true },
   { path: '/santunan', name: 'Form Santunan', element: Santunan, adminOnly: true },
-  { path: '/iuran', name: 'Form Iruan Bulanan', element: Iuran},
+  { path: '/iuran', name: 'Form Iuran Bulanan', element: Iuran},
   { path: '/wilayah', name: 'Data Wilayah', element: Wilayah },
   { path: '/wilayah/:id', name: 'Detail Wilayah', element: WilayahDetail },
   { path: '/wilayah/add', name: 'Add Wilayah', element: AddWilayah, adminOnly: true },
