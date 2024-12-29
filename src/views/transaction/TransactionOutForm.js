@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CForm,
   CFormInput,
@@ -13,6 +13,7 @@ import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 
 const TransactionOutForm = () => {
+  const fileInputRef = useRef(null);
   const { handleLogout } = useAuth();
   const [nominal, setNominal] = useState("");
   const [idKeluarga, setIdKeluarga] = useState(null);
@@ -172,6 +173,9 @@ const TransactionOutForm = () => {
     setNamaLingkungan("");
     setSubKeterangan("");
     setFileBukti(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
+    }
   };
 
   return (
@@ -219,7 +223,13 @@ const TransactionOutForm = () => {
             id="nominal"
             placeholder="Nominal"
             value={nominal}
-            onChange={(e) => setNominal(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value < 0){
+                setNominal(0)
+                return
+              }
+              setNominal(e.target.value)
+            }}
             required
             floatingClassName="mb-3"
             floatingLabel="Nominal"
@@ -284,7 +294,7 @@ const TransactionOutForm = () => {
             value={subKeterangan}
             onChange={(e) => setSubKeterangan(e.target.value)}
             floatingClassName="mb-3"
-            floatingLabel="Sub Keterangan"
+            floatingLabel="Sub Keterangan (Optional)"
           />
 
           <CFormInput
@@ -294,6 +304,7 @@ const TransactionOutForm = () => {
             onChange={handleFileChange}
             floatingClassName="mb-3"
             floatingLabel="File Bukti (Optional)"
+            ref={fileInputRef}
           />
 
           <CRow className="gy-3 justify-content-center">

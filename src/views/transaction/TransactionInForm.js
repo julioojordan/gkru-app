@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CForm,
   CFormInput,
@@ -13,9 +13,11 @@ import Swal from "sweetalert2";
 import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
+import helper from "../../helper";
 
 const TransactionInForm = () => {
   const { handleLogout } = useAuth();
+  const fileInputRef = useRef(null);
   const { ketuaLingkungan, ketuaWilayah } = useSelector((state) => state.auth);
   const { role } = useSelector((state) => state.role);
   const [nominal, setNominal] = useState("");
@@ -212,6 +214,22 @@ const TransactionInForm = () => {
       bukti = fileBukti;
     }
 
+    if (nominal % 10000 !== 0) {
+      await Swal.fire({
+        title: "Error!",
+        text: `Nominal: ${helper.FormatToRupiah.formatToRupiah(
+          nominal
+        )} tidak valid, nominal harus merupakan kelipatan dari Rp 10.000 !`,
+        icon: "error",
+      });
+      Swal.close();
+      setFileBukti(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
     const totalKeluarga = selectedKeluarga.length;
     const nominalPerKeluarga = Math.floor(
       parseInt(nominal, 10) / totalKeluarga
@@ -225,6 +243,10 @@ const TransactionInForm = () => {
         icon: "error",
       });
       Swal.close();
+      setFileBukti(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Reset file input
+      }
       return;
     }
     const requests = selectedKeluarga.map((keluarga) => ({
@@ -271,6 +293,9 @@ const TransactionInForm = () => {
     setSubKeterangan("");
     setSelectedKeluarga([]);
     setFileBukti(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
+    }
   };
 
   return (
@@ -362,7 +387,15 @@ const TransactionInForm = () => {
             id="nominal"
             placeholder="Nominal"
             value={nominal}
-            onChange={(e) => setNominal(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value < 0) {
+                setNominal(0);
+                setSelectedKeluarga([]);
+                return;
+              }
+              setNominal(e.target.value);
+              setSelectedKeluarga([]);
+            }}
             required
             floatingClassName="mb-3"
             floatingLabel="Nominal"
@@ -378,7 +411,9 @@ const TransactionInForm = () => {
               if (selected.length > maxSelection) {
                 Swal.fire({
                   title: "Warning!",
-                  text: `Anda hanya bisa memilih maksimal ${maxSelection} keluarga, pastikan nominal sudah sesuai !`,
+                  text: `Anda hanya bisa memilih maksimal ${Math.round(
+                    maxSelection
+                  )} keluarga, pastikan nominal sudah sesuai !`,
                   icon: "warning",
                 });
                 return;
@@ -417,7 +452,7 @@ const TransactionInForm = () => {
             value={subKeterangan}
             onChange={(e) => setSubKeterangan(e.target.value)}
             floatingClassName="mb-3"
-            floatingLabel="Sub Keterangan"
+            floatingLabel="Sub Keterangan (Optional)"
           />
 
           <CFormInput
@@ -426,7 +461,9 @@ const TransactionInForm = () => {
             accept=".jpg,.jpeg,.png,.webp"
             onChange={handleFileChange}
             floatingClassName="mb-3"
-            floatingLabel="File Bukti (Optional)"
+            floatingLabel="File Bukti (Wajib)"
+            ref={fileInputRef}
+            required
           />
 
           <CRow className="gy-3 justify-content-center">
