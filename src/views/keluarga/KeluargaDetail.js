@@ -44,8 +44,8 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     Nomor: "",
     Status: "",
-    NoTelp:"",
-    NomorKKGereja: ""
+    NoTelp: "",
+    NomorKKGereja: "",
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -81,7 +81,7 @@ const KeluargaDetail = () => {
       TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10),
       TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
       NoTelp: data.KepalaKeluarga.NoTelp,
-      NomorKKGereja: data.NomorKKGereja
+      NomorKKGereja: data.NomorKKGereja,
     };
     return formValue;
   };
@@ -299,7 +299,6 @@ const KeluargaDetail = () => {
 
     try {
       const response = await services.KeluargaService.updateKeluarga(formData);
-      console.log({response})
       // set new local State
       const newSelectedLingkungan = lingkungan.find(
         (lingkungan) => lingkungan.Id === response.IdLingkungan
@@ -383,7 +382,11 @@ const KeluargaDetail = () => {
         )}
 
         {loadingEdit ? (
-          <div className="shimmer">Loading...</div>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         ) : (
           <CForm onSubmit={handleSubmit} className="p-3">
             {isEditable && (
@@ -478,7 +481,7 @@ const KeluargaDetail = () => {
               </CCol>
 
               <CCol lg={6} sm={12}>
-              <CFormInput
+                <CFormInput
                   type="text"
                   name="NomorKKGereja"
                   floatingLabel="Nomor KK Gereja"
@@ -705,10 +708,14 @@ const KeluargaDetail = () => {
         <hr className="my-4" />
 
         {/* Payment History */}
-        <h3 style={{ textAlign: "center" }}>Payment History</h3>
+        <h3 style={{ textAlign: "center" }}>Riwayat Iuran</h3>
         <div style={{ overflowX: "auto" }}>
           {loading ? (
-            <div className="shimmer">Loading...</div>
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
           ) : (
             <CTable striped hover className="mt-4 shadow-sm">
               <CTableHead>
@@ -729,6 +736,9 @@ const KeluargaDetail = () => {
                       const isPayed = payedMonths.some(
                         (p) => p.month === month && p.year === year
                       );
+                      const payedMonth = payedMonths.find(
+                        (p) => p.month === month && p.year === year
+                      );
                       return (
                         <CTableDataCell
                           key={month}
@@ -738,7 +748,7 @@ const KeluargaDetail = () => {
                             cursor: isPayed ? "pointer" : "default",
                           }}
                           onClick={() =>
-                            isPayed && handleHistoryClick(year, month)
+                            isPayed && handleHistoryClick(payedMonth.id)
                           }
                         >
                           {isPayed ? "✓" : ""}
