@@ -37,6 +37,7 @@ const History = () => {
 
     fetchData();
   }, []);
+  
 
   if (loading)
     return (

@@ -122,6 +122,17 @@ const getDetailHistory = async (id) => {
   }
 };
 
+const getHistoryByGroup = async (id) => {
+  const url = `/historyByGroup?idGroup=${id}`;
+  try {
+    const response = await api.get(url);
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 const addHistory = async (data) => {
   const formData = new FormData();
   formData.append("Nominal", data.Nominal);
@@ -179,4 +190,5 @@ export default {
   getAllHistorySetoran,
   getAllHistoryWithTimeFilter,
   addHistoryIuran,
+  getHistoryByGroup
 };

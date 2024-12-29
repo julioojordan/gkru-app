@@ -449,7 +449,7 @@ const KeluargaDetail = () => {
                     floatingLabel="Nama Kepala Keluarga"
                     value={formData.NamaKepalaKeluarga}
                     disabled
-                    className="mb-3 bg-light"
+                    className="mb-3"
                   />
                 )}
                 {/* Tanggal Lahir Baptis dan noTelp hanya isa diubah di data anggota ya */}
@@ -459,7 +459,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Nomor Telepon"
                   value={formData.NoTelp}
                   onChange={handleChange}
-                  className="mb-3 border-0 bg-light shadow-sm"
+                  className="mb-3 border-0 shadow-sm"
                   disabled={true}
                 />
                 <CFormInput
@@ -468,7 +468,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Tanggal Lahir"
                   value={formData.TanggalLahir}
                   disabled={true}
-                  className="mb-3 border-0 bg-light shadow-sm"
+                  className="mb-3 border-0 shadow-sm"
                 />
                 <CFormInput
                   type="date"
@@ -476,7 +476,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Tanggal Baptis"
                   value={formData.TanggalBaptis}
                   disabled={true}
-                  className="mb-3 border-0 bg-light shadow-sm"
+                  className="mb-3 border-0 shadow-sm"
                 />
               </CCol>
 
@@ -488,7 +488,7 @@ const KeluargaDetail = () => {
                   value={formData.NomorKKGereja}
                   onChange={handleChange}
                   className={`mb-3 shadow-sm ${
-                    isEditable ? "bg-white" : "border-0 bg-light"
+                    isEditable ? "" : "border-0"
                   }`}
                   disabled={!isEditable}
                 />
@@ -499,7 +499,7 @@ const KeluargaDetail = () => {
                   value={formData.Alamat}
                   onChange={handleChange}
                   className={`mb-3 shadow-sm ${
-                    isEditable ? "bg-white" : "border-0 bg-light"
+                    isEditable ? "" : "border-0"
                   }`}
                   disabled={!isEditable}
                 />
@@ -537,7 +537,7 @@ const KeluargaDetail = () => {
                     floatingLabel="Lingkungan"
                     value={formData.NamaLingkungan}
                     disabled
-                    className="mb-3 bg-light"
+                    className="mb-3"
                   />
                 )}
                 <CFormInput
@@ -546,7 +546,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Wilayah"
                   value={formData.NamaWilayah}
                   disabled
-                  className="mb-3 bg-light"
+                  className="mb-3"
                 />
               </CCol>
             </CRow>
