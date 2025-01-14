@@ -79,7 +79,7 @@ const AturanIuran = React.lazy(() => import('./views/tataCara/Iuran'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', element: Dashboard, adminOnly: true },
   { path: '/aturan', name: 'Aturan Pangruktilaya', element: Aturan },
   { path: '/aturanFormIuran', name: 'Tata Cara Mengisi Form Iuran', element: AturanIuran },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },

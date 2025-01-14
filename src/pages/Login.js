@@ -60,8 +60,13 @@ function Login() {
           ketuaWilayah: data.ketuaWilayah,
         })
       );
-      dispatch(setRole(getRole(data)));
-      navigate("/dashboard");
+      const roleLogin = getRole(data)
+      dispatch(setRole(roleLogin));
+      if (roleLogin !== "admin") {
+        navigate("/aturan");
+      }else{
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Login Error:", error);
 

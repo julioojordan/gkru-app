@@ -13,7 +13,7 @@ const AdminRoute = ({ element }) => {
   }
 
   if (roleRedux !== 'admin') {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/aturan" replace />
   }
 
   return element;
