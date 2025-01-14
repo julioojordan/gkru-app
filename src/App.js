@@ -19,27 +19,10 @@ const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
 
 function App() {
   const { setColorMode } = useColorModes();
-  const storedTheme = useSelector((state) => state.app.theme);
-  
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   useEffect(() => {
     setColorMode('light'); // Paksa base root pakai ligt mode dulu
   }, []);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.href.split("?")[1]);
-    const theme =
-      urlParams.get("theme") &&
-      urlParams.get("theme").match(/^[A-Za-z0-9\s]+/)[0];
-    if (theme) {
-      // setColorMode(theme);
-    }
-    // if (isColorModeSet()) {
-    //   return;
-    // }
-
-    // setColorMode(storedTheme);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <BrowserRouter>
