@@ -1,0 +1,41 @@
+/* Styling untuk container */
+.tutorial-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Styling untuk card tutorial */
+  .tutorial-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+  }
+  
+  /* Header card */
+  .tutorial-header {
+    background-color: #0069d9;
+    color: white;
+    font-weight: bold;
+  }
+  
+  /* Styling untuk list tutorial */
+  .tutorial-list {
+    margin-left: 20px;
+  }
+  
+  .tutorial-list li {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333333;
+    text-align: justify;
+  }
+  
+  /* Styling untuk gambar */
+  .tutorial-image {
+    border-radius: 10px;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
