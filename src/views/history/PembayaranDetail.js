@@ -26,7 +26,7 @@ const PembayaranDetail = () => {
   const [historyDetail, setHistoryDetail] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const beUrl = "http://localhost:3001";
+  const beUrl = process.env.REACT_APP_SERVICE_URL || "http://localhost:3001"
 
   useEffect(() => {
     const fetchDetailData = async () => {

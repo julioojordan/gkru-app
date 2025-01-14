@@ -1,7 +1,8 @@
 import axios from "axios"
 
 const auth = async (username, password) => {
-    const url = "http://localhost:3001/login"
+    const baseUrl = process.env.REACT_APP_SERVICE_URL || "http://localhost:3001"
+    const url = `${baseUrl}/login`
     const requestBody = {
         username,
         password

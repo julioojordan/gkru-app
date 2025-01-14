@@ -21,7 +21,7 @@ const HistoryDetail = () => {
   const [historyDetail, setHistoryDetail] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const beUrl = "http://localhost:3001";
+  const beUrl = process.env.REACT_APP_SERVICE_URL || "http://localhost:3001"
 
   useHandleBack("/history");
 

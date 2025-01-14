@@ -4,17 +4,34 @@ FROM node:18
 # Set working directory
 WORKDIR /app
 
-# Copy file package.json dan package-lock.json
-COPY package*.json ./
+# Install yarn
+RUN npm install -g yarn
 
-# Install dependencies
-RUN npm install
+# Copy file package.json dan yarn.lock
+COPY package.json yarn.lock ./
+
+# Install dependencies dengan yarn
+RUN yarn install
+
+# Install serve secara global untuk menjalankan aplikasi statis
+RUN yarn global add serve
 
 # Copy semua file ke container
 COPY . .
 
-# Build aplikasi
-RUN npm run build
+# Tentukan ARG untuk menentukan mode (default: 'production')
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
-# Jalankan aplikasi
-CMD ["npm", "start"]
+# Build aplikasi dengan environment variables
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+
+# Build aplikasi
+RUN yarn build
+
+# Pilih perintah yang akan dijalankan berdasarkan nilai NODE_ENV
+CMD if [ "$NODE_ENV" = "development" ]; \
+    then yarn start; \
+    else serve -s build -l 5000; \
+    fi
