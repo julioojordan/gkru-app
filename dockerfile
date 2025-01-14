@@ -11,7 +11,7 @@ RUN npm install -g yarn
 COPY package.json yarn.lock ./
 
 # Install dependencies dengan yarn
-RUN yarn install
+RUN yarn install --ignore-engines
 
 # Install serve secara global untuk menjalankan aplikasi statis
 RUN yarn global add serve
