@@ -1,9 +1,9 @@
 import { combineReducers, legacy_createStore as createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import authReducer from './authReducers'
-import roleReducer from './roleReducers'
-import themeReducer from './themeReducers'
+import authReducer from './reducers/authReducers'
+import roleReducer from './reducers/roleReducers'
+import themeReducer from './reducers/themeReducers'
 const initialState = {
   sidebarShow: true,
   theme: 'light',
