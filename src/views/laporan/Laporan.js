@@ -31,8 +31,8 @@ const monthMap = [
 ];
 
 const formatRupiah = (amount) => {
-  const formattedAmount = Math.abs(amount).toLocaleString('id-ID');
-  const prefix = amount < 0 ? '-' : '';
+  const formattedAmount = Math.abs(amount).toLocaleString("id-ID");
+  const prefix = amount < 0 ? "-" : "";
   return `${prefix}Rp ${formattedAmount}`;
 };
 
@@ -95,9 +95,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 75,
+    height: 75,
     marginRight: 10,
+    marginTop: 20
   },
   headerTextContainer: {
     flex: 1,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   headerDivider: {
-    borderBottom: '2px solid black',
+    borderBottom: "2px solid black",
     marginVertical: 3,
   },
   table: { display: "table", width: "100%", marginTop: 10 },
@@ -153,6 +154,10 @@ const styles = StyleSheet.create({
     padding: 5,
     width: 105,
   },
+  textBold: {
+    fontWeight: 1000,
+    fontSize: 12,
+  },
   signature: {
     marginTop: 20,
     flexDirection: "row",
@@ -161,9 +166,8 @@ const styles = StyleSheet.create({
   },
   signatureBlock: { textAlign: "center", width: "40%" },
   emptySpace: { height: 5 },
-  highlightCell: {backgroundColor: "#FFC300"}
+  highlightCell: { backgroundColor: "#FFC300" },
 });
-
 
 // Komponen halaman PDF untuk setiap lingkungan
 const LingkunganPage = ({ lingkungan, rows, year }) => {
@@ -187,19 +191,24 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
 
   return (
     <Page size="A4" orientation="landscape" style={styles.page}>
-      
       <View style={styles.headerContainer}>
         <Image style={styles.logo} src={logo} />
         <View style={styles.headerTextContainer}>
-          <Text style={styles.header}>Paroki Kristus Raja Ungaran</Text>
-          <Text style={styles.header}>{lingkungan}</Text>
+          <Text style={styles.header}>KEUSKUPAN AGUNG SEMARANG</Text>
+          <Text style={[styles.header, styles.textBold]}>
+            DEWAN PASTORAL PAROKI KRISTUS RAJA UNGARAN
+          </Text>
+          <Text style={styles.header}>Bidang Pelayanan Kemasyarakatan</Text>
+          <Text style={styles.header}>Tim Pelayanan PANGRUKTILAYA</Text>
           <View style={styles.headerDivider} />
-          <Text style={styles.header}>Rincian Penerimaan Iuran PANGRUKTILAYA</Text>
-          <Text style={styles.header}>Tahun {year}</Text>
+          <Text style={styles.header}>
+            Rincian Penerimaan Iuran PANGRUKTILAYA
+          </Text>
+          <Text style={styles.header}>{lingkungan} - Tahun {year}</Text>
         </View>
       </View>
       <View style={styles.emptySpace}></View>
-  
+
       {/* Tabel */}
       <View style={styles.table}>
         {/* Header Table */}
@@ -223,12 +232,15 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
             "Dec",
             "Total",
           ].map((header, index) => (
-            <Text key={`header-${index}`} style={[styles.tableCell, styles.tableFontHeader]}>
+            <Text
+              key={`header-${index}`}
+              style={[styles.tableCell, styles.tableFontHeader]}
+            >
               {header}
             </Text>
           ))}
         </View>
-  
+
         {/* Rows */}
         {rows.map((row, index) => (
           <View key={`row-${row.id}`} style={styles.tableRow}>
@@ -238,14 +250,19 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
             </Text>
             {Object.values(row.iuran).map((value, i) => {
               const isMonthName = monthMap.includes(value); // Apakah nilai adalah nama bulan
-              const highlightStyle = (isNaN(value) || isMonthName || value > 10000)
-                ? styles.highlightCell
-                : {};
-  
+              const highlightStyle =
+                isNaN(value) || isMonthName || value > 10000
+                  ? styles.highlightCell
+                  : {};
+
               return (
                 <Text
                   key={`iuran-${row.id}-${i}`}
-                  style={[styles.tableCell, styles.tableFontNominal, highlightStyle]}
+                  style={[
+                    styles.tableCell,
+                    styles.tableFontNominal,
+                    highlightStyle,
+                  ]}
                 >
                   {value || "-"}
                 </Text>
@@ -256,12 +273,15 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
             </Text>
           </View>
         ))}
-  
+
         {/* Total Row */}
         <View style={styles.tableRow}>
           <Text style={styles.tableCellTotaL}>Total</Text>
           {totals.map((total, i) => (
-            <Text key={`total-${i}`} style={[styles.tableCell, styles.tableFontNominal]}>
+            <Text
+              key={`total-${i}`}
+              style={[styles.tableCell, styles.tableFontNominal]}
+            >
               {formatRupiah(total)}
             </Text>
           ))}
@@ -270,9 +290,9 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
           </Text>
         </View>
       </View>
-  
+
       <View style={styles.emptySpace}></View>
-  
+
       {/* Tanda Tangan */}
       <View style={styles.signature}>
         <View style={styles.signatureBlock}>
@@ -320,7 +340,7 @@ const ExportView = () => {
         const responseHistory =
           await services.HistoryService.getAllHistoryWithKeluargaContext(year);
         const filteredData = responseHistory.filter(
-          (item) =>item.Keterangan === "IN" // tahun sudah di fiilter pake created date di BE
+          (item) => item.Keterangan === "IN" // tahun sudah di fiilter pake created date di BE
         );
         // console.log(JSON.stringify(transformedData(filteredData), null, 2));
 
@@ -384,7 +404,12 @@ const ExportView = () => {
   const MyDocument = (
     <Document>
       {groupedData.map(({ lingkungan, rows }) => (
-        <LingkunganPage key={lingkungan} lingkungan={lingkungan} rows={rows} year={year} />
+        <LingkunganPage
+          key={lingkungan}
+          lingkungan={lingkungan}
+          rows={rows}
+          year={year}
+        />
       ))}
     </Document>
   );

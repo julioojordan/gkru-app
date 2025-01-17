@@ -41,7 +41,7 @@ const AppSidebar = () => {
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/" className="d-flex justify-content-center align-items-center">
           <CAvatar src={logo} size="lg" style={{marginRight: "10px"}}/>
-          <h5 className="sidebar-brand-full mb-0">GKR Ungaran</h5>
+          <h6 className="sidebar-brand-full mb-0">Pangruktilaya GKRU</h6>
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"

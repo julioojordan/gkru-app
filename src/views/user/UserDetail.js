@@ -90,7 +90,7 @@ const UserDetail = () => {
       }
     };
     if (authRedux) {
-      if (!row) {
+      if (!row && !isSelf) {
         redirectToBefore();
         return;
       }

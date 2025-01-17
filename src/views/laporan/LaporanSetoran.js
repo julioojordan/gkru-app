@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     marginRight: 10,
-    marginTop: 10,
+    marginTop: 10
   },
   headerTextContainer: {
     flex: 1,
@@ -104,6 +104,10 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     padding: 5,
     textAlign: "center",
+  },
+  textBold: {
+    fontWeight: 1000,
+    fontSize: 12
   },
   tableHeader: {
     backgroundColor: "#e0e0e0",
@@ -172,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     textAlign: "right",
     marginBottom: 5,
-    marginRight: 33,
+    marginRight: 40,
   },
 });
 
@@ -277,9 +281,10 @@ const LaporanPage = ({ DataTable, TotalPengeluaran, year, month }) => {
       <View style={styles.headerContainer}>
         <Image style={styles.logo} src={logo} />
         <View style={styles.headerTextContainer}>
-          <Text style={styles.header}>Dewan Paroki Kristus Raja Ungaran</Text>
+          <Text style={styles.header}>KEUSKUPAN AGUNG SEMARANG</Text>
+          <Text style={[styles.header, styles.textBold]}>DEWAN PASTORAL PAROKI KRISTUS RAJA UNGARAN</Text>
           <Text style={styles.header}>Bidang Pelayanan Kemasyarakatan</Text>
-          <Text style={styles.header}>Tim Kerja PANGRUKTILAYA</Text>
+          <Text style={styles.header}>Tim Pelayanan PANGRUKTILAYA</Text>
           <View style={styles.headerDivider} />
           <Text style={styles.header}>SETORAN PANGRUKTILAYA LINGKUNGAN</Text>
           <Text style={styles.header}>
