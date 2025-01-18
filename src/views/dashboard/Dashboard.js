@@ -36,15 +36,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const wealthData = await services.WealthService.getTotalWealth();
-        setTotalWealth(wealthData.Total);
-      } catch (error) {
-        console.error("Error fetching total wealth:", error);
-        setErrors(prevErrors => ({ ...prevErrors, totalWealthError: true }));
-        await handleLogoutError(error)
-      }
-
-      try {
         const income = await services.HistoryService.getTotalIncome();
         setTotalIncome(income.Nominal);
       } catch (error) {
@@ -103,6 +94,20 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchTotalWealth = async () => {
+      if(errors.totalIncomeError || errors.totalOutcomeError){
+        setErrors(prevErrors => ({ ...prevErrors, totalWealthError: true }));
+        await handleLogoutError(new Error('error getting wealth'))
+        return
+      }
+      setTotalWealth(totalIncome-totalOutcome);
+
+    }
+    fetchTotalWealth()
+
+  }, [totalIncome, totalOutcome, errors]);
 
   const wealthProps = { totalWealth, error: errors.totalWealthError, loading };
   const widgetsBrandProps = { 

@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { CRow, CCol, CWidgetStatsA } from "@coreui/react";
 import { getStyle } from "@coreui/utils";
 import { CChartLine } from "@coreui/react-chartjs";
-// import Shimmer from "react-shimmer-effect";
 import Shimmer from 'react-js-loading-shimmer';
 import helper from '../../helper';
 
@@ -59,25 +58,26 @@ const WidgetsDropdown = (props) => {
                 style={{ height: "70px" }}
                 data={{
                   labels: [
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
                   ],
                   datasets: [
                     {
-                      label: "My First dataset",
+                      label: "",
                       backgroundColor: "transparent",
                       borderColor: "rgba(255,255,255,.55)",
-                      pointBackgroundColor: getStyle("--cui-info"),
+                      pointBackgroundColor: "transparent",
                       data: [1, 18, 9, 17, 34, 22, 11],
                     },
                   ],
                 }}
                 options={{
+                  events: [], // untuk disable hover event
                   plugins: {
                     legend: {
                       display: false,
@@ -116,10 +116,10 @@ const WidgetsDropdown = (props) => {
                     point: {
                       radius: 4,
                       hitRadius: 10,
-                      hoverRadius: 4,
                     },
                   },
                 }}
+                
               />
             }
           />
