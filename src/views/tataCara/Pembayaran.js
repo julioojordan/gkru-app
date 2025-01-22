@@ -78,12 +78,12 @@ const Pembayaran = () => {
   if (error) return <p>Error fetching data.</p>;
 
   return (
-    <CContainer className="mt-1">
+    <CContainer>
       <CRow className="justify-content-center">
         <CCol lg="8">
           <CCard>
             <CCardHeader className="text-center bg-primary text-white">
-              <h5 className="mb-0">Tata Cara Transfer Pembayaran</h5>
+              <h4 className="mb-0">Tata Cara Transfer Pembayaran</h4>
             </CCardHeader>
             <CCardBody>
               <p>Transfer pembayaran dapat dilakukan ke rekening berikut:</p>

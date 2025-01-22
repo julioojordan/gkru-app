@@ -10,7 +10,7 @@ import {
 
 const AturanPangruktilaya = () => {
   return (
-    <CContainer className="mt-4">
+    <CContainer>
       <CRow className="justify-content-center">
         <CCol lg={10}>
           <CCard>

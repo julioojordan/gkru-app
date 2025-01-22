@@ -34,9 +34,12 @@ const TutorialPageIuran = () => {
                 <CCardBody>
                   <section>
                     <ol className="tutorial-list">
-                      <li>Masuk ke menu <b>Form Iuran Bulanan</b>.</li>
                       <li>
-                        Harap mengisi secara <b>urut</b> dari atas mulai input tahun.
+                        Masuk ke menu <b>Form Iuran Bulanan</b>.
+                      </li>
+                      <li>
+                        Harap mengisi secara <b>urut</b> dari atas mulai input
+                        tahun.
                       </li>
                       <li>
                         Nilai default dari input Tahun dan Bulan diatur sesuai
@@ -44,7 +47,8 @@ const TutorialPageIuran = () => {
                       </li>
                       <li>
                         Nilai default dari lingkungan disesuaikan dengan akun
-                        yang dipakai user, hanya akun <b>admin</b> dan <b>ketua wilayah </b>
+                        yang dipakai user, hanya akun <b>admin</b> dan{" "}
+                        <b>ketua wilayah </b>
                         yang dapat mengubah input lingkungan.
                       </li>
                       <li>
@@ -54,9 +58,9 @@ const TutorialPageIuran = () => {
                       <li>
                         Kemudian pilih keluarga anggota. User dapat memilih
                         lebih dari 1 keluarga anggota. Pilihan yang tersedia di
-                        dalam input keluarga anggota adalah semua keluarga anggota pada
-                        lingkungan yang belum membayar kan iuran pada tahun dan
-                        bulan yang dipilih.
+                        dalam input keluarga anggota adalah semua keluarga
+                        anggota pada lingkungan yang belum membayar kan iuran
+                        pada tahun dan bulan yang dipilih.
                       </li>
                       <li>
                         Isi Sub Keterangan jika dibutuhkan atau kosongkan jika
@@ -138,12 +142,10 @@ const TutorialPageIuran = () => {
                 </CCardHeader>
                 <CCardBody>
                   <strong>Bagian 1:</strong>
-                  <ol className="tutorial-list">
-                    <li>
-                      Apabila nominal tidak merupakan kelipatan dari Rp 10.000
-                      maka akan muncul error dan form tidak akan diterima.
-                    </li>
-                  </ol>
+                  <p>
+                    Apabila nominal tidak merupakan kelipatan dari Rp 10.000
+                    maka akan muncul error dan form tidak akan diterima.
+                  </p>
                 </CCardBody>
               </CCard>
             </CCol>
@@ -161,14 +163,12 @@ const TutorialPageIuran = () => {
               <CCard className="tutorial-card">
                 <CCardBody>
                   <strong>Bagian 2:</strong>
-                  <ol className="tutorial-list">
-                    <li>
-                      Apabila user mengisi nominal 10.000 lalu memilih lebih
-                      dari 1 keluarga pada input keluarga anggota, maka akan
-                      muncul warning dan pilihan keluarga anggota yang terakhir
-                      tidak akan ditambahkan di input.
-                    </li>
-                  </ol>
+                  <p>
+                    Apabila user mengisi nominal 10.000 lalu memilih lebih dari
+                    1 keluarga pada input keluarga anggota, maka akan muncul
+                    warning dan pilihan keluarga anggota yang terakhir tidak
+                    akan ditambahkan di input.
+                  </p>
                 </CCardBody>
               </CCard>
             </CCol>
@@ -186,14 +186,12 @@ const TutorialPageIuran = () => {
               <CCard className="tutorial-card">
                 <CCardBody>
                   <strong>Bagian 3:</strong>
-                  <ol className="tutorial-list">
-                    <li>
-                      Apabila user mengisi nominal 30.000 lalu memilih hanya 2
-                      keluarga pada input keluarga anggota, maka akan muncul
-                      error jumlah keluarga kurang pada waktu menekan tombol
-                      submit dan form tidak akan diterima.
-                    </li>
-                  </ol>
+                  <p>
+                    Apabila user mengisi nominal 30.000 lalu memilih hanya 2
+                    keluarga pada input keluarga anggota, maka akan muncul error
+                    jumlah keluarga kurang pada waktu menekan tombol submit dan
+                    form tidak akan diterima.
+                  </p>
                 </CCardBody>
               </CCard>
             </CCol>
