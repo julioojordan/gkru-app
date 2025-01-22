@@ -50,6 +50,12 @@ const getNavItems = (roleRedux) => [
     to: "/aturanFormIuran",
     icon: <CIcon icon={cilInfo} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: "Tata Cara Pembayaran",
+    to: "/pembayaran",
+    icon: <CIcon icon={cilInfo} customClassName="nav-icon" />,
+  },
   // {
   //   component: CNavItem,
   //   name: 'User',

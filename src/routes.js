@@ -75,12 +75,14 @@ const LaporanSetoran =  React.lazy(() => import('./views/laporan/LaporanSetoran'
 const NotFound = React.lazy(() => import('./pages/NotFound'))
 const Aturan = React.lazy(() => import('./views/tataCara/Aturan'))
 const AturanIuran = React.lazy(() => import('./views/tataCara/Iuran'))
+const Pembayaran = React.lazy(() => import('./views/tataCara/Pembayaran'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard, adminOnly: true },
   { path: '/aturan', name: 'Aturan Pangruktilaya', element: Aturan },
   { path: '/aturanFormIuran', name: 'Tata Cara Mengisi Form Iuran', element: AturanIuran },
+  { path: '/Pembayaran', name: 'Tata Cara Pembayaran', element: Pembayaran },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
