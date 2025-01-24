@@ -10,6 +10,8 @@
     "@coreui/react": "5.0.0-rc.3",
     "@coreui/react-chartjs": "^3.0.0-rc.0",
     "@coreui/utils": "^2.0.2",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@mui/system": "^5.15.14",
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^4.1.5",
