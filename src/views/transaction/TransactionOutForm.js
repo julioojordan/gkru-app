@@ -240,7 +240,7 @@ const TransactionOutForm = () => {
             options={keluargaOptions}
             value={idKeluarga}
             onChange={handleKeluargaChange}
-            placeholder="Select Keluarga"
+            placeholder="Pilih Keluarga Anggota"
             isSearchable
             styles={{
               container: (base) => ({

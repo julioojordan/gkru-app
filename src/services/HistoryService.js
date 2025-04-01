@@ -135,13 +135,14 @@ const getHistoryByGroup = async (id) => {
 
 const addHistory = async (data) => {
   const formData = new FormData();
-  formData.append("Nominal", data.Nominal);
-  formData.append("IdKeluarga", data.IdKeluarga);
-  formData.append("Keterangan", data.Keterangan);
-  formData.append("CreatedBy", data.CreatedBy);
-  formData.append("SubKeterangan", data.SubKeterangan);
-  formData.append("Bulan", data.Bulan);
-  formData.append("Tahun", data.Tahun);
+  formData.append("History", JSON.stringify(data));
+  // formData.append("Nominal", data.Nominal);
+  // formData.append("IdKeluarga", data.IdKeluarga);
+  // formData.append("Keterangan", data.Keterangan);
+  // formData.append("CreatedBy", data.CreatedBy);
+  // formData.append("SubKeterangan", data.SubKeterangan);
+  // formData.append("Bulan", data.Bulan);
+  // formData.append("Tahun", data.Tahun);
   if (data.FileBukti) {
     formData.append("FileBukti", data.FileBukti);
   }
