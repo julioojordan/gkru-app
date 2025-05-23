@@ -100,6 +100,7 @@ const Lingkungan = () => {
       filterKeys={["KodeLingkungan", "NamaLingkungan", "Wilayah.NamaWilayah"]}
       onRowClicked={roleRedux === "admin" ? handleRowClick : () => {}}
       navigateContext={roleRedux === "admin" ? navigateContext : []}
+      buttonName="Tambah Lingkungan"
     />
   );
 };

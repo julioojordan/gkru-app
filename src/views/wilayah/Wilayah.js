@@ -77,6 +77,7 @@ const Wilayah = () => {
       filterKeys={["KodeWilayah", "NamaWilayah"]}
       onRowClicked={roleRedux === "admin" ? handleRowClick : () => {}}
       navigateContext={roleRedux === "admin" ? navigateContext : []}
+      buttonName="Tambah Wilayah"
     />
   );
 };

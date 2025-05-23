@@ -87,6 +87,7 @@ const User = () => {
       filterKeys={["Id", "Username", "KetuaLingkungan", "KetuaWilayah"]}
       navigateContext={navigateContext}
       onRowClicked={handleRowClick}
+      buttonName="Tambah Anggota"
     />
   );
 };
