@@ -33,9 +33,9 @@ const getAllLingkunganWithTotalKeluarga = async () => {
 
 const updateLingkungan = async (formData) => {
   const body = {
-    NamaLingkungan: formData.NamaLingkungan, 
-    KodeLingkungan: formData.KodeLingkungan,
-    Wilayah: formData.Wilayah
+    namaLingkungan: formData.NamaLingkungan, 
+    kodeLingkungan: formData.KodeLingkungan,
+    wilayah: formData.Wilayah
   };
   const url = `/lingkungan/${formData.Id}/update`;
   try {
@@ -59,9 +59,15 @@ const getTotalLingkungan = async () => {
 };
 
 const addLingkungan = async (formData) => {
+  const requestBody = {
+    namaLingkungan: formData.NamaLingkungan,
+    kodeLingkungan: formData.KodeLingkungan,
+    wilayah: formData.Wilayah,
+  }
+  
   const url = "/lingkungan/add";
   try {
-    const response = await api.post(url, formData);
+    const response = await api.post(url, requestBody);
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);

@@ -53,14 +53,14 @@ const getTotalKeluarga = async () => {
 
 const updateKeluarga = async (formData) => {
   const body = {
-    IdWilayah: formData.Wilayah,
-    IdLingkungan: formData.Lingkungan,
-    Nomor: formData.Nomor,
-    Alamat: formData.Alamat,
-    Status: formData.Status,
-    IdKepalaKeluarga: formData.KepalaKeluarga,
-    OldIdKepalaKeluarga: formData.oldKepalaKeluarga,
-    NomorKKGereja: formData.NomorKKGereja
+    idWilayah: formData.Wilayah,
+    idLingkungan: formData.Lingkungan,
+    nomor: formData.Nomor,
+    alamat: formData.Alamat,
+    status: formData.Status,
+    idKepalaKeluarga: formData.KepalaKeluarga,
+    oldIdKepalaKeluarga: formData.oldKepalaKeluarga,
+    nomorKKGereja: formData.NomorKKGereja
   };
   const url = `/keluarga/${formData.IdKeluarga}/update`;
   try {

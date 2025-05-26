@@ -161,13 +161,13 @@ const AddUser = () => {
 
     try {
       const data = {
-        Username: formData.Username,
-        Password: formData.Password,
-        KetuaLingkungan: !isKetuaLingkungan ? 0 : formData.Lingkungan,
-        KetuaWilayah:
+        username: formData.Username,
+        password: formData.Password,
+        ketuaLingkungan: !isKetuaLingkungan ? 0 : formData.Lingkungan,
+        ketuaWilayah:
           isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
-        UpdatedBy: authRedux.id,
-        CreatedBy: authRedux.id,
+        updatedBy: authRedux.id,
+        createdBy: authRedux.id,
       };
       const response = await services.UserService.addUser(data);
       await Swal.fire({

@@ -17,8 +17,8 @@ const getAllWilayah = async () => {
 
 const updateWilayah = async (formData) => {
   const body = {
-    NamaWilayah: formData.NamaWilayah, 
-    KodeWilayah: formData.KodeWilayah
+    namaWilayah: formData.NamaWilayah, 
+    kodeWilayah: formData.KodeWilayah
   };
   const url = `/wilayah/${formData.Id}/update`;
   try {
@@ -42,9 +42,13 @@ const getTotalWilayah = async () => {
 };
 
 const AddWilayah = async (formData) => {
+  const body = {
+    namaWilayah: formData.NamaWilayah, 
+    kodeWilayah: formData.KodeWilayah
+  };
   const url = "/wilayah/add";
   try {
-    const response = await api.post(url, formData);
+    const response = await api.post(url, body);
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);

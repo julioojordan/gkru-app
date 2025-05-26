@@ -156,19 +156,19 @@ const KeluargaDetail = () => {
       });
 
       const keluargaRequest = {
-        NamaLengkap: formData.NamaKepalaKeluarga,
-        TanggalBaptis: formData.TanggalBaptis,
-        TanggalLahir: formData.TanggalLahir,
-        Keterangan: formData.Keterangan,
-        JenisKelamin: formData.JenisKelamin,
-        Status: formData.Status,
-        Hubungan: formData.Hubungan,
-        IdWilayah: formData.Wilayah,
-        IdLingkungan: formData.Lingkungan,
-        Nomor: formData.Nomor,
-        NomorKKGereja: formData.NomorKKGereja,
-        Alamat: formData.Alamat,
-        NoTelp: formData.NoTelp,
+        namaLengkap: formData.NamaKepalaKeluarga,
+        tanggalBaptis: formData.TanggalBaptis,
+        tanggalLahir: formData.TanggalLahir,
+        keterangan: formData.Keterangan,
+        jenisKelamin: formData.JenisKelamin,
+        status: formData.Status,
+        hubungan: formData.Hubungan,
+        idWilayah: formData.Wilayah,
+        idLingkungan: formData.Lingkungan,
+        nomor: formData.Nomor,
+        nomorKKGereja: formData.NomorKKGereja,
+        alamat: formData.Alamat,
+        noTelp: formData.NoTelp,
       };
 
       const responseAddKK = await services.KeluargaService.AddKeluarga(
