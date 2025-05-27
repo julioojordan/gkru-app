@@ -96,7 +96,7 @@ const getAllHistoryWithTimeFilter = async (
     url += `&idLingkungan=${idLingkungan}`;
   }
   if (IdWilayah && IdWilayah !== 0) {
-    url += `&IdWilayah=${IdWilayah}`;
+    url += `&idWilayah=${IdWilayah}`;
   }
   try {
     const response = await api.get(url);
