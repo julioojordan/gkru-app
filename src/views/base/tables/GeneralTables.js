@@ -72,10 +72,12 @@ const GeneralTables = ({
   filterKeys,
   onRowClicked = () => {},
   navigateContext,
+  buttonName
 }) => {
   const [filterText, setFilterText] = useState("");
   const localTheme = useSelector((state) => state.theme.theme);
   const customStyles = getCustomStyles(localTheme);
+  console.log('navigatecontext', navigateContext)
 
   // Validasi jika filterKeys kosong
   if (!filterKeys || filterKeys.length === 0) {
@@ -154,7 +156,8 @@ const GeneralTables = ({
                 }
                 onMouseOut={(e) => (e.target.style.backgroundColor = "#28a745")}
               >
-                {context.name.replace("_", " ")}
+                {/* {context.name.replace("_", " ")} */}
+                {buttonName}
               </CButton>
             </CCol>
           ))}
