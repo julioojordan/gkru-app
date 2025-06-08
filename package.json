@@ -2,6 +2,7 @@
   "name": "gkru-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://pangruktilaya.parokiungaran.or.id/",
   "dependencies": {
     "@coreui/chartjs": "^4.0.0-rc.0",
     "@coreui/coreui": "^5.0.0-rc-2",

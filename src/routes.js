@@ -54,7 +54,7 @@ const routes = [
   { path: '/keluarga/add', name: 'Add Keluarga', element: AddKeluarga },
   { path: '/keluarga/:id', name: 'Data Keluarga Anggota', element: KeluargaDetail },
   { path: '/anggota/:id', name: 'Detail Anggota', element: AnggotaDetail },
-  { path: '/anggota/add', name: 'Add Anggota', element: AddAnggota, adminOnly: true },
+  { path: '/anggota/add', name: 'Add Anggota', element: AddAnggota },
   { path: '/laporan', name: 'Laporan Keuangan', element: Laporan, adminOnly: true },
   { path: '/laporanSetoran', name: 'Laporan Setoran Bulanan', element: LaporanSetoran, adminOnly: true },
   { path: '/notFound', name: 'Tidak Ditemukan', element: NotFound },
