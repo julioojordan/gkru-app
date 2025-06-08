@@ -42,6 +42,18 @@ const AddAnggota = async (formData) => {
     return Promise.reject(error);
   }
 };
+
+const AddAnggota2 = async (formData) => { // ini add anggota dari keluarga ada perbedaan inputan
+  const url = `/anggota/add`;
+  try {
+    const response = await api.post(url, formData); // Menggunakan api.post yang sudah ada interceptornya
+    return Promise.resolve(response.data.data);
+  } catch (error) {
+    console.error("Error:", error);
+    return Promise.reject(error);
+  }
+};
+
 const UpdateAnggota = async (formData) => {
   const body = {
     id: formData.Id,
@@ -82,6 +94,7 @@ export default {
   getTotalAnggota,
   getAllAnggotaWithIdKeluarga,
   AddAnggota,
+  AddAnggota2,
   UpdateAnggota,
   deleteAnggota
 };

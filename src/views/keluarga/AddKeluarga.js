@@ -180,7 +180,7 @@ const KeluargaDetail = () => {
           idKeluarga: responseAddKK.Id,
         };
 
-        await services.AnggotaService.AddAnggota(anggotaRequest);
+        await services.AnggotaService.AddAnggota2(anggotaRequest);
       }
 
       await Swal.fire({
