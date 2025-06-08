@@ -23,9 +23,19 @@ const getAllAnggotaWithIdKeluarga = async (idKeluarga) => {
 };
 
 const AddAnggota = async (formData) => {
+  const body = {
+    namaLengkap: formData.NamaLengkap,
+    tanggalLahir: formData.TanggalLahir,
+    tanggalBaptis: formData.TanggalBaptis,
+    keterangan: formData.Keterangan,
+    status: formData.Status,
+    jenisKelamin: formData.JenisKelamin,
+    hubungan: formData.Hubungan,
+    idKeluarga: formData.IdKeluarga,
+  }
   const url = `/anggota/add`;
   try {
-    const response = await api.post(url, formData); // Menggunakan api.post yang sudah ada interceptornya
+    const response = await api.post(url, body); // Menggunakan api.post yang sudah ada interceptornya
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);
@@ -33,9 +43,22 @@ const AddAnggota = async (formData) => {
   }
 };
 const UpdateAnggota = async (formData) => {
+  const body = {
+    id: formData.Id,
+    namaLengkap: formData.NamaLengkap,
+    tanggalLahir: formData.TanggalLahir,
+    tanggalBaptis: formData.TanggalBaptis,
+    keterangan: formData.Keterangan,
+    status: formData.Status,
+    jenisKelamin: formData.JenisKelamin,
+    hubungan: formData.Hubungan,
+    idKeluarga: formData.IdKeluarga,
+    isKepalaKeluarga: formData.IsKepalaKeluarga,
+    noTelp: formData.NoTelp,
+  }
   const url = `/anggota/${formData.Id}/update`;
   try {
-    const response = await api.patch(url, formData);
+    const response = await api.patch(url, body);
     return Promise.resolve(response.data.data);
   } catch (error) {
     console.error("Error:", error);
