@@ -9,11 +9,11 @@ switch (action.type) {
         ...state,
         theme: 'light'
     };
-    // case "dark":
-    // return {
-    //     ...state,
-    //     theme: 'dark'
-    // };
+    case "dark":
+    return {
+        ...state,
+        theme: 'dark'
+    };
     default:
     return state;
 }

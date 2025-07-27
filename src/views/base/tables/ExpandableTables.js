@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 const getCustomStyles = (theme) => ({
   headCells: {
     style: {
-      backgroundColor: theme === 'dark' ? '#333' : '#fff',
+      backgroundColor: theme === "dark" ? "#212631" : "#fff",
       color: theme === 'dark' ? '#fff' : '#000',
       border: '1px solid #DAE2ED',
       whiteSpace: 'normal',
@@ -27,7 +27,7 @@ const getCustomStyles = (theme) => ({
   rows: {
     style: {
       border: '1px solid #DAE2ED',
-      backgroundColor: theme === 'dark' ? '#444' : '#f7f9fc',
+      backgroundColor: theme === "dark" ? "#323a49" : "#f7f9fc",
       color: theme === 'dark' ? '#fff' : '#000',
       fontSize: '14px',  // ukuran font baris data
       '&:hover': {
@@ -36,7 +36,7 @@ const getCustomStyles = (theme) => ({
       },
     },
     stripedStyle: {
-      backgroundColor: theme === 'dark' ? '#555' : '#C0C0C0',
+      backgroundColor: theme === "dark" ? "#4A5469" : "#C0C0C0",
       color: theme === 'dark' ? '#fff' : '#000',
     },
   },
@@ -48,7 +48,7 @@ const getCustomStyles = (theme) => ({
   },
   pagination: {
     style: {
-      backgroundColor: theme === 'dark' ? '#333' : '#f9f9f9',
+      backgroundColor: theme === "dark" ? "#212631" : "#f9f9f9",
       color: theme === 'dark' ? '#fff' : '#000',
       borderTop: '1px solid #DAE2ED',
       minHeight: '56px',
@@ -59,9 +59,9 @@ const getCustomStyles = (theme) => ({
       width: '40px',
       padding: '8px',
       margin: '0 4px',
-      color: theme === 'dark' ? '#fff' : '#333',
-      fill: theme === 'dark' ? '#fff' : '#333',
-      backgroundColor: theme === 'dark' ? '#555' : '#e4e4e4',
+      color: theme === "dark" ? "#212631" : "#333",
+      fill: theme === "dark" ? "#212631" : "#333",
+      backgroundColor: theme === "dark" ? "#323a49" : "#e4e4e4",
       fontSize: '14px', // ukuran font pagination
       '&:hover': {
         backgroundColor: theme === 'dark' ? '#777' : '#d4d4d4',

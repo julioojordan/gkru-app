@@ -13,6 +13,8 @@ import services from "../../services";
 import Swal from "sweetalert2";
 import Select from "react-select";
 import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const AddLingkungan = () => {
   const { handleLogout } = useAuth();
@@ -22,6 +24,8 @@ const AddLingkungan = () => {
     KodeLingkungan: "",
     Wilayah: "",
   };
+
+  const localTheme = useSelector((state) => state.theme.theme);
 
   const [formData, setFormData] = useState(data);
   const [wilayahOptions, setWilayahOptions] = useState([]);
@@ -148,24 +152,7 @@ const AddLingkungan = () => {
               required
               placeholder="Select Wilayah"
               isSearchable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  width: "100%",
-                  marginBottom: "1rem",
-                }),
-                control: (base) => ({
-                  ...base,
-                  backgroundColor: "white",
-                  borderColor: "#ced4da",
-                  borderWidth: "1px",
-                  borderRadius: "0.375rem",
-                }),
-                menu: (base) => ({
-                  ...base,
-                  zIndex: 1050,
-                }),
-              }}
+              styles={multiSelectStyles(localTheme)}
             />
 
             <CRow className="gy-3">

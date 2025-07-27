@@ -19,8 +19,10 @@ import { updateUser, setRole } from "../../actions";
 import { useAuth } from "../../hooks/useAuth";
 import { useRedirect } from "../../hooks/useRedirect";
 import useHandleBack from "../../hooks/useHandleBack";
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const UserDetail = () => {
+  const localTheme = useSelector((state) => state.theme.theme);
   const { handleLogout } = useAuth();
   const { redirectToBefore } = useRedirect();
   const navigate = useNavigate();
@@ -413,24 +415,7 @@ const UserDetail = () => {
                   placeholder="Select Wilayah"
                   isSearchable
                   isDisabled={!isEditable}
-                  styles={{
-                    container: (base) => ({
-                      ...base,
-                      width: "100%",
-                      marginBottom: "1rem",
-                    }),
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: "white",
-                      borderColor: "#ced4da",
-                      borderWidth: "1px",
-                      borderRadius: "0.375rem",
-                    }),
-                    menu: (base) => ({
-                      ...base,
-                      zIndex: 1050,
-                    }),
-                  }}
+                  styles={multiSelectStyles(localTheme)}
                   required
                 />
               )}
@@ -445,24 +430,7 @@ const UserDetail = () => {
                   placeholder="Select Lingkungan"
                   isSearchable
                   isDisabled={!isEditable}
-                  styles={{
-                    container: (base) => ({
-                      ...base,
-                      width: "100%",
-                      marginBottom: "1rem",
-                    }),
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: "white",
-                      borderColor: "#ced4da",
-                      borderWidth: "1px",
-                      borderRadius: "0.375rem",
-                    }),
-                    menu: (base) => ({
-                      ...base,
-                      zIndex: 1050,
-                    }),
-                  }}
+                  styles={multiSelectStyles(localTheme)}
                   required
                 />
               )}

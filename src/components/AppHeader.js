@@ -92,7 +92,7 @@ const AppHeader = () => {
               )}
             </CDropdownToggle>
             {/* TO DOo masih banyak issue kalo dark mode */}
-            {/* <CDropdownMenu>
+            <CDropdownMenu>
               <CDropdownItem
                 active={colorMode === 'light'}
                 className="d-flex align-items-center"
@@ -120,7 +120,7 @@ const AppHeader = () => {
               >
                 <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
               </CDropdownItem>
-            </CDropdownMenu> */}
+            </CDropdownMenu>
           </CDropdown>
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>

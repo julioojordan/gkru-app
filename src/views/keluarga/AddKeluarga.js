@@ -9,16 +9,19 @@ import {
   CCol,
   CFormSelect,
   CCardSubtitle,
+  CFormCheck,
 } from "@coreui/react";
 import Select from "react-select";
 import services from "../../services";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { useAuth } from "../../hooks/useAuth";
+import {multiSelectStyles} from "../base/select/selectStyle"
 
 const KeluargaDetail = () => {
   const { ketuaLingkungan, ketuaWilayah } = useSelector((state) => state.auth);
   const { role } = useSelector((state) => state.role);
+  const localTheme = useSelector((state) => state.theme.theme);
   const [formData, setFormData] = useState({
     NamaKepalaKeluarga: "",
     Lingkungan: "",
@@ -35,6 +38,8 @@ const KeluargaDetail = () => {
     Keterangan: "Kepala Keluarga",
     Hubungan: "Kepala Keluarga",
     NoTelp: "",
+    AlasanBelumBaptis: "",
+    IsBaptis: true,
   });
   const [loading, setLoading] = useState(true);
   const [isWithAnggota, setIsWithAnggota] = useState(false);
@@ -106,6 +111,15 @@ const KeluargaDetail = () => {
     }));
   };
 
+  const handleBaptisToggle = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      IsBaptis: value,
+      // reset fields when toggling
+      ...(value ? { AlasanBelumBaptis: null } : { TanggalBaptis: "" }),
+    }));
+  };
+
   const handleAddAnggota = () => {
     setAnggotaList([
       ...anggotaList,
@@ -117,6 +131,8 @@ const KeluargaDetail = () => {
         jenisKelamin: "",
         status: "",
         noTelp: "",
+        isBaptis: true,
+        alasanBelumBaptis: ""
       },
     ]);
     setIsWithAnggota(true);
@@ -135,6 +151,21 @@ const KeluargaDetail = () => {
       );
     }
     setAnggotaList(updatedAnggotaList);
+  };
+
+  const handleAnggotaBaptisToggle = (idx, value) => {
+    setAnggotaList((prev) =>
+      prev.map((ag, i) =>
+        i === idx
+          ? {
+              ...ag,
+              isBaptis: value,
+              tanggalBaptis: value ? ag.tanggalBaptis : "",
+              alasanBelumBaptis: value ? null : ag.alasanBelumBaptis,
+            }
+          : ag
+      )
+    );
   };
 
   const handleRemoveAnggota = (index) => {
@@ -169,11 +200,15 @@ const KeluargaDetail = () => {
         nomorKKGereja: formData.NomorKKGereja,
         alamat: formData.Alamat,
         noTelp: formData.NoTelp,
+        isBaptis: formData.IsBaptis,
+        alasanBelumBaptis: formData.AlasanBelumBaptis
       };
+      console.log({keluargaRequest})
 
       const responseAddKK = await services.KeluargaService.AddKeluarga(
         keluargaRequest
       );
+      // const responseAddKK = 1
       for (const anggota of anggotaList) {
         const anggotaRequest = {
           ...anggota,
@@ -215,6 +250,8 @@ const KeluargaDetail = () => {
       Hubungan: "Kepala Keluarga",
       NoTelp: "",
       Status: "HIDUP",
+      IsBaptis: true,
+      AlasanBelumBaptis: "",
     });
     setAnggotaList([]);
     setIsWithAnggota(false);
@@ -276,25 +313,7 @@ const KeluargaDetail = () => {
                       (option) => option.value === formData.Lingkungan
                     )}
                     isDisabled={role === "ketuaLingkungan"}
-                    styles={{
-                      container: (base) => ({
-                        ...base,
-                        width: "100%",
-                        marginBottom: "35px",
-                        borderColor: "blue",
-                      }),
-                      control: (base) => ({
-                        ...base,
-                        backgroundColor: "white",
-                        borderColor: "#ced4da",
-                        borderWidth: "1px",
-                        borderRadius: "0.375rem",
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        zIndex: 1050,
-                      }),
-                    }}
+                    styles={multiSelectStyles(localTheme)}
                   />
                 </CCol>
                 <CCol lg={6} sm={12}>
@@ -319,6 +338,26 @@ const KeluargaDetail = () => {
                   >
                     Kepala Keluarga
                   </CCardSubtitle>
+                  <div>
+                    <CFormCheck
+                      inline
+                      type="radio"
+                      id="kepBptSudah"
+                      name="kepBpt"
+                      label="Sudah Baptis"
+                      checked={formData.IsBaptis}
+                      onChange={() => handleBaptisToggle(true)}
+                    />
+                    <CFormCheck
+                      inline
+                      type="radio"
+                      id="kepBptBelum"
+                      name="kepBpt"
+                      label="Belum Baptis"
+                      checked={!formData.IsBaptis}
+                      onChange={() => handleBaptisToggle(false)}
+                    />
+                  </div>
                   {/* Baris Pertama */}
                   <CRow>
                     <CCol xs={12} sm={12} md={12} lg={4} xl={4}>
@@ -353,7 +392,7 @@ const KeluargaDetail = () => {
                   </CRow>
 
                   {/* Baris Kedua */}
-                  <CRow className="mt-3">
+                  <CRow className="mt-3 mb-3">
                     <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                       <CFormInput
                         type="date"
@@ -370,8 +409,9 @@ const KeluargaDetail = () => {
                         name="TanggalBaptis"
                         floatingLabel="Tanggal Baptis"
                         onChange={handleChange}
-                        required
                         value={formData.TanggalBaptis}
+                        disabled={!formData.IsBaptis}
+                        required={formData.IsBaptis}
                       />
                     </CCol>
                     <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
@@ -406,6 +446,21 @@ const KeluargaDetail = () => {
                       </CFormSelect>
                     </CCol>
                   </CRow>
+                  {/* Baris Ketiga */}
+                  {!formData.IsBaptis && (
+                    <CRow className="mt-3 mb-3">
+                      <CCol lg={12} sm={12} md={12}>
+                        <CFormInput
+                          type="text"
+                          name="AlasanBelumBaptis"
+                          label="Alasan Belum Baptis"
+                          value={formData.AlasanBelumBaptis}
+                          onChange={handleChange}
+                          required
+                        />
+                      </CCol>
+                    </CRow>
+                  )}
                 </CCardBody>
               </CCard>
 
@@ -439,6 +494,31 @@ const KeluargaDetail = () => {
                         >
                           &times;
                         </CButton>
+                      </div>
+
+                      <div>
+                        <CFormCheck
+                          inline
+                          type="radio"
+                          id={`agBptSudah${index}`}
+                          name={`agBpt${index}`}
+                          label="Sudah Baptis"
+                          checked={anggota.isBaptis}
+                          onChange={() =>
+                            handleAnggotaBaptisToggle(index, true)
+                          }
+                        />
+                        <CFormCheck
+                          inline
+                          type="radio"
+                          id={`agBptBelum${index}`}
+                          name={`agBpt${index}`}
+                          label="Belum Baptis"
+                          checked={!anggota.isBaptis}
+                          onChange={() =>
+                            handleAnggotaBaptisToggle(index, false)
+                          }
+                        />
                       </div>
 
                       {/* Baris Pertama */}
@@ -482,7 +562,7 @@ const KeluargaDetail = () => {
                       </CRow>
 
                       {/* Baris Kedua */}
-                      <CRow className="mt-3">
+                      <CRow className="mt-3 mb-3">
                         <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
                           <CFormInput
                             type="date"
@@ -498,9 +578,10 @@ const KeluargaDetail = () => {
                             type="date"
                             name="tanggalBaptis"
                             floatingLabel="Tanggal Baptis"
-                            required
                             value={anggota.tanggalBaptis}
                             onChange={(e) => handleAnggotaChange(e, index)}
+                            disabled={!anggota.isBaptis}
+                            required={anggota.isBaptis}
                           />
                         </CCol>
                         <CCol xs={12} sm={12} md={12} lg={3} xl={3}>
@@ -534,6 +615,21 @@ const KeluargaDetail = () => {
                           </CFormSelect>
                         </CCol>
                       </CRow>
+                      {/* Baris Ketiga */}
+                      {!anggota.isBaptis && (
+                        <CRow className="mt-3 mb-3">
+                          <CCol lg={12} sm={12} md={12}>
+                            <CFormInput
+                              type="text"
+                              name="alasanBelumBaptis"
+                              label="Alasan Belum Baptis"
+                              value={anggota.alasanBelumBaptis}
+                              onChange={(e) => handleAnggotaChange(e, index)}
+                              required
+                            />
+                          </CCol>
+                        </CRow>
+                      )}
                     </CCardBody>
                   </CCard>
                 ))}

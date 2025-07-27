@@ -32,6 +32,9 @@ const AddAnggota = async (formData) => {
     jenisKelamin: formData.JenisKelamin,
     hubungan: formData.Hubungan,
     idKeluarga: formData.IdKeluarga,
+    isBaptis: formData.IsBaptis,
+    noTelp: formData.NoTelp,
+    alasanBelumBaptis: formData.AlasanBelumBaptis
   }
   const url = `/anggota/add`;
   try {
@@ -67,6 +70,8 @@ const UpdateAnggota = async (formData) => {
     idKeluarga: formData.IdKeluarga,
     isKepalaKeluarga: formData.IsKepalaKeluarga,
     noTelp: formData.NoTelp,
+    isBaptis: formData.IsBaptis,
+    alasanBelumBaptis: formData.AlasanBelumBaptis
   }
   const url = `/anggota/${formData.Id}/update`;
   try {

@@ -16,6 +16,8 @@ import Select from "react-select";
 import { useAuth } from "../../hooks/useAuth";
 import { useRedirect } from "../../hooks/useRedirect";
 import useHandleBack from "../../hooks/useHandleBack";
+import { useSelector } from "react-redux";
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const LingkunganDetail = () => {
   const { handleLogout } = useAuth();
@@ -23,6 +25,7 @@ const LingkunganDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { lingkungan } = location.state || {};
+  const localTheme = useSelector((state) => state.theme.theme);
 
   const [formData, setFormData] = useState({
     Id: "",
@@ -270,24 +273,7 @@ const LingkunganDetail = () => {
               placeholder="Select Wilayah"
               isDisabled={!isEditable}
               isSearchable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  width: "100%",
-                  marginBottom: "1rem",
-                }),
-                control: (base) => ({
-                  ...base,
-                  backgroundColor: "white",
-                  borderColor: "#ced4da",
-                  borderWidth: "1px",
-                  borderRadius: "0.375rem",
-                }),
-                menu: (base) => ({
-                  ...base,
-                  zIndex: 1050,
-                }),
-              }}
+              styles={multiSelectStyles(localTheme)}
               required
             />
 

@@ -14,6 +14,7 @@ import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import logo from "../../assets/brand/logo.png";
+import {multiSelectStyles} from "../base/select/selectStyle"
 
 const monthMap = [
   "jan",
@@ -320,6 +321,8 @@ const LingkunganPage = ({ lingkungan, rows, year }) => {
 // Komponen utama
 const ExportView = () => {
   const { ketuaWilayah, ketuaLingkungan } = useSelector((state) => state.auth);
+  
+  const localTheme = useSelector((state) => state.theme.theme);
   const { role } = useSelector((state) => state.role);
   const { handleLogout } = useAuth();
   const [selectedLingkungan, setSelectedLingkungan] = useState({
@@ -456,25 +459,7 @@ const ExportView = () => {
                 (option) => option.value === selectedLingkungan.value
               )}
               isDisabled={role === "ketuaLingkungan"}
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  width: "100%",
-                  marginBottom: "35px",
-                  borderColor: "blue",
-                }),
-                control: (base) => ({
-                  ...base,
-                  backgroundColor: "white",
-                  borderColor: "#ced4da",
-                  borderWidth: "1px",
-                  borderRadius: "0.375rem",
-                }),
-                menu: (base) => ({
-                  ...base,
-                  zIndex: 1050,
-                }),
-              }}
+              styles={multiSelectStyles(localTheme)}
             />
           </CCol>
         </CRow>

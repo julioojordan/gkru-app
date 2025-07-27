@@ -22,11 +22,13 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../hooks/useAuth";
 import useHandleBack from "../../hooks/useHandleBack";
 import { useSelector } from "react-redux";
+import {multiSelectStyles} from "../base/select/selectStyle"
 
 const KeluargaDetail = () => {
   const { handleLogout } = useAuth();
   const role = useSelector((state) => state.role);
   const auth = useSelector((state) => state.auth);
+  const localTheme = useSelector((state) => state.theme.theme);
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -79,7 +81,9 @@ const KeluargaDetail = () => {
       Nomor: data.Nomor,
       Status: data.Status,
       TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10),
-      TanggalBaptis: data.KepalaKeluarga.TanggalBaptis.slice(0, 10),
+      TanggalBaptis: data.KepalaKeluarga.TanggalBaptis
+        ? data.KepalaKeluarga.TanggalBaptis.slice(0, 10)
+        : null,
       NoTelp: data.KepalaKeluarga.NoTelp,
       NomorKKGereja: data.NomorKKGereja,
     };
@@ -261,7 +265,9 @@ const KeluargaDetail = () => {
       KepalaKeluarga: selectedAnggota.Id,
       NoTelp: selectedAnggota.NoTelp,
       TanggalLahir: selectedAnggota.TanggalLahir.slice(0, 10),
-      TanggalBaptis: selectedAnggota.TanggalBaptis.slice(0, 10),
+      TanggalBaptis: selectedAnggota.TanggalBaptis
+        ? selectedAnggota.TanggalBaptis.slice(0, 10)
+        : null,
     });
   };
 
@@ -357,7 +363,7 @@ const KeluargaDetail = () => {
     <CCard className="shadow-lg rounded">
       <CCardBody>
         <h1 style={{ textAlign: "center", fontWeight: "bold" }}>
-          Keluarga Anggota Detail
+          Keluarga Anggota No : <b>{formData.IdKeluarga}</b>
         </h1>
         {!isEditable && (
           <h3
@@ -424,23 +430,7 @@ const KeluargaDetail = () => {
                     value={anggotaOptions.find(
                       (option) => option.value === formData.KepalaKeluarga
                     )}
-                    styles={{
-                      container: (base) => ({
-                        ...base,
-                        width: "100%",
-                        marginBottom: "1rem",
-                      }),
-                      control: (base) => ({
-                        ...base,
-                        // backgroundColor: '#f8f9fa',
-                        borderColor: "#ced4da",
-                        borderRadius: "0.375rem",
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        zIndex: 1050,
-                      }),
-                    }}
+                    styles={multiSelectStyles(localTheme)}
                   />
                 ) : (
                   <CFormInput
@@ -470,14 +460,25 @@ const KeluargaDetail = () => {
                   disabled={true}
                   className="mb-3 border-0 shadow-sm"
                 />
-                <CFormInput
-                  type="date"
-                  name="TanggalBaptis"
-                  floatingLabel="Tanggal Baptis"
-                  value={formData.TanggalBaptis}
-                  disabled={true}
-                  className="mb-3 border-0 shadow-sm"
-                />
+                {formData.TanggalBaptis ? (
+                  <CFormInput
+                    type="date"
+                    name="TanggalBaptis"
+                    floatingLabel="Tanggal Baptis"
+                    value={formData.TanggalBaptis}
+                    disabled={true}
+                    className="mb-3 border-0 shadow-sm"
+                  />
+                ) : (
+                  <CFormInput
+                    type="text"
+                    name="TanggalBaptis"
+                    floatingLabel="Tanggal Baptis"
+                    value="Belum Baptis"
+                    disabled={true}
+                    className="mb-3 border-0 shadow-sm"
+                  />
+                )}
               </CCol>
 
               <CCol lg={6} sm={12}>
@@ -487,9 +488,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Nomor KK Gereja"
                   value={formData.NomorKKGereja}
                   onChange={handleChange}
-                  className={`mb-3 shadow-sm ${
-                    isEditable ? "" : "border-0"
-                  }`}
+                  className={`mb-3 shadow-sm ${isEditable ? "" : "border-0"}`}
                   disabled={!isEditable}
                 />
                 <CFormInput
@@ -498,9 +497,7 @@ const KeluargaDetail = () => {
                   floatingLabel="Alamat"
                   value={formData.Alamat}
                   onChange={handleChange}
-                  className={`mb-3 shadow-sm ${
-                    isEditable ? "" : "border-0"
-                  }`}
+                  className={`mb-3 shadow-sm ${isEditable ? "" : "border-0"}`}
                   disabled={!isEditable}
                 />
 
@@ -511,24 +508,7 @@ const KeluargaDetail = () => {
                     value={lingkunganOptions.find(
                       (option) => option.value === formData.Lingkungan
                     )}
-                    styles={{
-                      container: (base) => ({
-                        ...base,
-                        width: "100%",
-                        marginBottom: "1rem",
-                      }),
-                      control: (base) => ({
-                        ...base,
-                        backgroundColor: "white",
-                        borderColor: "#ced4da",
-                        borderWidth: "1px",
-                        borderRadius: "0.375rem",
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        zIndex: 1050,
-                      }),
-                    }}
+                    styles={multiSelectStyles(localTheme)}
                   />
                 ) : (
                   <CFormInput
@@ -648,7 +628,12 @@ const KeluargaDetail = () => {
                   return (
                     <CTableRow
                       key={anggota.Id}
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        cursor: "pointer",
+                        border: !anggota.IsBaptis
+                          ? "4px solid #ffc107" // #ffc107 adalah warna warning di Bootstrap/CoreUI
+                          : undefined,
+                      }}
                       onClick={() => handleAnggotaClick(stateData)}
                     >
                       <CTableDataCell>{index + 1}</CTableDataCell>
@@ -658,7 +643,9 @@ const KeluargaDetail = () => {
                         {anggota.TanggalLahir.slice(0, 10)}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {anggota.TanggalBaptis.slice(0, 10)}
+                        {anggota.TanggalBaptis && anggota.IsBaptis
+                          ? anggota.TanggalBaptis.slice(0, 10)
+                          : "Belum Baptis"}
                       </CTableDataCell>
                       <CTableDataCell>{anggota.Keterangan}</CTableDataCell>
                       <CTableDataCell>{anggota.Status}</CTableDataCell>

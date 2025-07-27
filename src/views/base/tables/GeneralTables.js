@@ -5,11 +5,24 @@ import { CFormInput, CButton, CCol, CRow } from "@coreui/react";
 import { useSelector } from "react-redux";
 
 const getCustomStyles = (theme) => ({
+  tableWrapper: {
+    style: {
+      backgroundColor: "transparent",
+    },
+  },
+  table: {
+    style: {
+      backgroundColor:
+        theme == "dark"
+          ? "#212631" // bg utama CoreUI dark
+          : "transparent",
+    },
+  },
   headCells: {
     style: {
-      backgroundColor: theme === "dark" ? "#333" : "#fff",
+      backgroundColor: theme === "dark" ? "#212631" : "#fff",
       color: theme === "dark" ? "#fff" : "#000",
-      border: "1px solid #DAE2ED",
+      border: "1px solid #fff",
       whiteSpace: "normal",
       wordBreak: "break-word",
       textAlign: "center",
@@ -19,7 +32,7 @@ const getCustomStyles = (theme) => ({
   rows: {
     style: {
       border: "1px solid #DAE2ED",
-      backgroundColor: theme === "dark" ? "#444" : "#f7f9fc",
+      backgroundColor: theme === "dark" ? "#323a49" : "#f7f9fc",
       color: theme === "dark" ? "#fff" : "#000",
       fontSize: "14px", // ukuran font baris data
       "&:hover": {
@@ -28,7 +41,7 @@ const getCustomStyles = (theme) => ({
       },
     },
     stripedStyle: {
-      backgroundColor: theme === "dark" ? "#555" : "#C0C0C0",
+      backgroundColor: theme === "dark" ? "#4A5469" : "#C0C0C0",
       color: theme === "dark" ? "#fff" : "#000",
     },
   },
@@ -40,7 +53,7 @@ const getCustomStyles = (theme) => ({
   },
   pagination: {
     style: {
-      backgroundColor: theme === "dark" ? "#333" : "#f9f9f9",
+      backgroundColor: theme === "dark" ? "#212631" : "#f9f9f9",
       color: theme === "dark" ? "#fff" : "#000",
       borderTop: "1px solid #DAE2ED",
       minHeight: "56px",
@@ -51,12 +64,12 @@ const getCustomStyles = (theme) => ({
       width: "40px",
       padding: "8px",
       margin: "0 4px",
-      color: theme === "dark" ? "#fff" : "#333",
-      fill: theme === "dark" ? "#fff" : "#333",
-      backgroundColor: theme === "dark" ? "#555" : "#e4e4e4",
+      color: theme === "dark" ? "#212631" : "#333",
+      fill: theme === "dark" ? "#212631" : "#333",
+      backgroundColor: theme === "dark" ? "#323a49" : "#e4e4e4",
       fontSize: "14px", // ukuran font pagination
       "&:hover": {
-        backgroundColor: theme === "dark" ? "#777" : "#d4d4d4",
+        backgroundColor: theme === "dark" ? "#888" : "#d4d4d4",
       },
       "&:focus": {
         outline: "none",
@@ -72,12 +85,12 @@ const GeneralTables = ({
   filterKeys,
   onRowClicked = () => {},
   navigateContext,
-  buttonName
+  buttonName,
 }) => {
   const [filterText, setFilterText] = useState("");
   const localTheme = useSelector((state) => state.theme.theme);
   const customStyles = getCustomStyles(localTheme);
-  console.log('navigatecontext', navigateContext)
+  console.log("navigatecontext", navigateContext);
 
   // Validasi jika filterKeys kosong
   if (!filterKeys || filterKeys.length === 0) {
@@ -169,8 +182,8 @@ const GeneralTables = ({
           data={filteredRows}
           customStyles={customStyles}
           pagination
-          paginationPerPage={5}
-          paginationRowsPerPageOptions={[5, 10, 25]}
+          paginationPerPage={25}
+          paginationRowsPerPageOptions={[25, 50, 100]}
           paginationComponentOptions={{
             rowsPerPageText: "Rows per page:",
             rangeSeparatorText: "of",

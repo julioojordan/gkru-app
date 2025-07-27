@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CForm,
   CFormInput,
@@ -14,34 +14,32 @@ import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import helper from "../../helper";
-import {multiSelectStyles} from "../base/select/selectStyle"
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const TransactionInForm = () => {
+  const localTheme = useSelector((state) => state.theme.theme);
   const { handleLogout } = useAuth();
   const fileInputRef = useRef(null);
   const { ketuaLingkungan, ketuaWilayah } = useSelector((state) => state.auth);
   const { role } = useSelector((state) => state.role);
-  const localTheme = useSelector((state) => state.theme.theme);
-
-  // form state
   const [nominal, setNominal] = useState("");
   const [idLingkungan, setIdLingkungan] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
   const [subKeterangan, setSubKeterangan] = useState("");
   const [keluargaOptions, setKeluargaOptions] = useState([]);
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [loadingKeluarga, setLoadingKeluarga] = useState(true);
   const [selectedKeluarga, setSelectedKeluarga] = useState([]);
   const [fileBukti, setFileBukti] = useState(null);
   const [error, setError] = useState(false);
-
-  // loading flags
-  const [loading, setLoading] = useState(true);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-  const [loadingKeluarga, setLoadingKeluarga] = useState(false);
-
-  // date selections
+  const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB maks
+  const VALID_FORMATS = ["image/jpeg", "image/png", "image/webp"];
   const CURRENT_YEAR = new Date().getFullYear();
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const CURRENT_MONTH = new Date().getMonth() + 1;
+  const [year, setYear] = useState(CURRENT_YEAR);
+  const [month, setMonth] = useState(CURRENT_MONTH);
   const monthNames = [
     "Januari",
     "Februari",
@@ -56,34 +54,11 @@ const TransactionInForm = () => {
     "November",
     "Desember",
   ];
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
   const [lingkungan, setLingkungan] = useState([]);
   const [lingkunganOptions, setLingkunganOptions] = useState([]);
 
-  // multi-select state
-  const yearOptions = useMemo(
-    () => [
-      { value: CURRENT_YEAR - 2, label: `${CURRENT_YEAR - 2}` },
-      { value: CURRENT_YEAR - 1, label: `${CURRENT_YEAR - 1}` },
-      { value: CURRENT_YEAR, label: `${CURRENT_YEAR}` },
-      { value: CURRENT_YEAR + 1, label: `${CURRENT_YEAR + 1}` },
-      { value: CURRENT_YEAR + 2, label: `${CURRENT_YEAR + 2}` },
-    ],
-    [CURRENT_YEAR]
-  );
-  const [selectedYears, setSelectedYears] = useState([]);
-  const [selectedMonthYears, setSelectedMonthYears] = useState([]);
-
-  // build month-year options based on selectedYears
-  const monthYearOptions = useMemo(() => {
-    return selectedYears.flatMap(({ value: y }) =>
-      months.map((m) => ({
-        value: `${y}-${m}`,
-        label: `${monthNames[m - 1]} ${y}`,
-      }))
-    );
-  }, [selectedYears]);
-
-  // Fetch lingkungan options on mount
   useEffect(() => {
     const fetchHistory = async () => {
       setLoading(true);
@@ -123,83 +98,68 @@ const TransactionInForm = () => {
     fetchHistory();
   }, []);
 
-  // Fetch history for all selected month-years
   useEffect(() => {
-    const fetchHistoryMulti = async () => {
-      if (!idLingkungan || selectedMonthYears.length === 0) {
-        setHistory([]);
-        return;
-      }
+    const fetchHistory = async () => {
       setLoadingHistory(true);
       try {
-        const results = await Promise.all(
-          selectedMonthYears.map(({ value }) => {
-            const [y, m] = value.split("-").map(Number);
-            return services.HistoryService.getAllHistoryWithTimeFilter(
-              ketuaLingkungan,
-              ketuaWilayah,
-              m,
-              y
-            );
-          })
-        );
-        console.log("disini 1", results);
-        console.log("disini 2", results.flat());
-        setHistory(results.flat());
-      } catch (err) {
+        const responseHistory =
+          await services.HistoryService.getAllHistoryWithTimeFilter(
+            ketuaLingkungan,
+            ketuaWilayah,
+            month,
+            year
+          );
+        setHistory(responseHistory);
+      } catch (error) {
         setError(true);
-        if (err.response?.status === 401) await handleLogout();
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoadingHistory(false);
       }
     };
-    fetchHistoryMulti();
-  }, [selectedMonthYears, idLingkungan]);
 
-  // Fetch keluarga options based on combined history
+    fetchHistory();
+  }, [year, month, idLingkungan]);
+
   useEffect(() => {
-    const fetchKeluarga = async () => {
+    const fetchOptions = async () => {
       setLoadingKeluarga(true);
       try {
-        const allKeluarga = await services.KeluargaService.getAllKeluarga(
+        const keluargaData = await services.KeluargaService.getAllKeluarga(
           ketuaLingkungan,
           ketuaWilayah
         );
-        // records yang sudah bayar per tahun-bulan
-        const paidRecords = history
-          .filter((h) => h.Keterangan === "IN")
-          .map((h) => ({ id: h.IdKeluarga, tahun: h.Tahun, bulan: h.Bulan }));
-        // bangun opsi untuk tiap keluarga & tiap bulan-tahun yang belum bayar
-        const opts = [];
-        selectedMonthYears.forEach(({ value }) => {
-          const [y, m] = value.split("-").map(Number);
-          allKeluarga.forEach((k) => {
-            if (
-              k.Lingkungan.Id === idLingkungan &&
-              k.Status === "aktif" &&
-              !paidRecords.some(
-                (pr) => pr.id === k.Id && pr.tahun === y && pr.bulan === m
-              )
-            ) {
-              opts.push({
-                value: `${k.Id}-${y}-${m}`,
-                label: `Keluarga ${k.KepalaKeluarga.NamaLengkap} - ${
-                  monthNames[m - 1]
-                } ${y}`,
-              });
-            }
-          });
-        });
-        setKeluargaOptions(opts);
-      } catch (err) {
+        const historyIds = history
+          .filter((item) => item.Keterangan === "IN")
+          .map((item) => item.IdKeluarga);
+
+        const filteredKeluarga = keluargaData.filter(
+          (keluarga) =>
+            !historyIds.includes(keluarga.Id) &&
+            keluarga.Lingkungan.Id === idLingkungan &&
+            keluarga.Status === "aktif"
+        );
+        const formattedOptions = filteredKeluarga.map((option) => ({
+          value: option.Id,
+          label: `Keluarga ${option.KepalaKeluarga.NamaLengkap} - ${option.Nomor}`,
+        }));
+        setKeluargaOptions(formattedOptions);
+      } catch (error) {
         setError(true);
-        if (err.response?.status === 401) await handleLogout();
+        if (error.response && error.response.status === 401) {
+          await handleLogout();
+        }
       } finally {
         setLoadingKeluarga(false);
       }
     };
-    fetchKeluarga();
-  }, [history, idLingkungan]);
+
+    fetchOptions();
+  }, [history]);
+
+  if (error) return <p>Error fetching data.</p>;
 
   const handleLingkunganChange = (selectedOption) => {
     const selectedLingkungan = lingkungan.find(
@@ -209,35 +169,53 @@ const TransactionInForm = () => {
     setNamaWilayah(selectedLingkungan.Wilayah.NamaWilayah);
   };
 
-  // handle file input
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 1 * 1024 * 1024) {
+      // Cek ukuran file
+      if (file.size > MAX_FILE_SIZE) {
         Swal.fire({
           title: "Error!",
-          text: "Ukuran file > 2MB",
+          text: `Ukuran file melebihi limit 2MB.`,
           icon: "error",
         });
         return;
       }
-      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+
+      // Cek format file
+      if (!VALID_FORMATS.includes(file.type)) {
         Swal.fire({
           title: "Error!",
-          text: "Format file tidak sesuai.",
+          text: "Format File tidak sesuai. hanya JPG, PNG, and WebP yang dibolehkan.",
           icon: "error",
         });
         return;
       }
-      setFileBukti(file);
+
+      setFileBukti(file); // Jika valid
     }
   };
 
-  // submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     const createdBy = 1;
     const createdDate = new Date().toISOString();
+    let bukti = null;
+
+    let data = {
+      Nominal: parseInt(nominal, 10),
+      Keterangan: "IN",
+      CreatedBy: createdBy,
+      SubKeterangan: subKeterangan,
+      CreatedDate: createdDate,
+      Tahun: year,
+      Bulan: month,
+    };
+
+    if (fileBukti) {
+      bukti = fileBukti;
+    }
+
     if (nominal % 10000 !== 0) {
       await Swal.fire({
         title: "Error!",
@@ -255,6 +233,9 @@ const TransactionInForm = () => {
     }
 
     const totalKeluarga = selectedKeluarga.length;
+    const nominalPerKeluarga = Math.floor(
+      parseInt(nominal, 10) / totalKeluarga
+    );
 
     if (totalKeluarga * 10000 < parseInt(nominal, 10)) {
       const deficiency = parseInt(nominal, 10) / 10000 - totalKeluarga;
@@ -270,23 +251,11 @@ const TransactionInForm = () => {
       }
       return;
     }
-
-    const nominalEntry = Math.floor(parseInt(nominal, 10) / totalKeluarga);
-
-    // build requests per selection
-    const requests = selectedKeluarga.map((sel) => {
-      const [fid, y, m] = sel.value.split("-").map(Number);
-      return {
-        Nominal: nominalEntry,
-        Keterangan: "IN",
-        CreatedBy: createdBy,
-        SubKeterangan: subKeterangan,
-        CreatedDate: createdDate,
-        Tahun: y,
-        Bulan: m,
-        IdKeluarga: fid,
-      };
-    });
+    const requests = selectedKeluarga.map((keluarga) => ({
+      ...data,
+      Nominal: nominalPerKeluarga,
+      IdKeluarga: parseInt(keluarga.value, 10),
+    }));
 
     try {
       const loadingAlert = Swal.fire({
@@ -297,69 +266,80 @@ const TransactionInForm = () => {
           Swal.showLoading(); // Pindahkan showLoading ke didOpen untuk konsistensi
         },
       });
-      await services.HistoryService.addHistoryIuran(requests, fileBukti);
+
+      await services.HistoryService.addHistoryIuran(requests, bukti);
+
       await Swal.fire({
         title: "Success!",
-        text: "Data berhasil ditambahkan.",
+        text: "Data has been added successfully.",
         icon: "success",
       });
-    } catch (err) {
-      if (err.response?.status === 401) await handleLogout();
-      else
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        await handleLogout();
+      } else {
         await Swal.fire({
           title: "Error!",
-          text: "Gagal menambahkan data.",
+          text: "There was an error adding the data.",
           icon: "error",
         });
+      }
     } finally {
       Swal.close();
-      // reset form
-      setNominal("");
-      setIdLingkungan("");
-      setNamaWilayah("");
-      setSubKeterangan("");
-      setSelectedYears([]);
-      setSelectedMonthYears([]);
-      setSelectedKeluarga([]);
-      setFileBukti(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      window.location.reload();
+    }
+
+    // Reset form after submission
+    setNominal("");
+    setIdLingkungan("");
+    setNamaWilayah("");
+    setSubKeterangan("");
+    setSelectedKeluarga([]);
+    setFileBukti(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
     }
   };
-
-  if (error) return <p>Error fetching data.</p>;
 
   return (
     <CForm onSubmit={handleSubmit}>
       {loading ? (
         <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status" />
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
       ) : (
         <>
-          <Select
+          <CFormSelect
             id="tahun"
-            options={yearOptions}
-            value={selectedYears}
-            onChange={setSelectedYears}
-            isMulti
-            placeholder="Pilih Tahun..."
-            className="mb-3"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
             required
-            styles={multiSelectStyles(localTheme)}
-          />
+            floatingClassName="mb-3"
+            floatingLabel="Tahun"
+          >
+            <option value="">Select Tahun</option>
+            <option value={CURRENT_YEAR - 2}>{CURRENT_YEAR - 2}</option>
+            <option value={CURRENT_YEAR - 1}>{CURRENT_YEAR - 1}</option>
+            <option value={CURRENT_YEAR}>{CURRENT_YEAR}</option>
+            <option value={CURRENT_YEAR + 1}>{CURRENT_YEAR + 1}</option>
+            <option value={CURRENT_YEAR + 2}>{CURRENT_YEAR + 2}</option>
+          </CFormSelect>
+          <CFormSelect
+            id="bulan"
+            value={month}
+            onChange={(e) => setMonth(Number(e.target.value))}
+            required
+            floatingClassName="mb-3"
+            floatingLabel="Bulan"
+          >
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {monthNames[month - 1]}
+              </option>
+            ))}
+          </CFormSelect>
 
-          <Select
-            options={monthYearOptions}
-            value={selectedMonthYears}
-            onChange={setSelectedMonthYears}
-            isMulti
-            isSearchable
-            placeholder="Pilih Bulan-Tahun..."
-            isDisabled={!selectedYears.length}
-            className="mb-3"
-            styles={multiSelectStyles(localTheme)}
-          />
           <Select
             options={lingkunganOptions}
             onChange={handleLingkunganChange}
@@ -430,7 +410,7 @@ const TransactionInForm = () => {
             isSearchable
             styles={multiSelectStyles(localTheme)}
             required
-            isDisabled={!keluargaOptions.length}
+            isDisabled={!keluargaOptions.length} // Disable if no options
           />
 
           <CFormInput
@@ -455,8 +435,13 @@ const TransactionInForm = () => {
           />
 
           <CRow className="gy-3 justify-content-center">
-            <CCol xs="12" md="6">
-              <CButton type="submit" color="primary" className="w-100">
+            <CCol xs="12" md="12" xl="6">
+              <CButton
+                type="submit"
+                color="primary"
+                className="w-100"
+                disabled={keluargaOptions.length === 0}
+              >
                 Submit
               </CButton>
             </CCol>

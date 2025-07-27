@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   MDBContainer,
@@ -60,11 +60,11 @@ function Login() {
           ketuaWilayah: data.ketuaWilayah,
         })
       );
-      const roleLogin = getRole(data)
+      const roleLogin = getRole(data);
       dispatch(setRole(roleLogin));
       if (roleLogin !== "admin") {
         navigate("/aturan");
-      }else{
+      } else {
         navigate("/dashboard");
       }
     } catch (error) {
@@ -100,16 +100,18 @@ function Login() {
             style={{ borderRadius: "1rem", maxWidth: "500px" }}
           >
             <MDBCardBody className="p-5 w-100 d-flex flex-column">
-              <h2 className="fw-bold mb-2 text-center">Sign in</h2>
-              <p className="text-white-50 mb-3">
-                Please enter your username and password!
+              <h2 className="fw-bold mb-2 text-center text-dark">Sign in</h2>
+              <p className= "mb-3 text-dark">
+                Silahkan Masukan Username dan Password
               </p>
               <Form onSubmit={handleSubmit(auth)}>
                 {errors.username && (
                   <span style={{ color: "red" }}>Username diperlukan</span>
                 )}
                 <MDBInput
-                  wrapperClass="mb-4 w-100"
+                  wrapperClass="mb-4 w-100 bg-white"
+                  inputClass="text-dark"
+                  labelClass="text-dark"
                   label="Username"
                   id="username"
                   size="lg"
@@ -120,18 +122,20 @@ function Login() {
                 )}
                 <MDBInput
                   wrapperClass="mb-4 w-100"
+                  inputClass="text-dark"
                   label="Password"
+                  labelClass="text-dark"
                   id="password"
                   type="password"
                   size="lg"
                   {...register("password", { required: true })}
                 />
-                <MDBCheckbox
+                {/* <MDBCheckbox
                   name="flexCheck"
                   id="flexCheckDefault"
                   className="mb-4"
                   label="Remember password"
-                />
+                /> */}
                 <CRow className="gy-3 justify-content-center">
                   <CCol xs="12" md="12" xl="12">
                     <CButton type="submit" color="primary" className="w-100">

@@ -11,6 +11,8 @@ import Select from "react-select";
 import Swal from "sweetalert2";
 import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const AddTHForm = () => {
   const { handleLogout } = useAuth();
@@ -41,6 +43,8 @@ const AddTHForm = () => {
       new Date(2024, i)
     ),
   }));
+
+  const localTheme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -295,24 +299,7 @@ const AddTHForm = () => {
             onChange={handleKeluargaChange}
             placeholder="Select Keluarga"
             isSearchable
-            styles={{
-              container: (base) => ({
-                ...base,
-                width: "100%",
-                marginBottom: "1rem",
-              }),
-              control: (base) => ({
-                ...base,
-                backgroundColor: "white",
-                borderColor: "#ced4da",
-                borderWidth: "1px",
-                borderRadius: "0.375rem",
-              }),
-              menu: (base) => ({
-                ...base,
-                zIndex: 1050,
-              }),
-            }}
+            styles={multiSelectStyles(localTheme)}
             required
           />
 

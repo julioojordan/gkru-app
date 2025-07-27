@@ -10,14 +10,17 @@ import {
   CCardSubtitle,
   CRow,
   CCol,
+  CFormCheck
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import services from "../../services";
 import Select from "react-select";
+import { useSelector } from "react-redux";
 import { useAuth } from "../../hooks/useAuth";
 import { useRedirect } from "../../hooks/useRedirect";
 import useHandleBack from "../../hooks/useHandleBack";
+import {multiSelectStyles} from "../base/select/selectStyle"
 
 const AnggotaDetail = () => {
   const { handleLogout } = useAuth();
@@ -25,6 +28,7 @@ const AnggotaDetail = () => {
   const location = useLocation();
   const { redirectToBefore } = useRedirect();
   const { data } = location.state || {};
+  const localTheme = useSelector((state) => state.theme.theme);
 
   const [formData, setFormData] = useState({
     Id: "",
@@ -38,6 +42,8 @@ const AnggotaDetail = () => {
     IdKeluarga: "",
     IsKepalaKeluarga: "",
     NoTelp: "",
+    AlasanBelumBaptis: "",
+    IsBaptis: null,
   });
 
   const [initialFormData, setInitialFormData] = useState({});
@@ -64,15 +70,20 @@ const AnggotaDetail = () => {
         Id: data.anggota.Id,
         NamaLengkap: data.anggota.NamaLengkap,
         TanggalLahir: data.anggota.TanggalLahir.split("T")[0],
-        TanggalBaptis: data.anggota.TanggalBaptis.split("T")[0],
+        TanggalBaptis: data.anggota.TanggalBaptis
+          ? data.anggota.TanggalBaptis.split("T")[0]
+          : null,
         Keterangan: data.anggota.Keterangan,
         Status: data.anggota.Status,
         NoTelp: data.anggota.NoTelp,
         JenisKelamin: data.anggota.JenisKelamin,
         IdKeluarga: data.keluarga.Id,
         IsKepalaKeluarga: data.isKepalaKeluarga,
+        AlasanBelumBaptis: data.anggota.AlasanBelumBaptis ?? "" ,
+        IsBaptis: data.anggota.IsBaptis,
       };
       setFormData(dataBaru);
+      console.log("disini" ,data.anggota.IsBaptis)
       setInitialFormData(dataBaru);
     }
   }, [data]);
@@ -103,6 +114,16 @@ const AnggotaDetail = () => {
 
   if (error) return <p>Error fetching data.</p>;
 
+  const handleBaptisChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      IsBaptis: value,
+      // Reset tanggal dan alasan ke initial untuk setiap toggle
+      TanggalBaptis: value && initialFormData.TanggalBaptis ? initialFormData.TanggalBaptis : "",
+      AlasanBelumBaptis: value ? null : initialFormData.AlasanBelumBaptis,
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -121,7 +142,8 @@ const AnggotaDetail = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    // selalu buat ke /keluarga karena ada bug misal di refresh dulu sebelum klik back -> dia akan ke halaman putih aja
+    navigate("/keluarga")
   };
 
   const handleEdit = () => {
@@ -195,11 +217,13 @@ const AnggotaDetail = () => {
 
     try {
       const response = await services.AnggotaService.UpdateAnggota(formData);
+      console.log('response', response)
       let updatedData = {};
       if (data.isFromKeluargaDetail) {
         updatedData = data.keluarga.Anggota.map((item) => {
-          return item.Id === response.Id ? { ...item, ...response } : item;
+          return item.Id === parseInt(response.Id, 10) ? { ...item, ...response } : item;
         });
+        console.log('updatedData', updatedData)
         const updatedKeluarga = {
           ...data.keluarga,
           Anggota: updatedData,
@@ -299,22 +323,7 @@ const AnggotaDetail = () => {
                 isSearchable
                 isDisabled={true}
                 // isDisabled={!isEditable || data.isKepalaKeluarga} // sementara di disable karena tidak terhandle di backend untuk update
-                styles={{
-                  container: (base) => ({
-                    ...base,
-                    width: "100%",
-                    marginBottom: "1rem",
-                  }),
-                  control: (base) => ({
-                    ...base,
-                    borderWidth: "1px",
-                    borderRadius: "0.375rem",
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    zIndex: 1050,
-                  }),
-                }}
+                styles={multiSelectStyles(localTheme)}
                 required
               />
 
@@ -374,16 +383,51 @@ const AnggotaDetail = () => {
               />
 
               {/* Input Tanggal Baptis */}
-              <CFormInput
-                type="date"
-                id="tanggalBaptis"
-                floatingLabel="Tanggal Baptis"
-                name="TanggalBaptis"
-                value={formData.TanggalBaptis}
-                onChange={handleChange}
+              <CFormCheck
+                inline
+                type="radio"
+                id="bptSudah"
+                name="bpt"
+                label="Sudah Baptis"
+                checked={formData.IsBaptis == true}
+                onChange={() => handleBaptisChange(true)}
                 disabled={!isEditable}
                 className="mb-3"
               />
+              <CFormCheck
+                inline
+                type="radio"
+                id="bptBelum"
+                name="bpt"
+                label="Belum Baptis"
+                checked={formData.IsBaptis == false}
+                onChange={() => handleBaptisChange(false)}
+                disabled={!isEditable}
+                className="mb-3"
+              />
+              {formData.IsBaptis ? (
+                <CFormInput
+                  type="date"
+                  id="tanggalBaptis"
+                  floatingLabel="Tanggal Baptis"
+                  name="TanggalBaptis"
+                  value={formData.TanggalBaptis}
+                  onChange={handleChange}
+                  disabled={!isEditable}
+                  className="mb-3"
+                />
+              ) : (
+                <CFormInput
+                  type="text"
+                  id="alasanBelumBaptis"
+                  floatingLabel="Alasan Belum Baptis"
+                  name="AlasanBelumBaptis"
+                  value={formData.AlasanBelumBaptis}
+                  onChange={handleChange}
+                  disabled={!isEditable}
+                  className="mb-3"
+                />
+              )}
 
               <CFormSelect
                 id="jenisKelamin"
@@ -436,7 +480,8 @@ const AnggotaDetail = () => {
               </CFormSelect>
               <CRow className="gy-3">
                 {/* Tombol Back */}
-                <CCol xs="12" md="4">
+                {/* di commen dulu ada bug di handle back */}
+                {/* <CCol xs="12" md="4">
                   <CButton
                     color="secondary"
                     onClick={handleBack}
@@ -451,10 +496,10 @@ const AnggotaDetail = () => {
                   >
                     Back
                   </CButton>
-                </CCol>
+                </CCol> */}
 
                 {/* Tombol Edit */}
-                <CCol xs="12" md="4">
+                <CCol xs="12" md="6">
                   <CButton
                     color="info"
                     onClick={handleEdit}
@@ -472,7 +517,7 @@ const AnggotaDetail = () => {
                 </CCol>
 
                 {/* Tombol Submit */}
-                <CCol xs="12" md="4">
+                <CCol xs="12" md="6">
                   <CButton
                     color="primary"
                     type="submit"

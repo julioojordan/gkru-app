@@ -7,7 +7,8 @@ import {
   CCardBody,
   CFormSelect,
   CRow,
-  CCol
+  CCol,
+  CFormCheck,
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -31,9 +32,22 @@ const AddAnggota = () => {
     JenisKelamin: "",
     Hubungan: "",
     IdKeluarga: Id,
+    NoTelp: "",
+    AlasanBelumBaptis: "",
+    IsBaptis: true,
   });
   const [namaWilayah] = useState(Wilayah.NamaWilayah);
   const [namaLingkungan] = useState(Lingkungan.NamaLingkungan);
+
+  const handleBaptisChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      IsBaptis: value,
+      // Reset tanggal dan alasan ke initial untuk setiap toggle
+      TanggalBaptis: value ? formData.TanggalBaptis : "",
+      AlasanBelumBaptis: value ? null : formData.AlasanBelumBaptis,
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +91,9 @@ const AddAnggota = () => {
         Keterangan: formData.Keterangan,
         Status: formData.Status,
         JenisKelamin: formData.JenisKelamin,
+        NoTelp: formData.NoTelp,
+        AlasanBelumBaptis: formData.AlasanBelumBaptis,
+        IsBaptis: formData.IsBaptis,
       };
       const newData = {
         ...location.state.data,
@@ -151,6 +168,16 @@ const AddAnggota = () => {
             className="mb-3"
           />
 
+          <CFormInput
+            type="text"
+            id="noTelp"
+            floatingLabel="No Telp"
+            name="NoTelp"
+            value={formData.NoTelp}
+            onChange={handleChange}
+            className="mb-3"
+          />
+
           {/* Input Tanggal Lahir */}
           <CFormInput
             type="date"
@@ -163,15 +190,47 @@ const AddAnggota = () => {
           />
 
           {/* Input Tanggal Baptis */}
-          <CFormInput
-            type="date"
-            id="tanggalBaptis"
-            floatingLabel="Tanggal Baptis"
-            name="TanggalBaptis"
-            value={formData.TanggalBaptis}
-            onChange={handleChange}
-            className="mb-3"
-          />
+              <CFormCheck
+                inline
+                type="radio"
+                id="bptSudah"
+                name="bpt"
+                label="Sudah Baptis"
+                checked={formData.IsBaptis == true}
+                onChange={() => handleBaptisChange(true)}
+                className="mb-3"
+              />
+              <CFormCheck
+                inline
+                type="radio"
+                id="bptBelum"
+                name="bpt"
+                label="Belum Baptis"
+                checked={formData.IsBaptis == false}
+                onChange={() => handleBaptisChange(false)}
+                className="mb-3"
+              />
+              {formData.IsBaptis ? (
+                <CFormInput
+                  type="date"
+                  id="tanggalBaptis"
+                  floatingLabel="Tanggal Baptis"
+                  name="TanggalBaptis"
+                  value={formData.TanggalBaptis}
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              ) : (
+                <CFormInput
+                  type="text"
+                  id="alasanBelumBaptis"
+                  floatingLabel="Alasan Belum Baptis"
+                  name="AlasanBelumBaptis"
+                  value={formData.AlasanBelumBaptis}
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              )}
 
           <CFormSelect
             id="jenisKelamin"
@@ -199,7 +258,6 @@ const AddAnggota = () => {
             <option value="">Select Keterangan</option>
             <option value="Istri">Istri</option>
             <option value="Anak">Anak</option>
-            <option value="Anggota">Anggota</option>
           </CFormSelect>
 
           <CFormSelect
