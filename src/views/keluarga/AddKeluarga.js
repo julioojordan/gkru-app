@@ -278,7 +278,7 @@ const KeluargaDetail = () => {
                     floatingLabel="Nomor Kartu Keluarga"
                     value={formData.Nomor}
                     onChange={handleChange}
-                    className={`mb-3 bg-white`}
+                    className={`mb-3`}
                   />
                 </CCol>
 
@@ -289,7 +289,7 @@ const KeluargaDetail = () => {
                     floatingLabel="Nomor KK Gereja"
                     value={formData.NomorKKGereja}
                     onChange={handleChange}
-                    className={`mb-3 bg-white`}
+                    className={`mb-3`}
                   />
                 </CCol>
 
@@ -300,7 +300,7 @@ const KeluargaDetail = () => {
                     floatingLabel="Alamat"
                     value={formData.Alamat}
                     onChange={handleChange}
-                    className={`mb-3 bg-white`}
+                    className={`mb-3`}
                   />
                 </CCol>
               </CRow>
