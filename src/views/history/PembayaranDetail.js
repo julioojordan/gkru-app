@@ -26,7 +26,9 @@ const PembayaranDetail = () => {
   const [historyDetail, setHistoryDetail] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const beUrl = process.env.REACT_APP_SERVICE_URL || "http://localhost:3001"
+  const apiUrl = window.env?.REACT_APP_API_URL || process.env.REACT_APP_API_URL;
+  // const beUrl = apiUrl || "https://pangruktilaya.parokiungaran.or.id/pangruktilaya-api"
+  const beUrl = "http://localhost:3001"
 
   useEffect(() => {
     const fetchDetailData = async () => {
@@ -76,7 +78,8 @@ const PembayaranDetail = () => {
             <CTableHead>
               <CTableRow>
                 <CTableHeaderCell>No</CTableHeaderCell>
-                <CTableHeaderCell>Id</CTableHeaderCell>
+                <CTableHeaderCell>No Transaksi</CTableHeaderCell>
+                <CTableHeaderCell>Id Keluarga</CTableHeaderCell>
                 <CTableHeaderCell>Nominal</CTableHeaderCell>
                 <CTableHeaderCell>Lingkungan</CTableHeaderCell>
                 <CTableHeaderCell>Wilayah</CTableHeaderCell>
@@ -90,7 +93,8 @@ const PembayaranDetail = () => {
                   style={{ cursor: "pointer" }}
                 >
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{item.Id}</CTableDataCell>
+                  <CTableDataCell>{item.IdTransaksi}</CTableDataCell>
+                  <CTableDataCell>{item.IdKeluarga}</CTableDataCell>
                   <CTableDataCell>{item.Nominal}</CTableDataCell>
                   <CTableDataCell>
                     {item.Lingkungan.NamaLingkungan}

@@ -59,4 +59,8 @@ export const multiSelectStyles = (localTheme) => ({
     ...base,
     color: localTheme === "dark" ? "#fff" : "#000",
   }),
+  input: (base) => ({
+    ...base,
+    color: localTheme === "dark" ? "#fff" : "#000",
+  }),
 });

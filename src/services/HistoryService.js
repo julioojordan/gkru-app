@@ -133,7 +133,7 @@ const getHistoryByGroup = async (id) => {
   }
 };
 
-const addHistory = async (data) => {
+const addHistory = async (data, kodeLingkungan) => {
   const formData = new FormData();
   formData.append("History", JSON.stringify(data));
   // formData.append("Nominal", data.Nominal);
@@ -146,6 +146,7 @@ const addHistory = async (data) => {
   if (data.FileBukti) {
     formData.append("FileBukti", data.FileBukti);
   }
+  formData.append("KodeLingkungan", kodeLingkungan);
   const url = "/history/add";
   try {
     const response = await api.post(url, formData, {
@@ -160,12 +161,13 @@ const addHistory = async (data) => {
   }
 };
 
-const addHistoryIuran = async (data, bukti) => {
+const addHistoryIuran = async (data, bukti, kodeLingkungan) => {
   const formData = new FormData();
   formData.append("History", JSON.stringify(data)); // Pastikan data adalah JSON array
   if (bukti) {
     formData.append("FileBukti", bukti); // Lampirkan file jika ada
   }
+  formData.append("KodeLingkungan", kodeLingkungan);
   const url = "/history/addIuran";
   try {
     const response = await api.post(url, formData, {

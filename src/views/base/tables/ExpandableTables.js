@@ -160,8 +160,8 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
           data={filteredRows}
           customStyles={customStyles}
           pagination
-          paginationPerPage={5}
-          paginationRowsPerPageOptions={[5, 10, 25]}
+          paginationPerPage={25}
+          paginationRowsPerPageOptions={[25, 50, 100]}
           paginationComponentOptions={{
             rowsPerPageText: 'Rows per page:',
             rangeSeparatorText: 'of',

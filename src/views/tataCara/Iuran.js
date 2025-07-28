@@ -27,7 +27,7 @@ const TutorialPageIuran = () => {
           <CRow>
             {/* Step 1: Pengisian Form */}
             <CCol md={6} className="mb-4">
-              <CCard className="tutorial-card">
+              <CCard className="tutorial-card border border-dark">
                 <CCardHeader className="tutorial-header">
                   1. Pengisian Form
                 </CCardHeader>
@@ -42,8 +42,9 @@ const TutorialPageIuran = () => {
                         tahun.
                       </li>
                       <li>
-                        Nilai default dari input Tahun dan Bulan diatur sesuai
-                        waktu sekarang, user bisa mengubahnya sesuai kebutuhan.
+                        Nilai Tahun dan Bulan diatur bisa dipilih{" "}
+                        <b>lebih dari 1 Nilai </b> user bisa mengubahnya sesuai
+                        kebutuhan.
                       </li>
                       <li>
                         Nilai default dari lingkungan disesuaikan dengan akun
@@ -103,7 +104,7 @@ const TutorialPageIuran = () => {
           <CRow className="mt-4">
             {/* Step 2: Pengisian Nominal dan Keluarga Anggota yang Benar */}
             <CCol md={6} className="mb-4">
-              <CCard className="tutorial-card">
+              <CCard className="tutorial-card border border-dark">
                 <CCardHeader className="tutorial-header">
                   2. Pengisian Nominal dan Keluarga Anggota yang Benar
                 </CCardHeader>
@@ -125,22 +126,27 @@ const TutorialPageIuran = () => {
               </CCard>
             </CCol>
             <CCol md={6} className="mb-4">
-              <CImage
-                src={successIuran}
-                alt="Step 2"
-                className="tutorial-image"
-              />
+              <figure>
+                <CImage
+                  src={successIuran}
+                  alt="Step 2"
+                  className="tutorial-image"
+                />
+                <figcaption className="image-caption">
+                  Gambar 3: Contoh Input yang Berhasil
+                </figcaption>
+              </figure>
             </CCol>
           </CRow>
 
           <CRow className="mt-4">
             {/* Step 3: Pengisian Nominal dan Keluarga Anggota yang Salah */}
             <CCol md={6} className="mb-4">
-              <CCard className="tutorial-card">
+              <CCard className="tutorial-card border border-dark">
                 <CCardHeader className="tutorial-header">
                   3. Pengisian Nominal dan Keluarga Anggota yang Salah
                 </CCardHeader>
-                <CCardBody>
+                <CCardBody className="text-dark">
                   <strong>Bagian 1:</strong>
                   <p>
                     Apabila nominal tidak merupakan kelipatan dari Rp 10.000
@@ -150,21 +156,26 @@ const TutorialPageIuran = () => {
               </CCard>
             </CCol>
             <CCol md={6} className="mb-4">
-              <CImage
-                src={nominalTidakValid}
-                alt="Error Nominal"
-                className="tutorial-image"
-              />
+              <figure>
+                <CImage
+                  src={nominalTidakValid}
+                  alt="Error Nominal"
+                  className="tutorial-image"
+                />
+                <figcaption className="image-caption">
+                  Gambar 4: Contoh Input yang Gagal 1
+                </figcaption>
+              </figure>
             </CCol>
           </CRow>
 
           <CRow className="mt-4">
             <CCol md={6} className="mb-4">
-              <CCard className="tutorial-card">
-                <CCardBody>
+              <CCard className="tutorial-card border border-dark">
+                <CCardBody className="text-dark">
                   <strong>Bagian 2:</strong>
                   <p>
-                    Apabila user mengisi nominal 10.000 lalu memilih lebih dari
+                    Apabila user mengisi nominal Rp 10.000 lalu memilih lebih dari
                     1 keluarga pada input keluarga anggota, maka akan muncul
                     warning dan pilihan keluarga anggota yang terakhir tidak
                     akan ditambahkan di input.
@@ -173,21 +184,26 @@ const TutorialPageIuran = () => {
               </CCard>
             </CCol>
             <CCol md={6} className="mb-4">
-              <CImage
-                src={keluargaTidakValid}
-                alt="Warning Keluarga Anggota"
-                className="tutorial-image"
-              />
+              <figure>
+                <CImage
+                  src={keluargaTidakValid}
+                  alt="Warning Keluarga Anggota"
+                  className="tutorial-image"
+                />
+                <figcaption className="image-caption">
+                  Gambar 5: Contoh Input yang Gagal 2
+                </figcaption>
+              </figure>
             </CCol>
           </CRow>
 
           <CRow className="mt-4">
             <CCol md={6} className="mb-4">
-              <CCard className="tutorial-card">
-                <CCardBody>
+              <CCard className="tutorial-card border border-dark">
+                <CCardBody className="text-dark">
                   <strong>Bagian 3:</strong>
                   <p>
-                    Apabila user mengisi nominal 30.000 lalu memilih hanya 2
+                    Apabila user mengisi nominal Rp 30.000 lalu memilih hanya 2
                     keluarga pada input keluarga anggota, maka akan muncul error
                     jumlah keluarga kurang pada waktu menekan tombol submit dan
                     form tidak akan diterima.
@@ -196,11 +212,16 @@ const TutorialPageIuran = () => {
               </CCard>
             </CCol>
             <CCol md={6} className="mb-4">
-              <CImage
-                src={jumlahKeluargaKurang}
-                alt="Error Jumlah Keluarga"
-                className="tutorial-image"
-              />
+              <figure>
+                <CImage
+                  src={jumlahKeluargaKurang}
+                  alt="Error Jumlah Keluarga"
+                  className="tutorial-image"
+                />
+                <figcaption className="image-caption">
+                  Gambar 6: Contoh Input yang Gagal 3
+                </figcaption>
+              </figure>
             </CCol>
           </CRow>
         </CCardBody>

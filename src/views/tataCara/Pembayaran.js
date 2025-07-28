@@ -209,11 +209,11 @@ const Pembayaran = () => {
       <CRow className="justify-content-center mt-4">
         <CCol lg="8">
           <CCard>
-            <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
+            <CCardHeader className="bg-info d-flex align-items-center justify-content-between text-dark">
               <strong>Tabel Kode Lingkungan</strong>
               <CButton
                 color="link"
-                className="text-decoration-none"
+                className="text-decoration-none text-dark"
                 onClick={() => setCollapse(!collapse)}
                 aria-expanded={collapse}
               >

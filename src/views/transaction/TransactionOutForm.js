@@ -21,6 +21,7 @@ const TransactionOutForm = () => {
   const [nominal, setNominal] = useState("");
   const [idKeluarga, setIdKeluarga] = useState(null);
   const [namaWilayah, setNamaWilayah] = useState("");
+  const [kodeLingkungan, setKodeLingkungan] = useState("");
   const [namaLingkungan, setNamaLingkungan] = useState("");
   const [subKeterangan, setSubKeterangan] = useState("");
   const [keluargaOptions, setKeluargaOptions] = useState([]);
@@ -83,9 +84,11 @@ const TransactionOutForm = () => {
       (option) => option.Id === selectedOption.value
     );
     if (selectedKeluarga) {
+      setKodeLingkungan(selectedKeluarga.Lingkungan.KodeLingkungan)
       setNamaWilayah(selectedKeluarga.Wilayah.NamaWilayah);
       setNamaLingkungan(selectedKeluarga.Lingkungan.NamaLingkungan);
     } else {
+      setKodeLingkungan("");
       setNamaWilayah("");
       setNamaLingkungan("");
     }
@@ -148,7 +151,7 @@ const TransactionOutForm = () => {
         },
       });
 
-      await services.HistoryService.addHistory(data);
+      await services.HistoryService.addHistory(data, kodeLingkungan);
 
       await Swal.fire({
         title: "Success!",
@@ -227,11 +230,11 @@ const TransactionOutForm = () => {
             placeholder="Nominal"
             value={nominal}
             onChange={(e) => {
-              if (e.target.value < 0){
-                setNominal(0)
-                return
+              if (e.target.value < 0) {
+                setNominal(0);
+                return;
               }
-              setNominal(e.target.value)
+              setNominal(e.target.value);
             }}
             required
             floatingClassName="mb-3"

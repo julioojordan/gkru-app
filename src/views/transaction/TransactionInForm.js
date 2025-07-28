@@ -26,6 +26,7 @@ const TransactionInForm = () => {
   // form state
   const [nominal, setNominal] = useState("");
   const [idLingkungan, setIdLingkungan] = useState("");
+  const [kodeLingkungan, setKodeLingkungan] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
   const [subKeterangan, setSubKeterangan] = useState("");
   const [keluargaOptions, setKeluargaOptions] = useState([]);
@@ -206,6 +207,7 @@ const TransactionInForm = () => {
       (lingkungan) => lingkungan.Id === selectedOption.value
     );
     setIdLingkungan(selectedLingkungan.Id);
+    setKodeLingkungan(selectedLingkungan.KodeLingkungan);
     setNamaWilayah(selectedLingkungan.Wilayah.NamaWilayah);
   };
 
@@ -297,7 +299,7 @@ const TransactionInForm = () => {
           Swal.showLoading(); // Pindahkan showLoading ke didOpen untuk konsistensi
         },
       });
-      await services.HistoryService.addHistoryIuran(requests, fileBukti);
+      await services.HistoryService.addHistoryIuran(requests, fileBukti, kodeLingkungan);
       await Swal.fire({
         title: "Success!",
         text: "Data berhasil ditambahkan.",

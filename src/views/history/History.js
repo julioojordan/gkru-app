@@ -60,10 +60,9 @@ const History = () => {
       width: "60px",
     },
     {
-      name: "Id",
-      selector: (row) => row.Id,
+      name: "Nomor Transaksi",
+      selector: (row) => row.IdTransaksi,
       sortable: true,
-      width: "80px",
     },
     {
       name: "Ket",
@@ -123,6 +122,7 @@ const History = () => {
         "Lingkungan.NamaLingkungan",
         "Wilayah.NamaWilayah",
         "SubKeterangan",
+        "IdTransaksi"
       ]}
       onRowClicked={handleRowClick}
     />
