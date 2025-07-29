@@ -27,6 +27,8 @@
     "docx": "^9.0.3",
     "file-saver": "^2.0.5",
     "mdb-react-ui-kit": "^7.2.0",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.6.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.1",

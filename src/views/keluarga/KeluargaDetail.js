@@ -23,6 +23,7 @@ import { useAuth } from "../../hooks/useAuth";
 import useHandleBack from "../../hooks/useHandleBack";
 import { useSelector } from "react-redux";
 import {multiSelectStyles} from "../base/select/selectStyle"
+import helper from "../../helper";
 
 const KeluargaDetail = () => {
   const { handleLogout } = useAuth();
@@ -80,9 +81,9 @@ const KeluargaDetail = () => {
       Alamat: data.Alamat,
       Nomor: data.Nomor,
       Status: data.Status,
-      TanggalLahir: data.KepalaKeluarga.TanggalLahir.slice(0, 10),
+      TanggalLahir: helper.formatDateToID(data.KepalaKeluarga.TanggalLahir),
       TanggalBaptis: data.KepalaKeluarga.TanggalBaptis
-        ? data.KepalaKeluarga.TanggalBaptis.slice(0, 10)
+        ? helper.formatDateToID(data.KepalaKeluarga.TanggalBaptis)
         : null,
       NoTelp: data.KepalaKeluarga.NoTelp,
       NomorKKGereja: data.NomorKKGereja,
@@ -264,9 +265,9 @@ const KeluargaDetail = () => {
       NamaKepalaKeluarga: selectedAnggota.NamaLengkap,
       KepalaKeluarga: selectedAnggota.Id,
       NoTelp: selectedAnggota.NoTelp,
-      TanggalLahir: selectedAnggota.TanggalLahir.slice(0, 10),
+      TanggalLahir: helper.formatDateToID(selectedAnggota.TanggalLahir),
       TanggalBaptis: selectedAnggota.TanggalBaptis
-        ? selectedAnggota.TanggalBaptis.slice(0, 10)
+        ? helper.formatDateToID(selectedAnggota.TanggalBaptis)
         : null,
     });
   };
@@ -640,11 +641,11 @@ const KeluargaDetail = () => {
                       <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
                       <CTableDataCell>{anggota.NoTelp}</CTableDataCell>
                       <CTableDataCell>
-                        {anggota.TanggalLahir.slice(0, 10)}
+                        {helper.formatDateToID(anggota.TanggalLahir)}
                       </CTableDataCell>
                       <CTableDataCell>
                         {anggota.TanggalBaptis && anggota.IsBaptis
-                          ? anggota.TanggalBaptis.slice(0, 10)
+                          ? helper.formatDateToID(anggota.TanggalBaptis)
                           : "Belum Baptis"}
                       </CTableDataCell>
                       <CTableDataCell>{anggota.Keterangan}</CTableDataCell>

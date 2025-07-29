@@ -10,7 +10,7 @@ import {
   CCardSubtitle,
   CRow,
   CCol,
-  CFormCheck
+  CFormCheck,
 } from "@coreui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -20,7 +20,8 @@ import { useSelector } from "react-redux";
 import { useAuth } from "../../hooks/useAuth";
 import { useRedirect } from "../../hooks/useRedirect";
 import useHandleBack from "../../hooks/useHandleBack";
-import {multiSelectStyles} from "../base/select/selectStyle"
+import { multiSelectStyles } from "../base/select/selectStyle";
+import helper from "../../helper";
 
 const AnggotaDetail = () => {
   const { handleLogout } = useAuth();
@@ -69,9 +70,9 @@ const AnggotaDetail = () => {
       const dataBaru = {
         Id: data.anggota.Id,
         NamaLengkap: data.anggota.NamaLengkap,
-        TanggalLahir: data.anggota.TanggalLahir.split("T")[0],
+        TanggalLahir: helper.formatDateToID(data.anggota.TanggalLahir),
         TanggalBaptis: data.anggota.TanggalBaptis
-          ? data.anggota.TanggalBaptis.split("T")[0]
+          ? helper.formatDateToID(data.anggota.TanggalBaptis)
           : null,
         Keterangan: data.anggota.Keterangan,
         Status: data.anggota.Status,
@@ -79,11 +80,10 @@ const AnggotaDetail = () => {
         JenisKelamin: data.anggota.JenisKelamin,
         IdKeluarga: data.keluarga.Id,
         IsKepalaKeluarga: data.isKepalaKeluarga,
-        AlasanBelumBaptis: data.anggota.AlasanBelumBaptis ?? "" ,
+        AlasanBelumBaptis: data.anggota.AlasanBelumBaptis ?? "",
         IsBaptis: data.anggota.IsBaptis,
       };
       setFormData(dataBaru);
-      console.log("disini" ,data.anggota.IsBaptis)
       setInitialFormData(dataBaru);
     }
   }, [data]);
@@ -119,7 +119,10 @@ const AnggotaDetail = () => {
       ...prev,
       IsBaptis: value,
       // Reset tanggal dan alasan ke initial untuk setiap toggle
-      TanggalBaptis: value && initialFormData.TanggalBaptis ? initialFormData.TanggalBaptis : "",
+      TanggalBaptis:
+        value && initialFormData.TanggalBaptis
+          ? initialFormData.TanggalBaptis
+          : "",
       AlasanBelumBaptis: value ? null : initialFormData.AlasanBelumBaptis,
     }));
   };
@@ -143,7 +146,7 @@ const AnggotaDetail = () => {
 
   const handleBack = () => {
     // selalu buat ke /keluarga karena ada bug misal di refresh dulu sebelum klik back -> dia akan ke halaman putih aja
-    navigate("/keluarga")
+    navigate("/keluarga");
   };
 
   const handleEdit = () => {
@@ -217,13 +220,13 @@ const AnggotaDetail = () => {
 
     try {
       const response = await services.AnggotaService.UpdateAnggota(formData);
-      console.log('response', response)
       let updatedData = {};
       if (data.isFromKeluargaDetail) {
         updatedData = data.keluarga.Anggota.map((item) => {
-          return item.Id === parseInt(response.Id, 10) ? { ...item, ...response } : item;
+          return item.Id === parseInt(response.Id, 10)
+            ? { ...item, ...response }
+            : item;
         });
-        console.log('updatedData', updatedData)
         const updatedKeluarga = {
           ...data.keluarga,
           Anggota: updatedData,

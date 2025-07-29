@@ -10,6 +10,7 @@ import {
 import { CCard, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell } from '@coreui/react';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import helper from "../../../helper"
 
 
 const getCustomStyles = (theme) => ({
@@ -209,11 +210,7 @@ const GeneralTables = ({ columns, rows, filterKeys, onRowClicked = () => {} }) =
                         {data.KepalaKeluarga.JenisKelamin === 'P' ? 'Perempuan' : data.KepalaKeluarga.JenisKelamin === 'L' ? 'Laki-Laki' : 'Tidak Diketahui'}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {new Date(data.KepalaKeluarga.TanggalLahir).toLocaleDateString("id-ID", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
+                        {helper.formatDateToID(data.KepalaKeluarga.TanggalLahir)}
                       </CTableDataCell>
                       <CTableDataCell>{data.KepalaKeluarga.Keterangan}</CTableDataCell>
                       <CTableDataCell>{data.KepalaKeluarga.Status}</CTableDataCell>

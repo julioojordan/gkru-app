@@ -190,47 +190,47 @@ const AddAnggota = () => {
           />
 
           {/* Input Tanggal Baptis */}
-              <CFormCheck
-                inline
-                type="radio"
-                id="bptSudah"
-                name="bpt"
-                label="Sudah Baptis"
-                checked={formData.IsBaptis == true}
-                onChange={() => handleBaptisChange(true)}
-                className="mb-3"
-              />
-              <CFormCheck
-                inline
-                type="radio"
-                id="bptBelum"
-                name="bpt"
-                label="Belum Baptis"
-                checked={formData.IsBaptis == false}
-                onChange={() => handleBaptisChange(false)}
-                className="mb-3"
-              />
-              {formData.IsBaptis ? (
-                <CFormInput
-                  type="date"
-                  id="tanggalBaptis"
-                  floatingLabel="Tanggal Baptis"
-                  name="TanggalBaptis"
-                  value={formData.TanggalBaptis}
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              ) : (
-                <CFormInput
-                  type="text"
-                  id="alasanBelumBaptis"
-                  floatingLabel="Alasan Belum Baptis"
-                  name="AlasanBelumBaptis"
-                  value={formData.AlasanBelumBaptis}
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              )}
+          <CFormCheck
+            inline
+            type="radio"
+            id="bptSudah"
+            name="bpt"
+            label="Sudah Baptis"
+            checked={formData.IsBaptis == true}
+            onChange={() => handleBaptisChange(true)}
+            className="mb-3"
+          />
+          <CFormCheck
+            inline
+            type="radio"
+            id="bptBelum"
+            name="bpt"
+            label="Belum Baptis"
+            checked={formData.IsBaptis == false}
+            onChange={() => handleBaptisChange(false)}
+            className="mb-3"
+          />
+          {formData.IsBaptis ? (
+            <CFormInput
+              type="date"
+              id="tanggalBaptis"
+              floatingLabel="Tanggal Baptis"
+              name="TanggalBaptis"
+              value={formData.TanggalBaptis}
+              onChange={handleChange}
+              className="mb-3"
+            />
+          ) : (
+            <CFormInput
+              type="text"
+              id="alasanBelumBaptis"
+              floatingLabel="Alasan Belum Baptis"
+              name="AlasanBelumBaptis"
+              value={formData.AlasanBelumBaptis}
+              onChange={handleChange}
+              className="mb-3"
+            />
+          )}
 
           <CFormSelect
             id="jenisKelamin"
@@ -258,6 +258,7 @@ const AddAnggota = () => {
             <option value="">Select Keterangan</option>
             <option value="Istri">Istri</option>
             <option value="Anak">Anak</option>
+            <option value="Anggota">Anggota</option>
           </CFormSelect>
 
           <CFormSelect
