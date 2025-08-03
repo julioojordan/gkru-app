@@ -33,7 +33,6 @@ const KeluargaDetail = () => {
     TanggalBaptis: "",
     JenisKelamin: "",
     Nomor: "",
-    NomorKKGereja: "",
     Status: "HIDUP",
     Keterangan: "Kepala Keluarga",
     Hubungan: "Kepala Keluarga",
@@ -197,13 +196,11 @@ const KeluargaDetail = () => {
         idWilayah: formData.Wilayah,
         idLingkungan: formData.Lingkungan,
         nomor: formData.Nomor,
-        nomorKKGereja: formData.NomorKKGereja,
         alamat: formData.Alamat,
         noTelp: formData.NoTelp,
         isBaptis: formData.IsBaptis,
         alasanBelumBaptis: formData.AlasanBelumBaptis
       };
-      console.log({keluargaRequest})
 
       const responseAddKK = await services.KeluargaService.AddKeluarga(
         keluargaRequest
@@ -245,7 +242,6 @@ const KeluargaDetail = () => {
       TanggalBaptis: "",
       JenisKelamin: "",
       Nomor: "",
-      NomorKKGereja: "",
       Keterangan: "Kepala Keluarga",
       Hubungan: "Kepala Keluarga",
       NoTelp: "",
@@ -271,23 +267,12 @@ const KeluargaDetail = () => {
           <>
             <CForm onSubmit={handleSubmit}>
               <CRow className="mt-3">
-                <CCol lg={3} sm={12}>
+                <CCol lg={6} sm={12}>
                   <CFormInput
                     type="text"
                     name="Nomor"
                     floatingLabel="Nomor Kartu Keluarga"
                     value={formData.Nomor}
-                    onChange={handleChange}
-                    className={`mb-3`}
-                  />
-                </CCol>
-
-                <CCol lg={3} sm={12}>
-                  <CFormInput
-                    type="text"
-                    name="NomorKKGereja"
-                    floatingLabel="Nomor KK Gereja"
-                    value={formData.NomorKKGereja}
                     onChange={handleChange}
                     className={`mb-3`}
                   />
@@ -374,8 +359,7 @@ const KeluargaDetail = () => {
                       <CFormInput
                         type="text"
                         name="NoTelp"
-                        floatingLabel="No Telepon"
-                        required
+                        floatingLabel="No Telepon (optional)"
                         onChange={handleChange}
                         value={formData.NoTelp}
                       />
@@ -537,8 +521,7 @@ const KeluargaDetail = () => {
                           <CFormInput
                             type="text"
                             name="noTelp"
-                            floatingLabel="No Telepon"
-                            required
+                            floatingLabel="No Telepon (optional)"
                             value={anggota.noTelp}
                             onChange={(e) => handleAnggotaChange(e, index)}
                           />

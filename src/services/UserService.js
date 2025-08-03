@@ -20,7 +20,8 @@ const updateUser = async (formData) => {
     username: formData.Username, 
     ketuaLingkungan: formData.KetuaLingkungan,
     ketuaWilayah: formData.KetuaWilayah,
-    updatedBy: formData.UpdatedBy
+    updatedBy: formData.UpdatedBy,
+    password: formData.Password
   };
   const url = `/user/${formData.Id}/update`;
   try {

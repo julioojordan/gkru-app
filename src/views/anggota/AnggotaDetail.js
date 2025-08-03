@@ -76,7 +76,7 @@ const AnggotaDetail = () => {
           : null,
         Keterangan: data.anggota.Keterangan,
         Status: data.anggota.Status,
-        NoTelp: data.anggota.NoTelp,
+        NoTelp: data.anggota.NoTelp ?? "",
         JenisKelamin: data.anggota.JenisKelamin,
         IdKeluarga: data.keluarga.Id,
         IsKepalaKeluarga: data.isKepalaKeluarga,
@@ -131,7 +131,7 @@ const AnggotaDetail = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: value == "" ? "-" : value,
     }));
   };
 

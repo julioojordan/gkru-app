@@ -14,7 +14,7 @@ import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import helper from "../../helper";
-import {multiSelectStyles} from "../base/select/selectStyle"
+import { multiSelectStyles } from "../base/select/selectStyle";
 
 const TransactionInForm = () => {
   const { handleLogout } = useAuth();
@@ -84,6 +84,9 @@ const TransactionInForm = () => {
     );
   }, [selectedYears]);
 
+  //select all anggota
+  const selectAllOption = { value: "*", label: "Pilih Semua" };
+
   // Fetch lingkungan options on mount
   useEffect(() => {
     const fetchHistory = async () => {
@@ -144,8 +147,6 @@ const TransactionInForm = () => {
             );
           })
         );
-        console.log("disini 1", results);
-        console.log("disini 2", results.flat());
         setHistory(results.flat());
       } catch (err) {
         setError(true);
@@ -299,7 +300,11 @@ const TransactionInForm = () => {
           Swal.showLoading(); // Pindahkan showLoading ke didOpen untuk konsistensi
         },
       });
-      await services.HistoryService.addHistoryIuran(requests, fileBukti, kodeLingkungan);
+      await services.HistoryService.addHistoryIuran(
+        requests,
+        fileBukti,
+        kodeLingkungan
+      );
       await Swal.fire({
         title: "Success!",
         text: "Data berhasil ditambahkan.",
@@ -375,7 +380,8 @@ const TransactionInForm = () => {
 
           {keluargaOptions.length === 0 && idLingkungan && (
             <CAlert color="success">
-              Semua Keluarga Anggota telah membayar iuran pada bulan ini
+              Semua Keluarga Anggota telah membayar iuran pada bulan dan tahun
+              yang dipilih
             </CAlert>
           )}
 
@@ -390,23 +396,28 @@ const TransactionInForm = () => {
           />
 
           <CFormInput
-            type="number"
+            type="text"
             id="nominal"
             placeholder="Nominal"
-            value={nominal}
+            value={helper.FormatToRupiah.formatToRupiah(nominal)}
             onChange={(e) => {
-              if (e.target.value < 0) {
+              const rawValue = helper.parseRupiah.parseRupiah(e.target.value);
+              if (rawValue < 0) {
                 setNominal(0);
                 setSelectedKeluarga([]);
                 return;
               }
-              setNominal(e.target.value);
+
+              if (rawValue >= keluargaOptions.length * 10000) {
+                setKeluargaOptions([selectAllOption, ...keluargaOptions]);
+              }
+
+              setNominal(rawValue);
               setSelectedKeluarga([]);
             }}
             required
             floatingClassName="mb-3"
             floatingLabel="Nominal"
-            step={10000}
           />
 
           <Select
@@ -415,6 +426,18 @@ const TransactionInForm = () => {
             isLoading={loadingHistory || loadingKeluarga}
             onChange={(selected) => {
               const maxSelection = nominal / 10000;
+              if (!selected || selected.length === 0) {
+                setSelectedKeluarga([]);
+
+                // Kalau nominal masih pas → pastikan Select All tetap ada
+                if (nominal >= keluargaOptions.length * 10000) {
+                  setKeluargaOptions((prev) => {
+                    const hasSelectAll = prev.some((opt) => opt.value === "*");
+                    return hasSelectAll ? prev : [selectAllOption, ...prev];
+                  });
+                }
+                return;
+              }
               if (selected.length > maxSelection) {
                 Swal.fire({
                   title: "Warning!",
@@ -425,6 +448,18 @@ const TransactionInForm = () => {
                 });
                 return;
               }
+              if (selected.some((option) => option.value === "*")) {
+                // pilih semua yang asli (tanpa opsi "*")
+                setSelectedKeluarga(
+                  keluargaOptions.filter((opt) => opt.value !== "*")
+                );
+                // Hapus '*' dari list keluargaOptions
+                setKeluargaOptions((prev) =>
+                  prev.filter((opt) => opt.value !== "*")
+                );
+                return;
+              }
+
               setSelectedKeluarga(selected);
             }}
             placeholder="Pilih Keluarga Anggota"

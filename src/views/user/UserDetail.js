@@ -270,6 +270,7 @@ const UserDetail = () => {
         KetuaWilayah:
           isKetuaWilayah || isKetuaLingkungan ? formData.Wilayah : 0,
         UpdatedBy: authRedux.id,
+        Password: formData.Password
       };
       const response = await services.UserService.updateUser(data);
       if (isSelf) {
@@ -296,7 +297,7 @@ const UserDetail = () => {
         text: "Data has been updated successfully.",
         icon: "success",
       }).then(
-        navigate(`/user/${row.Id}`, {
+        navigate(`/user/${row?.Id ?? authRedux.id}`, {
           state: {
             isSelf,
             row: {
@@ -354,7 +355,7 @@ const UserDetail = () => {
                 className="mb-2 text-body-secondary"
                 style={{ marginLeft: "3px" }}
               >
-                Detail Lingkungan
+                Profile Setting
               </CCardSubtitle>
               {!isSelf && (
                 <CButton
@@ -385,7 +386,7 @@ const UserDetail = () => {
                 onChange={handleTypeChange}
                 required
                 floatingClassName="mb-3"
-                disabled={!isEditable}
+                disabled={!isEditable || roleRedux !== "admin"}
                 floatingLabel="Status"
               >
                 <option value="">Select Role</option>
@@ -401,7 +402,7 @@ const UserDetail = () => {
                 value={formData.Username}
                 onChange={handleChange}
                 className="mb-3"
-                disabled={!isEditable}
+                disabled={!isEditable || roleRedux !== "admin"}
                 required
               />
 
@@ -414,7 +415,7 @@ const UserDetail = () => {
                   onChange={handleSelectWilayahChange}
                   placeholder="Select Wilayah"
                   isSearchable
-                  isDisabled={!isEditable}
+                  isDisabled={!isEditable || roleRedux !== "admin"}
                   styles={multiSelectStyles(localTheme)}
                   required
                 />
@@ -429,7 +430,7 @@ const UserDetail = () => {
                   onChange={handleSelectLingkunganChange}
                   placeholder="Select Lingkungan"
                   isSearchable
-                  isDisabled={!isEditable}
+                  isDisabled={!isEditable || roleRedux !== "admin"}
                   styles={multiSelectStyles(localTheme)}
                   required
                 />

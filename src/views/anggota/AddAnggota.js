@@ -53,7 +53,7 @@ const AddAnggota = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: value == "" ? "-" : value,
     }));
   };
 
@@ -166,12 +166,13 @@ const AddAnggota = () => {
             value={formData.NamaLengkap}
             onChange={handleChange}
             className="mb-3"
+            required
           />
 
           <CFormInput
             type="text"
             id="noTelp"
-            floatingLabel="No Telp"
+            floatingLabel="No Telp (Optional)"
             name="NoTelp"
             value={formData.NoTelp}
             onChange={handleChange}
@@ -187,6 +188,7 @@ const AddAnggota = () => {
             value={formData.TanggalLahir}
             onChange={handleChange}
             className="mb-3"
+            required
           />
 
           {/* Input Tanggal Baptis */}

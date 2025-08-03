@@ -40,7 +40,7 @@ const routes = [
   { path: '/lingkungan/add', name: 'Add Lingkungan', element: AddLingkungan, adminOnly: true },
   { path: '/lingkungan/:id', name: 'Detail Lingkungan', element: LingkunganDetail },
   { path: '/user', name: 'Data User', element: User, adminOnly: true },
-  { path: '/user/:id', name: 'Data User', element: UserDetail, adminOnly: true },
+  { path: '/user/:id', name: 'Data User', element: UserDetail },
   { path: '/user/add', name: 'Data User', element: AddUser, adminOnly: true },
   { path: '/history', name: 'Data Kas Masuk dan Keluar', element: History },
   { path: '/history/:id', name: 'Detail History', element: HistoryDetail },

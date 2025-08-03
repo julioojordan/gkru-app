@@ -22,7 +22,7 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../hooks/useAuth";
 import useHandleBack from "../../hooks/useHandleBack";
 import { useSelector } from "react-redux";
-import {multiSelectStyles} from "../base/select/selectStyle"
+import { multiSelectStyles } from "../base/select/selectStyle";
 import helper from "../../helper";
 
 const KeluargaDetail = () => {
@@ -48,7 +48,6 @@ const KeluargaDetail = () => {
     Nomor: "",
     Status: "",
     NoTelp: "",
-    NomorKKGereja: "",
   });
   const [initialFormData, setInitialFormData] = useState({});
   const [isEditable, setIsEditable] = useState(false);
@@ -85,8 +84,7 @@ const KeluargaDetail = () => {
       TanggalBaptis: data.KepalaKeluarga.TanggalBaptis
         ? helper.formatDateToID(data.KepalaKeluarga.TanggalBaptis)
         : null,
-      NoTelp: data.KepalaKeluarga.NoTelp,
-      NomorKKGereja: data.NomorKKGereja,
+      NoTelp: data.KepalaKeluarga.NoTelp ? data.KepalaKeluarga.NoTelp : "-",
     };
     return formValue;
   };
@@ -401,24 +399,11 @@ const KeluargaDetail = () => {
                 <CFormInput
                   type="text"
                   name="Nomor"
-                  label="Nomor Keluarga"
+                  label="Nomor Kartu Keluarga"
                   value={formData.Nomor}
                   onChange={handleChange}
                   className="mb-3 shadow-sm"
                 />
-                <CFormSelect
-                  id="status"
-                  value={formData.Status}
-                  onChange={handleChange}
-                  required
-                  floatingClassName="mb-3"
-                  floatingLabel="Status"
-                  name="Status"
-                >
-                  <option value="">Select Status</option>
-                  <option value="aktif">Aktif</option>
-                  <option value="nonAktif">Tidak Aktif</option>
-                </CFormSelect>
               </>
             )}
 
@@ -483,15 +468,19 @@ const KeluargaDetail = () => {
               </CCol>
 
               <CCol lg={6} sm={12}>
-                <CFormInput
-                  type="text"
-                  name="NomorKKGereja"
-                  floatingLabel="Nomor KK Gereja"
-                  value={formData.NomorKKGereja}
+                <CFormSelect
+                  id="status"
+                  value={formData.Status}
                   onChange={handleChange}
-                  className={`mb-3 shadow-sm ${isEditable ? "" : "border-0"}`}
-                  disabled={!isEditable}
-                />
+                  required
+                  floatingClassName="mb-3"
+                  floatingLabel="Status"
+                  name="Status"
+                >
+                  <option value="">Select Status</option>
+                  <option value="aktif">Aktif</option>
+                  <option value="nonAktif">Tidak Aktif</option>
+                </CFormSelect>
                 <CFormInput
                   type="text"
                   name="Alamat"
@@ -639,13 +628,19 @@ const KeluargaDetail = () => {
                     >
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>{anggota.NamaLengkap}</CTableDataCell>
-                      <CTableDataCell>{anggota.NoTelp}</CTableDataCell>
+                      <CTableDataCell>{(anggota.NoTelp ?? "-")}</CTableDataCell>
                       <CTableDataCell>
-                        {helper.formatDateToID(anggota.TanggalLahir)}
+                        {helper.formatDateToID(
+                          anggota.TanggalLahir,
+                          "DD-MM-YYYY"
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         {anggota.TanggalBaptis && anggota.IsBaptis
-                          ? helper.formatDateToID(anggota.TanggalBaptis)
+                          ? helper.formatDateToID(
+                              anggota.TanggalBaptis,
+                              "DD-MM-YYYY"
+                            )
                           : "Belum Baptis"}
                       </CTableDataCell>
                       <CTableDataCell>{anggota.Keterangan}</CTableDataCell>

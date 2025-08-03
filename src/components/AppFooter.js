@@ -12,7 +12,7 @@ const AppFooter = () => {
         <span className="ms-1">&copy; 2024 creativeLabs.</span>
       </div>
       <div className="ms-auto">
-        <span className="me-1">Gereja Kristus Raja Ungaran</span>
+        <span className="me-1">Gereja Kristus Raja Ungaran App v1.1.3</span>
       </div>
     </CFooter>
   )
