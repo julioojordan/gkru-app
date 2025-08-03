@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import services from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
+import helper from "../../helper";
 import { multiSelectStyles } from "../base/select/selectStyle";
 
 const TransactionOutForm = () => {
@@ -84,7 +85,7 @@ const TransactionOutForm = () => {
       (option) => option.Id === selectedOption.value
     );
     if (selectedKeluarga) {
-      setKodeLingkungan(selectedKeluarga.Lingkungan.KodeLingkungan)
+      setKodeLingkungan(selectedKeluarga.Lingkungan.KodeLingkungan);
       setNamaWilayah(selectedKeluarga.Wilayah.NamaWilayah);
       setNamaLingkungan(selectedKeluarga.Lingkungan.NamaLingkungan);
     } else {
@@ -225,23 +226,24 @@ const TransactionOutForm = () => {
           </CFormSelect>
 
           <CFormInput
-            type="number"
+            type="text"
             id="nominal"
             placeholder="Nominal"
-            value={nominal}
+            value={helper.FormatToRupiah.formatToRupiah(nominal)}
             onChange={(e) => {
-              if (e.target.value < 0) {
+              const rawValue = helper.parseRupiah.parseRupiah(e.target.value);
+              
+              if (rawValue < 0) {
                 setNominal(0);
                 return;
               }
-              setNominal(e.target.value);
+              setNominal(rawValue);
             }}
             required
             floatingClassName="mb-3"
             floatingLabel="Nominal"
-            step={50000}
           />
-
+          
           <Select
             options={keluargaOptions}
             value={idKeluarga}
