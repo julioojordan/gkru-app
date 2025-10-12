@@ -17,6 +17,7 @@ import {
   cilUser,
   cilFolder,
   cilInfo,
+  cilFile
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 import { useSelector } from "react-redux";
@@ -77,6 +78,12 @@ const getNavItems = (roleRedux) => [
     name: "Data Keluarga Anggota",
     to: "/keluarga",
     icon: <CIcon icon={cilFolder} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: "Import Data Keluarga",
+    to: "/importKeluarga",
+    icon: <CIcon icon={cilFile} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,

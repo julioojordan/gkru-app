@@ -20,6 +20,7 @@ const AddWilayah = React.lazy(() => import('./views/wilayah/AddWilayah'))
 const Keluarga =  React.lazy(() => import('./views/keluarga/Keluarga'))
 const KeluargaDetail =  React.lazy(() => import('./views/keluarga/KeluargaDetail'))
 const AddKeluarga =  React.lazy(() => import('./views/keluarga/AddKeluarga'))
+const ImportKeluarga =  React.lazy(() => import('./views/keluarga/ImportKeluarga'))
 const AnggotaDetail = React.lazy(() => import('./views/anggota/AnggotaDetail'))
 const AddAnggota =  React.lazy(() => import('./views/anggota/AddAnggota'))
 const Laporan =  React.lazy(() => import('./views/laporan/Laporan'))
@@ -52,6 +53,7 @@ const routes = [
   { path: '/wilayah/add', name: 'Add Wilayah', element: AddWilayah, adminOnly: true },
   { path: '/keluarga', name: 'Data Keluarga Anggota', element: Keluarga },
   { path: '/keluarga/add', name: 'Add Keluarga', element: AddKeluarga },
+  { path: '/importKeluarga', name: 'Import Data Keluarga', element: ImportKeluarga },
   { path: '/keluarga/:id', name: 'Data Keluarga Anggota', element: KeluargaDetail },
   { path: '/anggota/:id', name: 'Detail Anggota', element: AnggotaDetail },
   { path: '/anggota/add', name: 'Add Anggota', element: AddAnggota },
